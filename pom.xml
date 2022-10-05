@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>5.0.1.pro.sky</groupId>
-	<artifactId>dogs-and-cats-shelter</artifactId>
+	<artifactId>pet-shelter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>dogs-and-cats-shelter</name>
+	<name>pet-shelter</name>
 	<description>chat bot project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -27,6 +27,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.github.pengrad</groupId>
+			<artifactId>java-telegram-bot-api</artifactId>
+			<version>5.7.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

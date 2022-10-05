@@ -1,13 +1,13 @@
-package com.example.demo;
+package com.telegrambot.jd501;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DogsAndCatsShelterApplication {
+public class PetShelterApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DogsAndCatsShelterApplication.class, args);
+		SpringApplication.run(PetShelterApplication.class, args);
 	}
 
 }
