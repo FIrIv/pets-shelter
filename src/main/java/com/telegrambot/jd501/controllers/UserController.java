@@ -9,9 +9,14 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
     @GetMapping
     public Collection<User> getAllUsers () {
-       return userServise.getAllUser();
+       return userService.getAllUser();
     }
     @PostMapping
     public ResponseEntity <User> createUser(@RequestBody User user){
@@ -22,7 +27,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(user));
     }
     @DeleteMapping ("{id}") ResponseEntity <User> deleteUser (@PathVariable Long id){
-       return ResponseEntity.ok(userServise.deleteUser(id));
+       return ResponseEntity.ok(userService.deleteUser(id));
     }
 
 }
