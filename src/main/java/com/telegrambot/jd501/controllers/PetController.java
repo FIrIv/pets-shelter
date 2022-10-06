@@ -8,6 +8,11 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/pet")
 public class PetController {
+    PetServise petServise;
+
+    public PetController(PetServise petServise) {
+        this.petServise = petServise;
+    }
     @GetMapping
     public Collection<Pet> getAllPet () {
         return petServise.getAllPet();
