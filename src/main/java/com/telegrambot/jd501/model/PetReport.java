@@ -1,4 +1,4 @@
-package com.telegrambot.jd501.model;
+package com.example.demo.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
