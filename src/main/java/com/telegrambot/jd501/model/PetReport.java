@@ -1,7 +1,7 @@
 package com.telegrambot.jd501.model;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -11,7 +11,7 @@ public class PetReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long petId;
-    private LocalDateTime dateOfReport;
+    private LocalDate dateOfReport;
     private String textOfReport;
     private String photoLink;
 
@@ -31,11 +31,11 @@ public class PetReport {
         this.petId = petId;
     }
 
-    public LocalDateTime getDateOfReport() {
+    public LocalDate getDateOfReport() {
         return dateOfReport;
     }
 
-    public void setDateOfReport(LocalDateTime dateOfReport) {
+    public void setDateOfReport(LocalDate dateOfReport) {
         this.dateOfReport = dateOfReport;
     }
 

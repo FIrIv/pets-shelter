@@ -1,7 +1,6 @@
 package com.telegrambot.jd501.model;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
