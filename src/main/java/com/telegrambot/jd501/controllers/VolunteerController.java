@@ -9,21 +9,25 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/volunteer")
 public class VolunteerController {
+    VolunteerService volunteerService;
 
+    public VolunteerController(VolunteerService volunteerService) {
+        this.volunteerService = volunteerService;
+    }
     @GetMapping
     public Collection<Volunteer> getAllVolunteer () {
-        return volunteerServise.getAllVolunteer();
+        return volunteerService.getAllVolunteer();
     }
     @PostMapping
     public ResponseEntity<Volunteer> createVolunteer(@RequestBody Volunteer volunteer){
-        return ResponseEntity.ok(volunteerServise.createVolunteer(volunteer));
+        return ResponseEntity.ok(volunteerService.createVolunteer(volunteer));
     }
     @PutMapping
     public ResponseEntity <Volunteer> updateVolunteer(@RequestBody Volunteer volunteer){
-        return ResponseEntity.ok(volunteerServise.updateVolunteer(volunteer));
+        return ResponseEntity.ok(volunteerService.updateVolunteer(volunteer));
     }
     @DeleteMapping("{id}")
     ResponseEntity <Volunteer> deleteVolunteer (@PathVariable Long id){
-        return ResponseEntity.ok(volunteerServise.deleteVolunteer(id));
+        return ResponseEntity.ok(volunteerService.deleteVolunteer(id));
     }
 }

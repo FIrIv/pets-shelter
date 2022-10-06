@@ -1,6 +1,5 @@
 package com.telegrambot.jd501.controllers;
 
-import com.telegrambot.jd501.Services.InformationMessageService;
 import com.telegrambot.jd501.model.InformationMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -9,21 +9,25 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/petReport")
 public class PetReportController {
+    PetReportService petReportService;
 
+    public PetReportController(PetReportService petReportService) {
+        this.petReportService = petReportService;
+    }
     @GetMapping
     public Collection <PetReport> getAllPetReport () {
-        return petReportServise.getAllPetReport();
+        return petReportService.getAllPetReport();
     }
     @PostMapping
     public ResponseEntity<PetReport> createPetReport(@RequestBody PetReport petReport){
-        return ResponseEntity.ok(petReportServise.createPetReport(petReport));
+        return ResponseEntity.ok(petReportService.createPetReport(petReport));
     }
     @PutMapping
     public ResponseEntity <PetReport> updatePetReport(@RequestBody PetReport petReport){
-        return ResponseEntity.ok(petReportServise.updatePetReport(petReport));
+        return ResponseEntity.ok(petReportService.updatePetReport(petReport));
     }
     @DeleteMapping("{id}")
     ResponseEntity <PetReport> deletePetReport (@PathVariable Long id){
-        return ResponseEntity.ok(petReportServise.deletePetReport(id));
+        return ResponseEntity.ok(petReportService.deletePetReport(id));
     }
 }
