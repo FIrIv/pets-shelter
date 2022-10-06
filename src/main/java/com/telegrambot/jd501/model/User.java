@@ -1,7 +1,7 @@
 package com.telegrambot.jd501.model;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -17,7 +17,7 @@ public class User {
     @JoinColumn(name = "pet id")
     private Pet pet;
     private Boolean isAdopted;
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     private Integer quantityTestDays;
 
     public Long getId() {
@@ -68,11 +68,11 @@ public class User {
         isAdopted = adopted;
     }
 
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
