@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>5.0.1.pro.sky</groupId>
-	<artifactId>dogs-and-cats-shelter</artifactId>
+	<artifactId>pet-shelter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>dogs-and-cats-shelter</name>
+	<name>pet-shelter</name>
 	<description>chat bot project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -29,6 +29,18 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots</artifactId>
+			<version>6.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.22</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
@@ -41,6 +53,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
+
 		</dependency>
 	</dependencies>
 
