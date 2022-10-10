@@ -15,6 +15,7 @@ public class PetReportService {
     public PetReportService(PetReportRepository petReportRepository) {
         this.petReportRepository = petReportRepository;
     }
+
     /**
      * get All PetReport from DataBase
      * Use method of PetReport repository {@link PetReportRepository#findAll()} ()} (Collection< PetReport >)}
@@ -24,16 +25,17 @@ public class PetReportService {
     public Collection<PetReport> getAllPetReport() {
         return petReportRepository.findAll();
     }
+
     /**
      * add new PetReport in DataBase
      *
-     * @param petReport
-     * Use  method PetReport repository {@link PetReportRepository#save(Object)} (PetReport)}
+     * @param petReport Use  method PetReport repository {@link PetReportRepository#save(Object)} (PetReport)}
      * @return PetReport
      */
     public PetReport createPetReport(PetReport petReport) {
         return petReportRepository.save(petReport);
     }
+
     /**
      * change PetReport in DataBase
      * Use  method PetReport repository {@link PetReportRepository#save(Object)} (PetReport)}
@@ -46,6 +48,7 @@ public class PetReportService {
         petReportRepository.findById(petReport.getId()).orElseThrow(() -> new PetReportNotFoundException("Report not found"));
         return petReportRepository.save(petReport);
     }
+
     /**
      * delete PetReport from DataBase by id
      * Use  method PetReport repository {@link PetReportRepository#deleteById(Object)} } (Long id)}
@@ -58,5 +61,9 @@ public class PetReportService {
         PetReport temp = petReportRepository.findById(id).orElseThrow(() -> new PetReportNotFoundException("Report not found"));
         petReportRepository.deleteById(id);
         return temp;
+    }
+
+    public Collection<PetReport> getAllPetReportByPetId(Long id) {
+        return petReportRepository.findByPetIdOrderByDateOfReport(id);
     }
 }
