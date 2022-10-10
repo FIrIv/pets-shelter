@@ -2,6 +2,7 @@ package com.telegrambot.jd501.service;
 
 
 import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
+import com.telegrambot.jd501.repository.InformationMessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 public class TelegramBot extends TelegramLongPollingBot {
     final TelegramBotConfiguration config;
+    final InformationMessageRepository informationMessageRepository;
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
     /**
      * Массив с наименованиями начальных кнопок
@@ -31,8 +33,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     //        3 - Прислать отчет
     //        4 - Оставить данные для связи
     //        5 - Позвать волонтера
-    public TelegramBot(TelegramBotConfiguration config) {
+    public TelegramBot(TelegramBotConfiguration config, InformationMessageRepository informationMessageRepository) {
         this.config = config;
+        this.informationMessageRepository = informationMessageRepository;
     }
 
     /**
@@ -94,7 +97,17 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
                 case "Позвать волонтера":
                     String example4 = "Нажата кнопка " + "''" + START_KEY_NAMES.get(4) + "''";
+                    //String example4 = informationMessageRepository.findById(10L).get().getText();
                     SendMessage message4 = makeSendingMessage(chatId, example4);
+                    //message4.setParseMode("HTML");
+                    /* не работают теги ul,ol,li,br,p - только
+                      <b>bold</b>,
+                        <strong>bold</strong>
+                        <i>italic</i>,
+                        <em>italic</em>
+                        <a href="URL">inline URL</a>
+                        <code>inline fixed-width code</code>
+                        <pre>pre-formatted fixed-width code block</pre> */
                     sendMessage(message4);
                     break;
 
