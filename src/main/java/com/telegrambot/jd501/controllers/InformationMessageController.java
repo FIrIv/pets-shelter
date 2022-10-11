@@ -43,7 +43,7 @@ public class InformationMessageController {
             )
     })
     @GetMapping
-    public Collection<InformationMessage> getAllInformationMessage() {
+    public Collection <InformationMessage> getAllInformationMessage() {
         return informationMessageService.getAllInformationMessage();
     }
 

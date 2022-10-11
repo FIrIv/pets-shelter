@@ -24,6 +24,7 @@ public class VolunteerService {
     public Collection<Volunteer> getAllVolunteer() {
         return volunteerRepository.findAll();
     }
+
     /**
      * add new Volunteer in DataBase
      *
@@ -34,6 +35,7 @@ public class VolunteerService {
     public Volunteer createVolunteer(Volunteer volunteer) {
         return volunteerRepository.save(volunteer);
     }
+
     /**
      * change Volunteer in DataBase
      * Use  method Volunteer repository {@link VolunteerRepository#save(Object)} (Volunteer)}
