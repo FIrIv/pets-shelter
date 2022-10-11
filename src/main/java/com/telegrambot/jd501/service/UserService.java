@@ -38,9 +38,10 @@ public class UserService {
      * @param user Use  method InformationMessage repository {@link UserRepository#save(Object)} (User)}
      * @return InformationMessage
      */
+
     public User createUser(User user) {
-        user.setQuantityTestDays(0);
         user.setStartDate(null);
+        user.setFinishDate(null);
         user.setPet(null);
         user.setAdopted(false);
         return userRepository.save(user);
@@ -84,7 +85,7 @@ public class UserService {
      */
     public String probationPeriodExtension(Long id, Integer days) {
         User temp = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
-        temp.setQuantityTestDays(temp.getQuantityTestDays() + days);
+        temp.setFinishDate(temp.getFinishDate().plusDays(days));
         userRepository.save(temp);
         return "Probationary period" + temp.getName() + "increased by" + days + "days";
     }
@@ -105,7 +106,7 @@ public class UserService {
         userTemp.setAdopted(true);
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
-        userTemp.setQuantityTestDays(30);
+        userTemp.setFinishDate(LocalDate.now().plusDays(30));
         return userRepository.save(userTemp);
     }
 }

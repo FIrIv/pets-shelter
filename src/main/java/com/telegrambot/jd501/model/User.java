@@ -18,7 +18,7 @@ public class User {
     private Pet pet;
     private Boolean isAdopted;
     private LocalDate startDate;
-    private Integer quantityTestDays;
+    private LocalDate finishDate;
 
     public Long getId() {
         return id;
@@ -76,12 +76,12 @@ public class User {
         this.startDate = startDate;
     }
 
-    public Integer getQuantityTestDays() {
-        return quantityTestDays;
+    public LocalDate getFinishDate() {
+        return finishDate;
     }
 
-    public void setQuantityTestDays(Integer quantityTestDays) {
-        this.quantityTestDays = quantityTestDays;
+    public void setFinishDate(LocalDate finishDate) {
+        this.finishDate = finishDate;
     }
 
     @Override
@@ -89,12 +89,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(chatId, user.chatId) && Objects.equals(name, user.name) && Objects.equals(phone, user.phone) && Objects.equals(pet, user.pet) && Objects.equals(isAdopted, user.isAdopted) && Objects.equals(startDate, user.startDate) && Objects.equals(quantityTestDays, user.quantityTestDays);
+        return Objects.equals(id, user.id) && Objects.equals(chatId, user.chatId) && Objects.equals(name, user.name) && Objects.equals(phone, user.phone) && Objects.equals(pet, user.pet) && Objects.equals(isAdopted, user.isAdopted) && Objects.equals(startDate, user.startDate) && Objects.equals(finishDate, user.finishDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, phone, pet, isAdopted, startDate, quantityTestDays);
+        return Objects.hash(id, chatId, name, phone, pet, isAdopted, startDate, finishDate);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class User {
                 ", pet=" + pet +
                 ", isAdopted=" + isAdopted +
                 ", startDate=" + startDate +
-                ", quantityTestDays=" + quantityTestDays +
+                ", finishDate=" + finishDate +
                 '}';
     }
 }
