@@ -1,6 +1,8 @@
 package com.telegrambot.jd501.configuration;
 
 import com.telegrambot.jd501.service.TelegramBot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -13,9 +15,9 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class TelegramBotInitializer {
     @Autowired
     TelegramBot bot;
-
+    private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
     /**
-     * Инициализируем телеграмм-бота
+     * Initialization of telegram's bot
      * @throws TelegramApiException
      */
     @EventListener({ContextRefreshedEvent.class})
@@ -24,7 +26,7 @@ public class TelegramBotInitializer {
         try {
             telegramBotsApi.registerBot(bot);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            logger.error("Error occured in method init(): " + e.getMessage());
         }
     }
 }
