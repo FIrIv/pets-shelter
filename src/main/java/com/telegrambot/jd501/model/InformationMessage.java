@@ -7,9 +7,7 @@ import java.util.Objects;
 @Table(name = "information_message")
 public class InformationMessage {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     private String text;
 
     public Long getId() {
@@ -20,13 +18,6 @@ public class InformationMessage {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getText() {
         return text;
@@ -41,19 +32,18 @@ public class InformationMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InformationMessage that = (InformationMessage) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(text, that.text);
+        return Objects.equals(id, that.id) && Objects.equals(text, that.text);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, text);
+        return Objects.hash(id, text);
     }
 
     @Override
     public String toString() {
         return "InformationMessage{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
                 ", text='" + text + '\'' +
                 '}';
     }

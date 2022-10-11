@@ -41,3 +41,7 @@ create table if not exists volunteer
     chatId           serial,
     name             text not null
 );
+
+-- changeset i.cherniltcev:2
+alter table if exists information_message
+   drop column if exists name;
