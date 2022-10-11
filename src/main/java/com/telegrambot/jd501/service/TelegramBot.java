@@ -3,6 +3,7 @@ package com.telegrambot.jd501.service;
 
 import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
 import com.telegrambot.jd501.configuration.TelegramBotSetButtons;
+import com.telegrambot.jd501.repository.InformationMessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     final TelegramBotConfiguration config;
     private final TelegramBotSetButtons buttons = new TelegramBotSetButtons();
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
+    /** String with start command in chat
+     *
+     */
     private final String START_FIRST_COMMAND = "/start";
     private final String CHOOSE_MENU_ITEM_STRING = "*** Выберите интересующий пункт меню ***";
+
+    private final InformationMessageRepository infoRepository;
 
     /**
      * ArrayList with button's names
@@ -42,8 +48,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     //             *******  Меню 2 *******
     //        11 - Общая информация         (5)     12 - Расписание работы, адрес (6)
     //        13 - Техника безопасности     (7)     0  - вернуться в главное меню (8)
-    public TelegramBot(TelegramBotConfiguration config) {
+    public TelegramBot(TelegramBotConfiguration config, InformationMessageRepository infoRepository) {
         this.config = config;
+        this.infoRepository = infoRepository;
     }
 
     /**
@@ -128,6 +135,10 @@ public class TelegramBot extends TelegramLongPollingBot {
                 messageToSend = buttons.setButtons(chatId, BUTTONS_NAMES, 0, 3);
                 messageToSend.setText(CHOOSE_MENU_ITEM_STRING);
                 break;
+             // --- 11 - Общая информация (5) button is pressed ---
+            case 5:
+                messageToSend = getGeneralInfo(chatId);
+                break;
             // -------- any other command / string -----
             default:
                 messageToSend = buttons.setupSendMessage(chatId, CHOOSE_MENU_ITEM_STRING);
@@ -161,7 +172,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * @param chatId identificator of chat
      */
     private SendMessage informAboutShelter(long chatId) {
-        logger.info("Erase last keyboard");
+        logger.info("Change keyboard to");
         String chooseItem = "Здесь Вы можете получить информацию о нашем приюте.\n" +
                 CHOOSE_MENU_ITEM_STRING;
         SendMessage message = buttons.setButtons(chatId, BUTTONS_NAMES, 5, 2);
@@ -209,6 +220,20 @@ public class TelegramBot extends TelegramLongPollingBot {
         return buttons.setupSendMessage(chatId, example);
     }
 
+    /**
+     * Menu of general information about shelter
+     *
+     * @param chatId identificator of chat
+     */
+    // *** Menu item 11 *** (5)
+    private SendMessage getGeneralInfo(long chatId) {
+        long itemNumber = 11;
+        String info = infoRepository.findById(itemNumber).orElseThrow().getText();
+        return buttons.setupSendMessage(chatId, info);
+    }
+
+
+    // =========================================================================
     /**
      * Send message to user.
      *
