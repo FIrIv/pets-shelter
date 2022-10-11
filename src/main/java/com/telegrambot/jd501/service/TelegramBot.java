@@ -19,6 +19,7 @@ import java.util.List;
 public class TelegramBot extends TelegramLongPollingBot {
     final TelegramBotConfiguration config;
     private final TelegramBotSetButtons buttons = new TelegramBotSetButtons();
+    final InformationMessageRepository informationMessageRepository;
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
     /** String with start command in chat
      *
@@ -31,6 +32,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     /**
      * ArrayList with button's names
      */
+
     private final List<String> BUTTONS_NAMES = new ArrayList<>(List.of(
             "Информация о приюте", "Как приютить питомца?",
             "Прислать отчет", "Оставить данные для связи",
@@ -79,6 +81,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * @param update list of incoming updates, must be not Null
      */
     @Override
+
     public void onUpdateReceived(Update update) { // ********* здесь ошибка (при вводе произвольной строки)
         try {
             if (update.hasMessage() && update.getMessage().hasText()) {

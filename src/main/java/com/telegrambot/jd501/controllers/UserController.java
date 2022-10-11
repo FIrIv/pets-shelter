@@ -1,4 +1,5 @@
 package com.telegrambot.jd501.controllers;
+
 import com.telegrambot.jd501.model.User;
 import com.telegrambot.jd501.service.UserService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collection;
 
 /**
@@ -90,6 +92,53 @@ public class UserController {
     @PutMapping
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.updateUser(user));
+    }
+
+    /**
+     * find user by id and change  status of The Adopter,
+     * add adopted Pet, Date of adoption, and set test day at 30 days
+     * Use method User repository {@link UserService#changeStatusOfTheAdopter(Long, Long)}
+     *
+     * @param userId - user id for fing user in repository,
+     * @param petId  - pet id for fing user in repository,
+     * @return Changed User
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "find user by id and change him adoption status, add adoption Pet, adoption Date, and set test day at 30 days"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "When User or Pet not found"
+            )
+    })
+    @PutMapping("/adoption")
+    public User changeStatusOfTheAdopter(Long userId, Long petId) {
+        return userService.changeStatusOfTheAdopter(userId, petId);
+    }
+
+    /**
+     * find user by id and change amount of probation period
+     *
+     * @param id   - user id,
+     * @param days - number of days to increase the term of the transfer
+     * @return notification that probationary period has been extended (String)
+     * or UserNotFoundException
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "find user by id and change amount of probation period"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "When User not found"
+            )
+    })
+    @PutMapping("/change_period")
+    public String probationPeriodExtension(@RequestParam Long id, @RequestParam Integer days) {
+        return userService.probationPeriodExtension(id, days);
     }
 
     /**

@@ -8,6 +8,7 @@ import java.util.Objects;
 public class InformationMessage {
     @Id
     private Long id;
+
     private String text;
 
     public Long getId() {
@@ -17,7 +18,6 @@ public class InformationMessage {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public String getText() {
         return text;
