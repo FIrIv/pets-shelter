@@ -6,14 +6,18 @@ import com.telegrambot.jd501.configuration.TelegramBotSetButtons;
 import com.telegrambot.jd501.repository.InformationMessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class TelegramBot extends TelegramLongPollingBot {
@@ -50,8 +54,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     //             *******  Меню 2 *******
     //        11 - Общая информация         (5)     12 - Расписание работы, адрес (6)
     //        13 - Техника безопасности     (7)     0  - вернуться в главное меню (8)
-    public TelegramBot(TelegramBotConfiguration config, InformationMessageRepository infoRepository) {
+    public TelegramBot(TelegramBotConfiguration config, InformationMessageRepository informationMessageRepository, InformationMessageRepository infoRepository) {
         this.config = config;
+        this.informationMessageRepository = informationMessageRepository;
         this.infoRepository = infoRepository;
     }
 
@@ -250,5 +255,25 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             logger.error("Error occured in method sendMessageToUser: " + e.getMessage());
         }
+    }
+
+    // =========================================================================
+    /**
+     * Every day test DB in 20:00 to check all yesterday reports are present in DB.
+     * Photo and text about pet should be there.
+     */
+    @Scheduled(cron = "0 20 * * * *")
+    public void runTestForReports () {
+
+    }
+
+    // =========================================================================
+    /**
+     * Every day test DB in 12:00 to check trial period has expired.
+     * Photo and text about pet should be there.
+     */
+    @Scheduled(cron = "00 12 * * * *")
+    public void runTestTrialPeriodHaasExpired () {
+
     }
 }
