@@ -38,7 +38,6 @@ public class UserService {
      * @param user Use  method InformationMessage repository {@link UserRepository#save(Object)} (User)}
      * @return InformationMessage
      */
-
     public User createUser(User user) {
         user.setStartDate(null);
         user.setFinishDate(null);

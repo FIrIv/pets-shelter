@@ -1,6 +1,7 @@
 package com.telegrambot.jd501.service;
 
 import com.telegrambot.jd501.Exceptions.PetReportNotFoundException;
+import com.telegrambot.jd501.model.Pet;
 import com.telegrambot.jd501.model.PetReport;
 import com.telegrambot.jd501.repository.InformationMessageRepository;
 import com.telegrambot.jd501.repository.PetReportRepository;
@@ -63,7 +64,13 @@ public class PetReportService {
         return temp;
     }
 
-    public Collection<PetReport> getAllPetReportByPetId(Long id) {
-        return petReportRepository.findByPetIdOrderByDateOfReport(id);
+    /**
+     * get All PetReport from DataBase by Pet
+     * Use method of PetReport repository {@link PetReportRepository#findByPetOrderByDateOfReport(Pet)} ()} (List<PetReport>)}
+     *
+     * @return collection of PetReport With Pet
+     */
+    public Collection<PetReport> getAllPetReportByPet(Pet pet) {
+        return petReportRepository.findByPetOrderByDateOfReport(pet);
     }
 }
