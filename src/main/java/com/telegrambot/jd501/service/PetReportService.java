@@ -3,10 +3,10 @@ package com.telegrambot.jd501.service;
 import com.telegrambot.jd501.Exceptions.PetReportNotFoundException;
 import com.telegrambot.jd501.model.Pet;
 import com.telegrambot.jd501.model.PetReport;
-import com.telegrambot.jd501.repository.InformationMessageRepository;
 import com.telegrambot.jd501.repository.PetReportRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collection;
 
 @Service
@@ -66,11 +66,23 @@ public class PetReportService {
 
     /**
      * get All PetReport from DataBase by Pet
-     * Use method of PetReport repository {@link PetReportRepository#findByPetOrderByDateOfReport(Pet)} ()} (List<PetReport>)}
+     * Use method of PetReport repository {@link PetReportRepository#findPetReportByPetOrderByDateOfReport(Pet)} ()} (List<PetReport>)}
      *
      * @return collection of PetReport With Pet
      */
     public Collection<PetReport> getAllPetReportByPet(Pet pet) {
-        return petReportRepository.findByPetOrderByDateOfReport(pet);
+        return petReportRepository.findPetReportByPetOrderByDateOfReport(pet);
+    }
+
+    /**
+     * get one PetReport from DataBase by Pet And DateOfReport
+     * Use method of PetReport repository {@link PetReportRepository#findPetReportByPetAndDateOfReport(Pet, LocalDate)} ()} (<PetReport>)}
+     *
+     * @param pet
+     * @param dateOfReport
+     * @return PetReport With pet And dateOfReport
+     */
+    public PetReport getPetReportByPetAndDateOfReport(Pet pet, LocalDate dateOfReport) {
+        return petReportRepository.findPetReportByPetAndDateOfReport(pet, dateOfReport);
     }
 }

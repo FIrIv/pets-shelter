@@ -3,6 +3,8 @@ package com.telegrambot.jd501.service;
 
 import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
 import com.telegrambot.jd501.configuration.TelegramBotSetButtons;
+import com.telegrambot.jd501.model.PetReport;
+import com.telegrambot.jd501.model.User;
 import com.telegrambot.jd501.repository.InformationMessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,17 +15,18 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class TelegramBot extends TelegramLongPollingBot {
     final TelegramBotConfiguration config;
     private final TelegramBotSetButtons buttons = new TelegramBotSetButtons();
-    final InformationMessageRepository informationMessageRepository;
+    private final InformationMessageRepository informationMessageRepository;
+    private final UserService userService;
+    private final PetReportService petReportService;
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
     /** String with start command in chat
      *
@@ -54,9 +57,11 @@ public class TelegramBot extends TelegramLongPollingBot {
     //             *******  Меню 2 *******
     //        11 - Общая информация         (5)     12 - Расписание работы, адрес (6)
     //        13 - Техника безопасности     (7)     0  - вернуться в главное меню (8)
-    public TelegramBot(TelegramBotConfiguration config, InformationMessageRepository informationMessageRepository, InformationMessageRepository infoRepository) {
+    public TelegramBot(TelegramBotConfiguration config, InformationMessageRepository informationMessageRepository, UserService userService, PetReportService petReportService, InformationMessageRepository infoRepository) {
         this.config = config;
         this.informationMessageRepository = informationMessageRepository;
+        this.userService = userService;
+        this.petReportService = petReportService;
         this.infoRepository = infoRepository;
     }
 
@@ -264,7 +269,35 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @Scheduled(cron = "0 20 * * * *")
     public void runTestForReports () {
+        // get all users with trial period
+        List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
 
+        // test, users have sent reports yesterday and two days ago
+        for (User petsMaster : toTestWithTrialPeriod) {
+            PetReport petReportYesterday = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(1L));
+            PetReport petReportTwoDaysAgo = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(2L));
+            if (petReportYesterday==null && petReportTwoDaysAgo==null) {
+                /* позвать волонтера!!!
+                 * если пользователь не присылал 2 дня никакой информации (текст или фото), отправлять запрос волонтеру на связь с усыновителем.
+                 * Текст: "Усыновитель petsMaster не отправляет информацию уже 2 дня".*/
+                break;
+            }
+            if (petReportYesterday==null) {
+                /* если пользователь не присылал вчера информацию (текст и фото),
+                напоминаем: "Добрый день, мы не получили отчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет и информациюю о питомце".*/
+                break;
+            }
+            if (petReportYesterday.getTextOfReport()==null && petReportYesterday.getPhotoLink()!=null) {
+                /* если пользователь не присылал вчера текст,
+                напоминаем: "Добрый день, мы не получили рассказ о питомце за вчерашний день, пожалуйста, пришлите сегодня информацию о питомце". */
+                break;
+            }
+            if (petReportYesterday.getTextOfReport()!=null && petReportYesterday.getPhotoLink()==null) {
+                /* если пользователь не присылал вчера фотоотчет,
+                напоминаем: "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет о питомце". */
+                break;
+            }
+        }
     }
 
     // =========================================================================
@@ -273,7 +306,23 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Photo and text about pet should be there.
      */
     @Scheduled(cron = "00 12 * * * *")
-    public void runTestTrialPeriodHaasExpired () {
+    public void runTestTrialPeriodHasExpired () {
+        // get all users with trial period
+        List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
 
+        // test, users have the last day of trial period
+        for (User petsMaster : toTestWithTrialPeriod) {
+            if (petsMaster.getFinishDate().isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
+                /* если день>N и усыновитель в статусе "на проверке", бот отправляет запрос волонтеру.
+                Текст: "N-ый день уже прошел! Срочно примите решение об успешном/неуспешном прохождении усыновителем испытательного срока или продлите испытательный срок".
+                 */
+                break;
+            }
+            if (petsMaster.getFinishDate().equals(LocalDate.now()) && petsMaster.getAdopted()) {
+                /* если день=N и хозяин еще на испытательном сроке, бот отправляет запрос волонтеру.
+                Текст: "Сегодня истекает N-ый день. Примите решение об успешном/неуспешном прохождении усыновителем испытательного срока или продлите испытательный срок". */
+                break;
+            }
+        }
     }
 }
