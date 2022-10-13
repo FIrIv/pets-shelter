@@ -351,7 +351,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         // get all users with trial period
         List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
 
-        // test, users have sent reports yesterday and two days ago
+        // test, if users have sent reports yesterday and two days ago
         for (User petsMaster : toTestWithTrialPeriod) {
             PetReport petReportYesterday = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(1L));
             PetReport petReportTwoDaysAgo = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(2L));
