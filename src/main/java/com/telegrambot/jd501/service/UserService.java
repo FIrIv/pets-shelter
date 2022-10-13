@@ -112,12 +112,12 @@ public class UserService {
 
     /**
      * find users with status "adopted = true"
-     * Use method User repository {@link UserRepository#findUsersByAdoptedIsTrue()}
+     * Use method User repository {@link UserRepository#findUsersByIsAdoptedIsTrue()}
      *
      * @return List<User>
      */
     public List<User> findUsersByAdoptedIsTrue () {
-        return userRepository.findUsersByAdoptedIsTrue();
+        return userRepository.findUsersByIsAdoptedIsTrue();
     }
 
 
