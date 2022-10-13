@@ -22,6 +22,7 @@ public class TelegramBotSetButtons {
      */
     public SendMessage setupSendMessage(long chatId, String messageText) {
         SendMessage message = new SendMessage();
+        message.setParseMode("HTML");
         message.setChatId(chatId);
         message.setText(messageText);
         return message;
@@ -30,13 +31,13 @@ public class TelegramBotSetButtons {
     /**
      * Make buttons in Telegram's chat
      *
-     * @param chatId        identificator of chat
-     * @param namesOfKeys   list of button's names, must be not Null
-     * @param startIndexKey start index of button
-     * @param numberOfRows  number of button's rows
+     * @param chatId           identificator of chat
+     * @param namesOfButtons   list of button's names, must be not Null
+     * @param startIndexButton start index of button
+     * @param numberOfButtons  number of used buttons
      */
-    public SendMessage setButtons(long chatId, List<String> namesOfKeys,
-                                  int startIndexKey, int numberOfRows) {
+    public SendMessage setButtons(long chatId, List<String> namesOfButtons,
+                                  int startIndexButton, int numberOfButtons) {
         logger.info("Setting of keyboard...");
         SendMessage sendMessage = setupSendMessage(chatId, "");
 
@@ -49,32 +50,42 @@ public class TelegramBotSetButtons {
 
         // Create list of strings of keyboard
         List<KeyboardRow> keyboard = new ArrayList<>();
-        int indexOfKey = startIndexKey;
-        // First row of keyboard
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-        // Add buttons to First row of keyboard
-        keyboardFirstRow.add(new KeyboardButton(namesOfKeys.get(indexOfKey)));
-        indexOfKey++;
-        keyboardFirstRow.add(new KeyboardButton(namesOfKeys.get(indexOfKey)));
-
-        // Second row of keyboard
-        indexOfKey++;
-        KeyboardRow keyboardSecondRow = new KeyboardRow();
-        // Add buttons to Second row of keyboard
-        keyboardSecondRow.add(new KeyboardButton(namesOfKeys.get(indexOfKey)));
-        indexOfKey++;
-        keyboardSecondRow.add(new KeyboardButton(namesOfKeys.get(indexOfKey)));
-
-        // Add all rows of keyboard to list
-        keyboard.add(keyboardFirstRow);
-        keyboard.add(keyboardSecondRow);
-
-        // If number of rows 3, than create third row of keyboard
-        if (numberOfRows == 3) {
-            indexOfKey++;
-            KeyboardRow keyboardThirdRow = new KeyboardRow();
-            keyboardThirdRow.add(new KeyboardButton(namesOfKeys.get(indexOfKey)));
-            keyboard.add(keyboardThirdRow);
+        int indexOfButton = startIndexButton;
+        // ==== if number of buttons is less than 6, we'll create 3 rows by 2 buttons in row.
+        // ==== Else create 4 rows by 3 buttons in row.
+        int numberButtonsInRow;
+        int counterOfButtons = 1;
+        int rows;
+        if (numberOfButtons < 6) {
+            rows = 3;
+            numberButtonsInRow = 2;
+        } else {
+            rows = 4;
+            numberButtonsInRow = 3;
+        }
+        for (int i = 0; i < rows; i++) {
+            // Next row of keyboard
+            KeyboardRow keyboardNextRow = new KeyboardRow();
+            for (int f = 0; f < numberButtonsInRow; f++) {
+                // Add buttons to this row of keyboard
+                KeyboardButton keyboardButton = new KeyboardButton();
+                // Check for contact's button
+                if (namesOfButtons.get(indexOfButton).equals("Оставить контакт для связи")) {
+                    keyboardButton.setRequestContact(true);
+                }
+                keyboardButton.setText(namesOfButtons.get(indexOfButton));
+                keyboardNextRow.add(keyboardButton);
+                indexOfButton++;
+                counterOfButtons++;
+                if (counterOfButtons > numberOfButtons) {
+                    break;
+                }
+            }
+            // Add row of keyboard to list
+            keyboard.add(keyboardNextRow);
+            if (counterOfButtons > numberOfButtons) {
+                break;
+            }
         }
 
         // Set created keyboard
