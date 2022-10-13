@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 
 @Service
@@ -108,4 +109,16 @@ public class UserService {
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
         return userRepository.save(userTemp);
     }
+
+    /**
+     * find users with status "adopted = true"
+     * Use method User repository {@link UserRepository#findUsersByAdoptedIsTrue()}
+     *
+     * @return List<User>
+     */
+    public List<User> findUsersByAdoptedIsTrue () {
+        return userRepository.findUsersByAdoptedIsTrue();
+    }
+
+
 }
