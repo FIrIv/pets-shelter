@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -19,15 +21,14 @@ import java.util.List;
 public class TelegramBot extends TelegramLongPollingBot {
     final TelegramBotConfiguration config;
     private final TelegramBotSetButtons buttons = new TelegramBotSetButtons();
-    final InformationMessageRepository informationMessageRepository;
+    private final InformationMessageRepository infoRepository;
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
-    /** String with start command in chat
-     *
+    /**
+     * String with start command in chat
      */
     private final String START_FIRST_COMMAND = "/start";
     private final String CHOOSE_MENU_ITEM_STRING = "*** Выберите интересующий пункт меню ***";
 
-    private final InformationMessageRepository infoRepository;
 
     /**
      * ArrayList with button's names
@@ -35,11 +36,16 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final List<String> BUTTONS_NAMES = new ArrayList<>(List.of(
             "Информация о приюте", "Как приютить питомца?",
-            "Прислать отчет", "Оставить данные для связи",
+            "Прислать отчет", "Оставить контакт для связи",
             "Позвать волонтера",
 
             "Общая информация", "Расписание работы, адрес",
-            "Техника безопасности", "вернуться в главное меню"
+            "Техника безопасности", "вернуться в главное меню",
+
+            "Знакомство с питомцем", "Необходимые документы", "Как перевозить",
+            "Дом для щенка", "Дом для взрослой собаки", "Дом для собаки с огр.возможностями",
+            "Советы кинолога", "Контакты кинологов", "Причины, по которым могут отказать",
+            "вернуться в главное меню"
 
     ));
 
@@ -50,6 +56,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     //             *******  Меню 2 *******
     //        11 - Общая информация         (5)     12 - Расписание работы, адрес (6)
     //        13 - Техника безопасности     (7)     0  - вернуться в главное меню (8)
+    //             *******  Меню 3 *******
+    //        21 - Знакомство с питомцем  (9)       22 - Необходимые документы (10)   23 - Как перевозить (11)
+    //        24 - Дом для щенка (12)               25 - Дом для взрослой собаки (13) 26 - Дом для собаки с огр.возможностями (14)
+    //        27 - Советы кинолога (15)             28 - Контакты кинологов (16)      29 - Причины, по которым могут отказать (17)
+    //        0  - вернуться в главное меню (18)
+
+
     public TelegramBot(TelegramBotConfiguration config, InformationMessageRepository infoRepository) {
         this.config = config;
         this.infoRepository = infoRepository;
@@ -87,6 +100,9 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (update.hasMessage() && update.getMessage().hasText()) {
                 // --- send incoming message (or pressed key) for checking -----
                 checkInputMessage(update);
+            } else if (update.getMessage().hasContact()) {
+                // --- if pressed key get contact call method getContact() -----
+                getContact(update);
             }
         } catch (Exception e) {
             logger.error("Error occured in method onUpdateReceived: " + e.getMessage());
@@ -124,24 +140,73 @@ public class TelegramBot extends TelegramLongPollingBot {
             case 2:
                 messageToSend = waitForReport(chatId);
                 break;
-            // --- 4 - "Оставить данные для связи" button is pressed (3)---
-            case 3:
-                messageToSend = getContact(chatId);
-                break;
+//            // --- 4 - "Оставить данные для связи" button is pressed (3)---
+//            case 3:
+//                //   messageToSend = getContact(update);
+//                break;
             // --- 5 - "Позвать волонтера" (4) button is pressed ---
             case 4:
                 messageToSend = callToVolunteer(chatId);
                 break;
-            // --- 0 - вернуться в главное меню (8) button is pressed ---
+            // --- 0 - "вернуться в главное меню" (8) button is pressed ---
             case 8:
+            case 18:
                 // call main menu ---
-                messageToSend = buttons.setButtons(chatId, BUTTONS_NAMES, 0, 3);
+                messageToSend = buttons.setButtons(chatId, BUTTONS_NAMES, 0, 5);
                 messageToSend.setText(CHOOSE_MENU_ITEM_STRING);
                 break;
-             // --- 11 - Общая информация (5) button is pressed ---
+            // --- 11 - "Общая информация" (5) button is pressed ---
             case 5:
-                messageToSend = getGeneralInfo(chatId);
+                messageToSend = getInfo(chatId, 11);
                 break;
+            // --- 12 - "Расписание работы, адрес" (6) button is pressed ---
+            case 6:
+                messageToSend = getInfo(chatId, 12);
+                break;
+            // --- 13 - "Техника безопасности" (7) button is pressed ---
+            case 7:
+                messageToSend = getInfo(chatId, 13);
+                break;
+
+            //
+            //        0  - вернуться в главное меню (18)
+            // --- 21 - Знакомство с питомцем  (9) button is pressed ---
+            case 9:
+                messageToSend = getInfo(chatId, 21);
+                break;
+            // --- 22 - Необходимые документы (10) button is pressed ---
+            case 10:
+                messageToSend = getInfo(chatId, 22);
+                break;
+            // --- 23 - Как перевозить (11) button is pressed ---
+            case 11:
+                messageToSend = getInfo(chatId, 23);
+                break;
+            // --- 24 - Дом для щенка (12) button is pressed ---
+            case 12:
+                messageToSend = getInfo(chatId, 24);
+                break;
+            // --- 25 - Дом для взрослой собаки (13) button is pressed ---
+            case 13:
+                messageToSend = getInfo(chatId, 25);
+                break;
+            // --- 26 - Дом для собаки с огр.возможностями (14) button is pressed ---
+            case 14:
+                messageToSend = getInfo(chatId, 26);
+                break;
+            // --- 27 - Советы кинолога (15) button is pressed ---
+            case 15:
+                messageToSend = getInfo(chatId, 27);
+                break;
+            // --- 28 - Контакты кинологов (16) button is pressed ---
+            case 16:
+                messageToSend = getInfo(chatId, 28);
+                break;
+            // --- 29 - Причины, по которым могут отказать (17) button is pressed ---
+            case 17:
+                messageToSend = getInfo(chatId, 29);
+                break;
+
             // -------- any other command / string -----
             default:
                 messageToSend = buttons.setupSendMessage(chatId, CHOOSE_MENU_ITEM_STRING);
@@ -164,7 +229,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         String greeting = "Здравствуйте! Это официальный телеграмм-бот приюта животных PetShelter. Мы помогаем людям, которые задумались приютить питомца. " +
                 "Для многих из Вас это первый опыт. Не волнуйтесь. Мы поможем с этим нелегким, но важным делом!\n" +
                 CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = buttons.setButtons(chatId, BUTTONS_NAMES, 0, 3);
+        SendMessage message = buttons.setButtons(chatId, BUTTONS_NAMES, 0, 5);
         message.setText(greeting);
         return message;
     }
@@ -175,10 +240,10 @@ public class TelegramBot extends TelegramLongPollingBot {
      * @param chatId identificator of chat
      */
     private SendMessage informAboutShelter(long chatId) {
-        logger.info("Change keyboard to");
+        logger.info("Change keyboard to menu informAboutShelter");
         String chooseItem = "Здесь Вы можете получить информацию о нашем приюте.\n" +
                 CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = buttons.setButtons(chatId, BUTTONS_NAMES, 5, 2);
+        SendMessage message = buttons.setButtons(chatId, BUTTONS_NAMES, 5, 4);
         message.setText(chooseItem);
         return message;
     }
@@ -189,8 +254,12 @@ public class TelegramBot extends TelegramLongPollingBot {
      * @param chatId identificator of chat
      */
     private SendMessage informToPotentialAdopter(long chatId) {
-        String example = "Нажата кнопка " + "''" + BUTTONS_NAMES.get(1) + "''";
-        return buttons.setupSendMessage(chatId, example);
+        logger.info("Change keyboard to menu informToPotentialAdopter");
+        String chooseItem = "Здесь мы собрали полезную информацию, которая поможет вам подготовиться ко встрече с новым членом семьи.\n" +
+                CHOOSE_MENU_ITEM_STRING;
+        SendMessage message = buttons.setButtons(chatId, BUTTONS_NAMES, 9, 10);
+        message.setText(chooseItem);
+        return message;
     }
 
     /**
@@ -206,11 +275,19 @@ public class TelegramBot extends TelegramLongPollingBot {
     /**
      * Contact getting menu
      *
-     * @param chatId identificator of chat
+     * @param update list of incoming updates, must be not Null
      */
-    private SendMessage getContact(long chatId) {
-        String example = "Нажата кнопка " + "''" + BUTTONS_NAMES.get(3) + "''";
-        return buttons.setupSendMessage(chatId, example);
+    private void getContact(Update update) {
+        logger.info("getContact processing...");
+        SendMessage message = new SendMessage();
+        String example = "Телефонный номер отсутствует";
+            Contact contact = update.getMessage().getContact();
+            String phoneNumber = contact.getPhoneNumber();
+            example = "Ваш номер телефона: " + phoneNumber;
+        message.setText(example);
+        message.setChatId(update.getMessage().getChatId());
+        message.setParseMode(ParseMode.MARKDOWN);
+        sendMessageToUser(message);
     }
 
     /**
@@ -224,19 +301,19 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     /**
-     * Menu of general information about shelter
+     * Method of getting information from repository {@link InformationMessageRepository#findById(Object)} of general information about shelter
      *
-     * @param chatId identificator of chat
+     * @param chatId         identificator of chat
+     * @param menuItemNumber id number of menu item
      */
-    // *** Menu item 11 *** (5)
-    private SendMessage getGeneralInfo(long chatId) {
-        long itemNumber = 11;
-        String info = infoRepository.findById(itemNumber).orElseThrow().getText();
+    private SendMessage getInfo(long chatId, long menuItemNumber) {
+        String info = infoRepository.findById(menuItemNumber).orElseThrow().getText();
         return buttons.setupSendMessage(chatId, info);
     }
 
 
     // =========================================================================
+
     /**
      * Send message to user.
      *

@@ -22,6 +22,7 @@ public class TelegramBotInitializer {
      */
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException{
+        logger.info("Process init() is running...");
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         try {
             telegramBotsApi.registerBot(bot);
