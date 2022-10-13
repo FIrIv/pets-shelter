@@ -1,5 +1,6 @@
 package com.telegrambot.jd501.controllers;
 
+import com.telegrambot.jd501.model.Pet;
 import com.telegrambot.jd501.model.PetReport;
 import com.telegrambot.jd501.service.PetReportService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +28,7 @@ public class PetReportController {
 
     /**
      * get All PetReport from DataBase
-     * Use method of servise {@link PetReportService#getAllPetReport()}}
+     * Use method of service {@link PetReportService#getAllPetReport()}}
      *
      * @return collection of PetReport
      */
@@ -48,23 +49,23 @@ public class PetReportController {
     }
 
     /**
-     * get All PetReport By Pet Id
-     * Use method of servise {@link PetReportService#getAllPetReportByPetId(Long)} ()}}
+     * get All PetReport By Pet
+     * Use method of service {@link PetReportService#getAllPetReportByPet(Pet)} ()}}
      *
-     * @return collection of PetReport With Pet id Ordered By Date
+     * @return collection of PetReport With Pet Ordered By Date
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Show all PetReport with Pet Id Ordered By Date",
+                    description = "Show all PetReport with Pet Ordered By Date",
                     content = @Content(
                             schema = @Schema(implementation = Collection.class)
                     )
             )
     })
     @GetMapping("/pet_report")
-    public Collection<PetReport> getAllPetReportByPetId(@RequestParam Long id) {
-        return petReportService.getAllPetReportByPetId(id);
+    public Collection<PetReport> getAllPetReportByPet(@RequestParam Pet pet) {
+        return petReportService.getAllPetReportByPet(pet);
     }
 
     /**

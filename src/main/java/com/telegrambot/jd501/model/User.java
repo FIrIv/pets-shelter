@@ -14,7 +14,7 @@ public class User {
     private String name;
     private String phone;
     @OneToOne
-    @JoinColumn(name = "pet id")
+    @JoinColumn(name = "pet_id")
     private Pet pet;
     private Boolean isAdopted;
     private LocalDate startDate;

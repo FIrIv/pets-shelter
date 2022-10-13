@@ -10,7 +10,10 @@ public class PetReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long petId;
+
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    private Pet pet;
     private LocalDate dateOfReport;
     private String textOfReport;
     private String photoLink;
@@ -23,12 +26,12 @@ public class PetReport {
         this.id = id;
     }
 
-    public Long getPetId() {
-        return petId;
+    public Pet getPet() {
+        return pet;
     }
 
-    public void setPetId(Long petId) {
-        this.petId = petId;
+    public void setPet(Pet pet) {
+        this.pet = pet;
     }
 
     public LocalDate getDateOfReport() {
@@ -60,19 +63,19 @@ public class PetReport {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PetReport petReport = (PetReport) o;
-        return Objects.equals(id, petReport.id) && Objects.equals(petId, petReport.petId) && Objects.equals(dateOfReport, petReport.dateOfReport) && Objects.equals(textOfReport, petReport.textOfReport) && Objects.equals(photoLink, petReport.photoLink);
+        return Objects.equals(id, petReport.id) && Objects.equals(pet, petReport.pet) && Objects.equals(dateOfReport, petReport.dateOfReport) && Objects.equals(textOfReport, petReport.textOfReport) && Objects.equals(photoLink, petReport.photoLink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, petId, dateOfReport, textOfReport, photoLink);
+        return Objects.hash(id, pet, dateOfReport, textOfReport, photoLink);
     }
 
     @Override
     public String toString() {
         return "PetReport{" +
                 "id=" + id +
-                ", petId=" + petId +
+                ", pet=" + pet +
                 ", dateOfReport=" + dateOfReport +
                 ", textOfReport='" + textOfReport + '\'' +
                 ", photoLink='" + photoLink + '\'' +
