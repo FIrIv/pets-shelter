@@ -341,6 +341,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    public void sendMessageToUserByChatId(long chatId, String textMessage) {
+        SendMessage mes = new SendMessage();
+        mes.setChatId(chatId);
+        mes.setText(textMessage);
+        sendMessageToUser(mes);
+    }
+
     // =========================================================================
     /**
      * Every day test DB in 20:00 to check all yesterday reports are present in DB.
@@ -404,4 +411,5 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         }
     }
+
 }
