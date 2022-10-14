@@ -17,10 +17,12 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final PetRepository petRepository;
+    private final TelegramBot telegramBot;
 
-    public UserService(UserRepository userRepository, PetRepository petRepository) {
+    public UserService(UserRepository userRepository, PetRepository petRepository, TelegramBot telegramBot) {
         this.userRepository = userRepository;
         this.petRepository = petRepository;
+        this.telegramBot = telegramBot;
     }
 
     /**
@@ -75,9 +77,10 @@ public class UserService {
     }
 
     /**
-     * find user by id and change amount of probation period
+     * find user by id and change amount of probation period, and send message to user
      * Use method User repository {@link UserRepository#findById(Object)}
      * Use  method User repository {@link UserRepository#save(Object)} }
+     * Use method TelegramBot {@link TelegramBot#sendMessageToUserByChatId(long, String)}
      *
      * @param id   - user id for fing user in repository,
      * @param days - number of days to increase the term of the transfer
@@ -87,15 +90,16 @@ public class UserService {
         User temp = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         userRepository.save(temp);
-        return "Probationary period" + temp.getName() + "increased by" + days + "days";
+        telegramBot.sendMessageToUserByChatId(temp.getChatId(), "Ваш испытательный срок увеличен на " + days + " дней");
+        return "Probationary period " + temp.getName() + " increased by" + days + " days";
     }
 
     /**
-     * find user by id and change  status of The Adopter, add adopted Pet, Date of adoption, and set test day by 30
+     * find user by id and change  status of The Adopter, add adopted Pet, Date of adoption, set test day by 30, and send message to user
      * Use method User repository {@link UserRepository#findById(Object)}
      * Use  method User repository {@link UserRepository#save(Object)} }
      * Use  method Pet repository {@link PetRepository#findById(Object)} }
-     *
+     * Use method TelegramBot {@link TelegramBot#sendMessageToUserByChatId(long, String)}
      * @param userId - user id for fing user in repository,
      * @param petId  - pet id for fing user in repository,
      * @return Changed User
@@ -107,9 +111,57 @@ public class UserService {
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
+        telegramBot.sendMessageToUserByChatId(userTemp.getChatId(), "Поздравляем! Вы стали усыновителем." +
+                " Вам назначен испытательный срок 30 дней." +
+                " По истечении которых мы примем решение, можем ли оставить вам питомца," +
+                "этот срок так же может быть увеличен если мы сочтем что в этом есть необходимость."
+                );
         return userRepository.save(userTemp);
     }
-
+    /**
+     * find user by id and send message for him about successful completion of probation period.
+     * and delete Pet from PetRepository
+     *
+     * Use method User repository {@link UserRepository#save(Object)}
+     * Use method Pet repository {@link PetRepository#deleteById(Object)}
+     * Use method TelegramBot {@link TelegramBot#sendMessageToUserByChatId(long, String)}
+     * @param userId   - user id,
+     * @return notification that probationary period successful completing (String)
+     * or UserNotFoundException or PetNotFoundException
+     */
+    public String successfulCompletionOfTheProbationaryPeriod (Long userId){
+        User userTemp = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User not found"));
+        Pet petTemp = petRepository.findById(userTemp.getPet().getId()).orElseThrow(()->new PetNotFoundException("Питомец не найден"));
+        userTemp.setAdopted(false);
+        userTemp.setStartDate(null);
+        userTemp.setPet(null);
+        userTemp.setFinishDate(null);
+        userRepository.save(userTemp);
+        petRepository.deleteById(petTemp.getId());
+        telegramBot.sendMessageToUserByChatId(userTemp.getChatId(),"Поздравляем! Вы успешно прошли испытательный период.");
+        return "Пользователю " + userTemp.getName() + " c chatId: " + userTemp.getChatId() + " отправлено сообщение об успешном прохождении испытательного срока. " +
+                " Питомец удален из списка питомцев приюта";
+    }
+    /**
+     * find user by id and send message for him about the fact that he did not pass the probationary period
+     * Use method User repository {@link UserRepository#findById(Object)}
+     * Use method User repository {@link UserRepository#save(Object)}
+     * Use method Pet repository {@link PetRepository#findById(Object)}
+     * Use method TelegramBot {@link TelegramBot#sendMessageToUserByChatId(long, String)}
+     * @param userId   - user id,
+     * @return notification that probationary period did not pass (String)
+     * or UserNotFoundException
+     */
+    public String didNotPassProbationPeriod (Long userId){
+        User userTemp = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User not found"));
+        userTemp.setAdopted(false);
+        userTemp.setStartDate(null);
+        userTemp.setPet(null);
+        userTemp.setFinishDate(null);
+        userRepository.save(userTemp);
+        telegramBot.sendMessageToUserByChatId(userTemp.getChatId(),"К сожалению вы не прошли испытательный период.");
+        return "Пользователю " + userTemp.getName() + " c chatId: " + userTemp.getChatId() + " отправлено сообщение о том что он не прошел испытательный период";
+    }
     /**
      * find users with status "adopted = true"
      * Use method User repository {@link UserRepository#findUsersByIsAdoptedIsTrue()}

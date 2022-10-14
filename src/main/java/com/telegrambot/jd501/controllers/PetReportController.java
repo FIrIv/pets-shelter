@@ -64,57 +64,57 @@ public class PetReportController {
             )
     })
     @GetMapping("/pet_report")
-    public Collection<PetReport> getAllPetReportByPet(@RequestParam Pet pet) {
+    public Collection <PetReport> getAllPetReportByPet(@RequestParam Pet pet) {
         return petReportService.getAllPetReportByPet(pet);
     }
 
-    /**
-     * add new PetReport in DataBase
-     *
-     * @param petReport Use method of Servise {@link PetReportService#createPetReport(PetReport)}
-     * @return PetReport
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Create new PetReport",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = PetReport.class)
-                    )
-            )
-    })
-    @PostMapping
-    public ResponseEntity<PetReport> createPetReport(@RequestBody PetReport petReport) {
-        return ResponseEntity.ok(petReportService.createPetReport(petReport));
-    }
+//    /**
+//     * add new PetReport in DataBase
+//     *
+//     * @param petReport Use method of Servise {@link PetReportService#createPetReport(PetReport)}
+//     * @return PetReport
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Create new PetReport",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = PetReport.class)
+//                    )
+//            )
+//    })
+//    @PostMapping
+//    public ResponseEntity<PetReport> createPetReport(@RequestBody PetReport petReport) {
+//        return ResponseEntity.ok(petReportService.createPetReport(petReport));
+//          }
 
-    /**
-     * change PetReport in DataBase
-     * Use method of Servise {@link PetReportService#updatePetReport(PetReport)}
-     *
-     * @param petReport
-     * @return PetReport
-     * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException if PetReport with id not found
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Change PetReport By Id",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = PetReport.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "PetReport not found"
-            )
-    })
-    @PutMapping
-    public ResponseEntity<PetReport> updatePetReport(@RequestBody PetReport petReport) {
-        return ResponseEntity.ok(petReportService.updatePetReport(petReport));
-    }
+//    /**
+//     * change PetReport in DataBase
+//     * Use method of Servise {@link PetReportService#updatePetReport(PetReport)}
+//     *
+//     * @param petReport
+//     * @return PetReport
+//     * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException if PetReport with id not found
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Change PetReport By Id",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = PetReport.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "404",
+//                    description = "PetReport not found"
+//            )
+//    })
+//    @PutMapping
+//    public ResponseEntity<PetReport> updatePetReport(@RequestBody PetReport petReport) {
+//        return ResponseEntity.ok(petReportService.updatePetReport(petReport));
+//    }
 
     /**
      * delete PetReport from DataBase by id

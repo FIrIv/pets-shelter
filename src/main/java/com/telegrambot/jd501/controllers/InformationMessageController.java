@@ -47,27 +47,27 @@ public class InformationMessageController {
         return informationMessageService.getAllInformationMessage();
     }
 
-    /**
-     * add new InformationMessage in DataBase
-     *
-     * @param informationMessage Use method of Servise {@link InformationMessageService#createInformationMessage(InformationMessage)}
-     * @return InformationMessage
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Create new InformationMessage",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = InformationMessage.class)
-                    )
-            )
-    })
-    @PostMapping
-    public ResponseEntity<InformationMessage> createInformationMessage(@RequestBody InformationMessage informationMessage) {
-        return ResponseEntity.ok(informationMessageService.createInformationMessage(informationMessage));
-    }
-
+//    /**
+//     * add new InformationMessage in DataBase
+//     *
+//     * @param informationMessage Use method of Servise {@link InformationMessageService#createInformationMessage(InformationMessage)}
+//     * @return InformationMessage
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Create new InformationMessage",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = InformationMessage.class)
+//                    )
+//            )
+//    })
+//    @PostMapping
+//    public ResponseEntity<InformationMessage> createInformationMessage(@RequestBody InformationMessage informationMessage) {
+//        return ResponseEntity.ok(informationMessageService.createInformationMessage(informationMessage));
+//    }
+//
     /**
      * change InformationMessage in DataBase
      * Use method of Servise {@link InformationMessageService#updateInformationMessage(InformationMessage)}
@@ -94,31 +94,31 @@ public class InformationMessageController {
     public ResponseEntity<InformationMessage> updateInformationMessage(@RequestBody InformationMessage informationMessage) {
         return ResponseEntity.ok(informationMessageService.updateInformationMessage(informationMessage));
     }
-
-    /**
-     * delete InformationMessage from DataBase by id
-     * Use method of Servise {@link InformationMessageService#deleteInformationMessage(Long id)}
-     *
-     * @param id
-     * @return Deleted InformationMessage
-     * @throws com.telegrambot.jd501.Exceptions.InformationMessageNotFoundException if InformationMessage with id not found
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Delete InformationMessage By Id",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = InformationMessage.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "InformationMessage not found"
-            )
-    })
-    @DeleteMapping("{id}")
-    ResponseEntity<InformationMessage> deleteInformationMessage(@PathVariable Long id) {
-        return ResponseEntity.ok(informationMessageService.deleteInformationMessage(id));
-    }
+//
+//    /**
+//     * delete InformationMessage from DataBase by id
+//     * Use method of Servise {@link InformationMessageService#deleteInformationMessage(Long id)}
+//     *
+//     * @param id
+//     * @return Deleted InformationMessage
+//     * @throws com.telegrambot.jd501.Exceptions.InformationMessageNotFoundException if InformationMessage with id not found
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Delete InformationMessage By Id",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = InformationMessage.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "404",
+//                    description = "InformationMessage not found"
+//            )
+//    })
+//    @DeleteMapping("{id}")
+//    ResponseEntity<InformationMessage> deleteInformationMessage(@PathVariable Long id) {
+//        return ResponseEntity.ok(informationMessageService.deleteInformationMessage(id));
+//    }
 }

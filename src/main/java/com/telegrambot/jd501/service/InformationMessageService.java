@@ -23,16 +23,16 @@ public class InformationMessageService {
     public Collection<InformationMessage> getAllInformationMessage() {
         return informationMessageRepository.findAll();
     }
-    /**
-     * add new InformationMessage in DataBase
-     *
-     * @param informationMessage
-     * Use  method InformationMessage repository {@link InformationMessageRepository#save(Object)} (InformationMessage)}
-     * @return InformationMessage
-     */
-    public InformationMessage createInformationMessage(InformationMessage informationMessage) {
-        return informationMessageRepository.save(informationMessage);
-    }
+//    /**
+//     * add new InformationMessage in DataBase
+//     *
+//     * @param informationMessage
+//     * Use  method InformationMessage repository {@link InformationMessageRepository#save(Object)} (InformationMessage)}
+//     * @return InformationMessage
+//     */
+//    public InformationMessage createInformationMessage(InformationMessage informationMessage) {
+//        return informationMessageRepository.save(informationMessage);
+//    }
     /**
      * change InformationMessage in DataBase
      * Use  method InformationMessage repository {@link InformationMessageRepository#save(Object)} (InformationMessage)}
@@ -45,17 +45,17 @@ public class InformationMessageService {
         informationMessageRepository.findById(informationMessage.getId()).orElseThrow(() -> new InformationMessageNotFoundException("InformationMessage not found"));
         return informationMessageRepository.save(informationMessage);
     }
-    /**
-     * delete InformationMessage from DataBase by id
-     * Use  method InformationMessage repository {@link InformationMessageRepository#deleteById(Object)} } (Long id)}
-     *
-     * @param id
-     * @return Deleted InformationMessage
-     * @throws com.telegrambot.jd501.Exceptions.InformationMessageNotFoundException if InformationMessage with id not found
-     */
-    public InformationMessage deleteInformationMessage(Long id) {
-        InformationMessage temp = informationMessageRepository.findById(id).orElseThrow(() -> new InformationMessageNotFoundException("InformationMessage not found"));
-        informationMessageRepository.deleteById(id);
-        return temp;
-    }
+//    /**
+//     * delete InformationMessage from DataBase by id
+//     * Use  method InformationMessage repository {@link InformationMessageRepository#deleteById(Object)} } (Long id)}
+//     *
+//     * @param id
+//     * @return Deleted InformationMessage
+//     * @throws com.telegrambot.jd501.Exceptions.InformationMessageNotFoundException if InformationMessage with id not found
+//     */
+//    public InformationMessage deleteInformationMessage(Long id) {
+//        InformationMessage temp = informationMessageRepository.findById(id).orElseThrow(() -> new InformationMessageNotFoundException("InformationMessage not found"));
+//        informationMessageRepository.deleteById(id);
+//        return temp;
+//    }
 }

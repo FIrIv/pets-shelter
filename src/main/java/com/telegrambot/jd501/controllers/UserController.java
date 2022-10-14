@@ -1,6 +1,8 @@
 package com.telegrambot.jd501.controllers;
 
 import com.telegrambot.jd501.model.User;
+import com.telegrambot.jd501.repository.PetRepository;
+import com.telegrambot.jd501.repository.UserRepository;
 import com.telegrambot.jd501.service.UserService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -121,6 +123,7 @@ public class UserController {
     /**
      * find user by id and change amount of probation period
      *
+     * Use method User repository {@link UserService#probationPeriodExtension(Long, Integer)}
      * @param id   - user id,
      * @param days - number of days to increase the term of the transfer
      * @return notification that probationary period has been extended (String)
@@ -139,6 +142,55 @@ public class UserController {
     @PutMapping("/change_period")
     public String probationPeriodExtension(@RequestParam Long id, @RequestParam Integer days) {
         return userService.probationPeriodExtension(id, days);
+    }
+
+    /**
+     * find user by id and send message for him about successful completion of probation period
+     *
+     * Use method User repository {@link UserService#successfulCompletionOfTheProbationaryPeriod(Long userId)}
+     * @param userId   - user id,
+     * @return notification that probationary period successful completing (String)
+     * or UserNotFoundException or PetNotFoundException
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "find user by id  and send message for him about successful completion of probation period"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "When User not found"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "When Pet not found"
+            )
+    })
+    @PutMapping("/success_probationary")
+    public String successfulCompletionOfTheProbationaryPeriod(@RequestParam Long userId) {
+        return userService.successfulCompletionOfTheProbationaryPeriod(userId);
+    }
+    /**
+     * find user by id and send message for him about the fact that he did not pass the probationary period
+     * Use method UserService {@link UserService#didNotPassProbationPeriod(Long)}
+
+     * @param userId   - user id,
+     * @return notification that probationary period did not pass (String)
+     * or UserNotFoundException
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "find user by id and send message for him about the fact that he did not pass the probationary period"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "When User not found"
+            )
+    })
+    @PutMapping("/probationary_not_pass")
+    public String didNotPassProbationPeriod (@RequestParam Long userId){
+        return userService.didNotPassProbationPeriod(userId);
     }
 
     /**
@@ -163,9 +215,10 @@ public class UserController {
                     description = "User not found"
             )
     })
+
+
     @DeleteMapping("{id}")
     ResponseEntity<User> deleteUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.deleteUser(id));
     }
-
 }
