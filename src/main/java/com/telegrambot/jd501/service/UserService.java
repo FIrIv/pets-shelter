@@ -31,7 +31,7 @@ public class UserService {
      *
      * @return collection of User
      */
-    public Collection <User> getAllUser() {
+    public Collection<User> getAllUser() {
         return userRepository.findAll();
     }
 
@@ -168,8 +168,18 @@ public class UserService {
      *
      * @return List<User>
      */
-    public List<User> findUsersByAdoptedIsTrue () {
+    public List<User> findUsersByAdoptedIsTrue() {
         return userRepository.findUsersByIsAdoptedIsTrue();
+    }
+
+    /**
+     * find user if he exists by his ID
+     * Use method User repository {@link UserRepository#existsById(Object)}
+     *
+     * @return boolean
+     */
+    public boolean findUsersById(long userId) {
+        return userRepository.existsById(userId);
     }
 
 
