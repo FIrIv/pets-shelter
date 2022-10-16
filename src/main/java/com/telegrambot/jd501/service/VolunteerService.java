@@ -3,6 +3,7 @@ package com.telegrambot.jd501.service;
 
 import com.telegrambot.jd501.Exceptions.VolunteerNotFoundException;
 import com.telegrambot.jd501.model.Volunteer;
+import com.telegrambot.jd501.repository.UserRepository;
 import com.telegrambot.jd501.repository.VolunteerRepository;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +61,15 @@ public class VolunteerService {
         Volunteer temp = volunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found"));
         volunteerRepository.deleteById(id);
         return temp;
+    }
+
+    /**
+     * find volunteer if he exists by his ID
+     * Use method Volunteer repository {@link VolunteerRepository#existsById(Object)}
+     *
+     * @return boolean
+     */
+    public boolean isExistsVolunteer(long userChatId) {
+        return volunteerRepository.existsByChatId(userChatId);
     }
 }

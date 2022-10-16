@@ -6,6 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.CreateChatInviteLink;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.ExportChatInviteLink;
+import org.telegram.telegrambots.meta.api.methods.send.SendContact;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -30,7 +33,6 @@ public class TelegramBot extends TelegramLongPollingBot {
      * @return string with BotName
      */
     @Override
-
     public String getBotUsername() {
         return config.getBotName();
     }
@@ -51,7 +53,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * @param update list of incoming updates, must be not Null
      */
     @Override
-    public void onUpdateReceived(Update update) { // ********* здесь ошибка (при вводе произвольной строки)
+    public void onUpdateReceived(Update update) {
         try {
             if (update.hasMessage() && update.getMessage().hasText()) {
                 // --- send incoming message (or pressed key) for checking -----
@@ -63,8 +65,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 SendMessage sendMessage = botService.replyAboutSavingContact(update);
                 sendMessageToUser(sendMessage);
                 // --- (2) Send user's phone number to volunteer
+//                CreateChatInviteLink createChatInviteLink = new CreateChatInviteLink();
+//                ExportChatInviteLink exportChatInviteLink = new ExportChatInviteLink();
+//                exportChatInviteLink.
                 sendMessage = botService.sendUserPhoneToVolunteer(update);
                 sendMessageToUser(sendMessage);
+
             }
         } catch (Exception e) {
             logger.error("Error occured in method onUpdateReceived: " + e.getMessage());

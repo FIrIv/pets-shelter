@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Contact;
@@ -18,7 +19,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import static java.lang.String.valueOf;
 
 @Service
 public class BotService {
@@ -32,6 +36,7 @@ public class BotService {
      * String with start command in chat
      */
     private final String START_FIRST_COMMAND = "/start";
+    private final String START_PHRASE_TO_VOLUNTEER = "*** Панель бота для волонтёров ***";
     private final String CHOOSE_MENU_ITEM_STRING = "*** Выберите интересующий пункт меню ***";
 
     /**
@@ -162,8 +167,16 @@ public class BotService {
         String messageText = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
         SendMessage messageToSend = new SendMessage();
-
-        int idMessage = -1;
+        // *** check chatId in volunteer db.
+        // *** If it exists, return start greeting to volunteer.
+        boolean isExistsVolunteer = volunteerService.isExistsVolunteer(chatId);
+        if (isExistsVolunteer) {
+            messageToSend.setText(START_PHRASE_TO_VOLUNTEER);
+            messageToSend.setChatId(chatId);
+            return messageToSend;
+        }
+        // ****************************************************
+            int idMessage = -1;
         for (int i = 0; i < BUTTONS_NAMES.size(); i++) {
             if (BUTTONS_NAMES.get(i).equals(messageText)) {
                 idMessage = i;
@@ -353,120 +366,128 @@ public class BotService {
 
     /**
      * Send user's phone number to volunteer and save it into DB
-     * @param update
-     * @return
+     *
+     * @param update list of incoming updates, must be not Null
+     * @return message to send
      */
     SendMessage sendUserPhoneToVolunteer(Update update) {
         SendMessage message = new SendMessage();
         String textToShow = "Телефонный номер отсутствует";
+        long userChatId = update.getMessage().getChatId();
         Contact contact = getContact(update);
         String phoneNumber = contact.getPhoneNumber();
         String userName = contact.getFirstName();
-        // ---- (1) check contact in base -----
-        boolean userIsExists = userService.findUsersById(contact.getUserId());
-        // --- if exists than send contact to volunteer ---
+        long userId = contact.getUserId();
+        boolean userIsExists = userService.isExistsUser(contact.getUserId());
+        // --- (1) send contact to volunteer ---
+        // *** get first volunteer ***
+        Volunteer firstVolunteer = volunteerService.getAllVolunteer()
+                .stream()
+                .findFirst()
+                .orElseThrow();
+        logger.info(firstVolunteer.toString());
+        message.setChatId(firstVolunteer.getChatId());
+        message.setText("Уважаемый волонтер! Просьба связаться с пользователем: id " + userId +  " phone " + phoneNumber +
+                " firstName "+ userName);
+        // ---- (2) check contact in base -----
         if (!userIsExists) {
-            // *** get first volunteer ***
-            Volunteer firstVolunteer = volunteerService.getAllVolunteer()
-                    .stream()
-                    .findFirst()
-                    .orElseThrow();
-            logger.info(firstVolunteer.toString());
-            message.setChatId(firstVolunteer.getChatId());
-            message.setText("Уважаемый волонтер! Просьба позвонить пользователю с именем " +
-                    userName + " по телефону " + phoneNumber);
-            // *** save phone number into DB
-            // .......
+            // *** save phone number into DB, if contact doesn't exist
+            User newUser = new User();
+            newUser.setChatId(userChatId);
+            newUser.setName(userName);
+            newUser.setPhone(phoneNumber);
+            newUser.setAdopted(false);
+            userService.createUser(newUser);
         }
-
         return message;
     }
-        /**
-         * Menu of volunteer's calling
-         *
-         * @param chatId identificator of chat
-         */
-        private SendMessage callToVolunteer (long chatId){
-            String example = "Нажата кнопка " + "''" + BUTTONS_NAMES.get(4) + "''";
-            return setupSendMessage(chatId, example);
-        }
 
-        /**
-         * Method of getting information from repository {@link InformationMessageRepository#findById(Object)} of general information about shelter
-         *
-         * @param chatId         identificator of chat
-         * @param menuItemNumber id number of menu item
-         */
-        private SendMessage getInfo ( long chatId, long menuItemNumber){
-            String info = infoRepository.findById(menuItemNumber).orElseThrow().getText();
-            return setupSendMessage(chatId, info);
-        }
+    /**
+     * Menu of volunteer's calling
+     *
+     * @param chatId identificator of chat
+     */
+    private SendMessage callToVolunteer(long chatId) {
+        String example = "Нажата кнопка " + "''" + BUTTONS_NAMES.get(4) + "''";
+        return setupSendMessage(chatId, example);
+    }
+
+    /**
+     * Method of getting information from repository {@link InformationMessageRepository#findById(Object)} of general information about shelter
+     *
+     * @param chatId         identificator of chat
+     * @param menuItemNumber id number of menu item
+     */
+    private SendMessage getInfo(long chatId, long menuItemNumber) {
+        String info = infoRepository.findById(menuItemNumber).orElseThrow().getText();
+        return setupSendMessage(chatId, info);
+    }
 
 
-        // =========================================================================
+    // =========================================================================
 
-        /**
-         * Every day test DB in 20:00 to check all yesterday reports are present in DB.
-         * Photo and text about pet should be there.
-         */
-        @Scheduled(cron = "0 20 * * * *")
-        public void runTestForReports () {
-            // get all users with trial period
-            List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
+    /**
+     * Every day test DB in 20:00 to check all yesterday reports are present in DB.
+     * Photo and text about pet should be there.
+     */
+    @Scheduled(cron = "0 20 * * * *")
+    public void runTestForReports() {
+        // get all users with trial period
+        List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
 
-            // test, if users have sent reports yesterday and two days ago
-            for (User petsMaster : toTestWithTrialPeriod) {
-                PetReport petReportYesterday = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(1L));
-                PetReport petReportTwoDaysAgo = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(2L));
-                if (petReportYesterday == null && petReportTwoDaysAgo == null) {
-                    /* позвать волонтера!!!
-                     * если пользователь не присылал 2 дня никакой информации (текст или фото), отправлять запрос волонтеру на связь с усыновителем.
-                     * Текст: "Усыновитель petsMaster не отправляет информацию уже 2 дня".*/
-                    break;
-                }
-                if (petReportYesterday == null) {
+        // test, if users have sent reports yesterday and two days ago
+        for (User petsMaster : toTestWithTrialPeriod) {
+            PetReport petReportYesterday = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(1L));
+            PetReport petReportTwoDaysAgo = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(2L));
+            if (petReportYesterday == null && petReportTwoDaysAgo == null) {
+                /* позвать волонтера!!!
+                 * если пользователь не присылал 2 дня никакой информации (текст или фото), отправлять запрос волонтеру на связь с усыновителем.
+                 * Текст: "Усыновитель petsMaster не отправляет информацию уже 2 дня".*/
+                break;
+            }
+            if (petReportYesterday == null) {
                 /* если пользователь не присылал вчера информацию (текст и фото),
                 напоминаем: "Добрый день, мы не получили отчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет и информациюю о питомце".*/
-                    break;
-                }
-                if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhotoLink() != null) {
+                break;
+            }
+            if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhotoLink() != null) {
                 /* если пользователь не присылал вчера текст,
                 напоминаем: "Добрый день, мы не получили рассказ о питомце за вчерашний день, пожалуйста, пришлите сегодня информацию о питомце". */
-                    break;
-                }
-                if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhotoLink() == null) {
+                break;
+            }
+            if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhotoLink() == null) {
                 /* если пользователь не присылал вчера фотоотчет,
                 напоминаем: "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет о питомце". */
-                    break;
-                }
+                break;
             }
         }
+    }
 
-        // =========================================================================
+    // =========================================================================
 
-        /**
-         * Every day test DB in 12:00 to check trial period has expired.
-         * Photo and text about pet should be there.
-         */
-        @Scheduled(cron = "00 12 * * * *")
-        public void runTestTrialPeriodHasExpired () {
-            // get all users with trial period
-            List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
+    /**
+     * Every day test DB in 12:00 to check trial period has expired.
+     * Photo and text about pet should be there.
+     */
+    @Scheduled(cron = "00 12 * * * *")
+    public void runTestTrialPeriodHasExpired() {
+        // get all users with trial period
+        List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
 
-            // test, users have the last day of trial period
-            for (User petsMaster : toTestWithTrialPeriod) {
-                if (petsMaster.getFinishDate().isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
+        // test, users have the last day of trial period
+        for (User petsMaster : toTestWithTrialPeriod) {
+            if (petsMaster.getFinishDate().isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
                 /* если день>N и усыновитель в статусе "на проверке", бот отправляет запрос волонтеру.
                 Текст: "N-ый день уже прошел! Срочно примите решение об успешном/неуспешном прохождении усыновителем испытательного срока или продлите испытательный срок".
                  */
-                    break;
-                }
-                if (petsMaster.getFinishDate().equals(LocalDate.now()) && petsMaster.getAdopted()) {
+                break;
+            }
+            if (petsMaster.getFinishDate().equals(LocalDate.now()) && petsMaster.getAdopted()) {
                 /* если день=N и хозяин еще на испытательном сроке, бот отправляет запрос волонтеру.
                 Текст: "Сегодня истекает N-ый день. Примите решение об успешном/неуспешном прохождении усыновителем испытательного срока или продлите испытательный срок". */
-                    break;
-                }
+                break;
             }
         }
-
     }
+
+}

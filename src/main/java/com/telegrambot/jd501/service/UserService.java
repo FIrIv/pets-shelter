@@ -126,8 +126,8 @@ public class UserService {
      *
      * @return boolean
      */
-    public boolean findUsersById(long userId) {
-        return userRepository.existsById(userId);
+    public boolean isExistsUser(long userChatId) {
+        return userRepository.existsByChatId(userChatId);
     }
 
 
