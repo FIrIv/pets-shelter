@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface PetReportRepository extends JpaRepository<PetReport, Long> {
 
-    List<PetReport> findPetReportByPetOrderByDateOfReport(Pet pet);
+    List<PetReport> findPetReportsByPetOrderByDateOfReport(Pet pet);
 
     PetReport findPetReportByPetAndDateOfReport (Pet pet, LocalDate dateOfReport);
 }
