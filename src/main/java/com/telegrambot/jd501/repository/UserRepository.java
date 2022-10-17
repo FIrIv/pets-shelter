@@ -11,4 +11,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findUsersByIsAdoptedIsTrue ();
 
     boolean existsByChatId(Long chatId);
+    User findUserByChatId(long userChatId);
 }

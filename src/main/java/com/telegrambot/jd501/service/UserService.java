@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -128,6 +129,16 @@ public class UserService {
      */
     public boolean isExistsUser(long userChatId) {
         return userRepository.existsByChatId(userChatId);
+    }
+
+    /**
+     * find user with by ID
+     * Use method User repository {@link UserRepository#findById(Object)}
+     *
+     * @return User
+     */
+    public User findUserByChatId(long userChatId) {
+        return userRepository.findUserByChatId(userChatId);
     }
 
 
