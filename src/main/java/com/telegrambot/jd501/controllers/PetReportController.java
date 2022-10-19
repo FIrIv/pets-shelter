@@ -64,7 +64,7 @@ public class PetReportController {
             )
     })
     @GetMapping("/pet_report")
-    public Collection <PetReport> getAllPetReportByPet(@RequestParam Pet pet) {
+    public Collection<PetReport> getAllPetReportByPet(@RequestBody Pet pet) {
         return petReportService.getAllPetReportByPet(pet);
     }
 

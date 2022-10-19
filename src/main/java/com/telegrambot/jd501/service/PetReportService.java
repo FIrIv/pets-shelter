@@ -13,6 +13,8 @@ import java.util.Collection;
 public class PetReportService {
     private final PetReportRepository petReportRepository;
 
+
+
     public PetReportService(PetReportRepository petReportRepository) {
         this.petReportRepository = petReportRepository;
     }
@@ -66,12 +68,12 @@ public class PetReportService {
 
     /**
      * get All PetReport from DataBase by Pet
-     * Use method of PetReport repository {@link PetReportRepository#findPetReportByPetOrderByDateOfReport(Pet)} ()} (List<PetReport>)}
+     * Use method of PetReport repository {@link PetReportRepository#findPetReportsByPetOrderByDateOfReport(Pet)} ()} (List<PetReport>)}
      *
      * @return collection of PetReport With Pet
      */
     public Collection<PetReport> getAllPetReportByPet(Pet pet) {
-        return petReportRepository.findPetReportByPetOrderByDateOfReport(pet);
+        return petReportRepository.findPetReportsByPetOrderByDateOfReport(pet);
     }
 
     /**
