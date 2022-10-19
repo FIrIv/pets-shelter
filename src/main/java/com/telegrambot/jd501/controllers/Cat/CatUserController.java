@@ -1,7 +1,9 @@
-package com.telegrambot.jd501.controllers;
+package com.telegrambot.jd501.controllers.Cat;
 
-import com.telegrambot.jd501.model.User;
-import com.telegrambot.jd501.service.UserService;
+
+
+import com.telegrambot.jd501.model.cat.CatUser;
+import com.telegrambot.jd501.service.CatService.CatUserService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,28 +15,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 /**
- * class for work with User
+ * class for work with CatUser
  * have CRUD operation
  */
 @RestController
-@RequestMapping("/user")
-public class UserController {
-    private final UserService userService;
+@RequestMapping("/cat/user")
+public class CatUserController {
+    private final CatUserService catUserService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public CatUserController(CatUserService catUserService) {
+        this.catUserService = catUserService;
     }
 
     /**
-     * get All User from DataBase
-     * Use method of user servise {@link UserService#getAllUser()} (Collection<User>)}
+     * get All CatUser from DataBase
+     * Use method of CatUser servise {@link CatUserService#getAllDogUser()} (Collection<CatUser>)}
      *
-     * @return collection of Users
+     * @return collection of CatUser
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Show all User",
+                    description = "Show all CatUser",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = Collection.class)
@@ -42,80 +44,80 @@ public class UserController {
             )
     })
     @GetMapping
-    public Collection<User> getAllUsers() {
-        return userService.getAllUser();
+    public Collection<CatUser> getAllDogUser() {
+        return catUserService.getAllDogUser();
     }
 
     /**
-     * add new User in DataBase
+     * add new CatUser in DataBase
      *
-     * @param user Use method of Servise {@link UserService#createUser(User)}
-     * @return User
+     * @param catUser Use method of Servise {@link CatUserService#createCatUser(CatUser)}
+     * @return CatUser
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Create new User",
+                    description = "Create new CatUser",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = User.class)
+                            schema = @Schema(implementation = CatUser.class)
                     )
             )
     })
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    public ResponseEntity<CatUser> createUser(@RequestBody CatUser catUser) {
+        return ResponseEntity.ok(catUserService.createCatUser(catUser));
     }
 
     /**
-     * change User in DataBase
-     * Use method of Servise {@link UserService#updateUser(User)}
+     * change CatUser in DataBase
+     * Use method of Servise {@link CatUserService#updateCatUser(CatUser)}
      *
-     * @param user
-     * @return User
-     * @throws com.telegrambot.jd501.Exceptions.UserNotFoundException if User with id not found
+     * @param catUser
+     * @return CatUser
+     * @throws com.telegrambot.jd501.Exceptions.UserNotFoundException if CatUser with id not found
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Change User By Id",
+                    description = "Change CatUser By Id",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = User.class)
+                            schema = @Schema(implementation = CatUser.class)
                     )
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "User not found"
+                    description = "CatUser not found"
             )
     })
     @PutMapping
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(user));
+    public ResponseEntity<CatUser> updateUser(@RequestBody CatUser catUser) {
+        return ResponseEntity.ok(catUserService.updateCatUser(catUser));
     }
 
     /**
      * find user by id and change  status of The Adopter,
-     * add adopted Pet, Date of adoption, and set test day at 30 days
-     * Use method User repository {@link UserService#changeStatusOfTheAdopter(Long, Long)}
+     * add adopted Cat, Date of adoption, and set test day at 30 days
+     * Use method User repository {@link }
      *
-     * @param userId - user id for fing user in repository,
-     * @param petId  - pet id for fing user in repository,
+     * @param catUserId - dogUser id for fing dogUser in repository,
+     * @param catId  - pet id for fing user in repository,
      * @return Changed User
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "find user by id and change him adoption status, add adoption Pet, adoption Date, and set test day at 30 days"
+                    description = "find cat user by id and change him adoption status, add adoption Pet, adoption Date, and set test day at 30 days"
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "When User or Pet not found"
+                    description = "When User or Cat not found"
             )
     })
     @PutMapping("/adoption")
-    public User changeStatusOfTheAdopter(Long userId, Long petId) {
-        return userService.changeStatusOfTheAdopter(userId, petId);
+    public CatUser changeStatusOfTheAdopter(Long catUserId, Long catId) {
+        return catUserService.changeStatusOfTheAdopter(catUserId, catId);
     }
 
     /**
@@ -138,24 +140,24 @@ public class UserController {
     })
     @PutMapping("/change_period")
     public String probationPeriodExtension(@RequestParam Long id, @RequestParam Integer days) {
-        return userService.probationPeriodExtension(id, days);
+        return catUserService.probationPeriodExtension(id, days);
     }
 
     /**
-     * delete User from DataBase by id
-     * Use method of Servise {@link UserService#deleteUser(Long id)}
+     * delete CatUser from DataBase by id
+     * Use method of Servise {@link CatUserService#deleteCatUser(Long)}
      *
      * @param id
-     * @return Deleted User
-     * @throws com.telegrambot.jd501.Exceptions.UserNotFoundException if User with id not found
+     * @return Deleted CatUser
+     * @throws com.telegrambot.jd501.Exceptions.UserNotFoundException if DogUser with id not found
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Delete User By Id",
+                    description = "Delete CatUser By Id",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = User.class)
+                            schema = @Schema(implementation = CatUser.class)
                     )
             ),
             @ApiResponse(
@@ -164,8 +166,8 @@ public class UserController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<User> deleteUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.deleteUser(id));
+    ResponseEntity<CatUser> deleteCatUser(@PathVariable Long id) {
+        return ResponseEntity.ok(catUserService.deleteCatUser(id));
     }
 
 }
