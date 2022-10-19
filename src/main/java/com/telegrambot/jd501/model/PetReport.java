@@ -4,19 +4,16 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Entity
-@Table(name = "pet_report")
 public class PetReport {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "pet_id")
-    private Pet pet;
+    private Long id;
+    private User user;
     private LocalDate dateOfReport;
     private String textOfReport;
     private String photoLink;
+
+    public PetReport() {
+    }
 
     public Long getId() {
         return id;
@@ -26,12 +23,12 @@ public class PetReport {
         this.id = id;
     }
 
-    public Pet getPet() {
-        return pet;
+    public User getUser() {
+        return user;
     }
 
-    public void setPet(Pet pet) {
-        this.pet = pet;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDate getDateOfReport() {
@@ -63,19 +60,19 @@ public class PetReport {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PetReport petReport = (PetReport) o;
-        return Objects.equals(id, petReport.id) && Objects.equals(pet, petReport.pet) && Objects.equals(dateOfReport, petReport.dateOfReport) && Objects.equals(textOfReport, petReport.textOfReport) && Objects.equals(photoLink, petReport.photoLink);
+        return Objects.equals(id, petReport.id) && Objects.equals(user, petReport.user) && Objects.equals(dateOfReport, petReport.dateOfReport) && Objects.equals(textOfReport, petReport.textOfReport) && Objects.equals(photoLink, petReport.photoLink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pet, dateOfReport, textOfReport, photoLink);
+        return Objects.hash(id, user, dateOfReport, textOfReport, photoLink);
     }
 
     @Override
     public String toString() {
         return "PetReport{" +
                 "id=" + id +
-                ", pet=" + pet +
+                ", user=" + user +
                 ", dateOfReport=" + dateOfReport +
                 ", textOfReport='" + textOfReport + '\'' +
                 ", photoLink='" + photoLink + '\'' +

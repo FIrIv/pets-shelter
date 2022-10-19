@@ -1,58 +1,55 @@
 package com.telegrambot.jd501.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.telegrambot.jd501.model.Pet;
 import com.telegrambot.jd501.model.PetReport;
-import com.telegrambot.jd501.repository.PetReportRepository;
-import com.telegrambot.jd501.service.PetReportService;
-import org.json.JSONObject;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest(controllers = PetReportController.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PetReportControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private PetReportRepository petReportRepository;
-
-    @SpyBean
-    private PetReportService petReportService;
+    @LocalServerPort
+    private int port;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    PetController petController;
+
+    @Autowired
+    PetReportController petReportController;
 
     @Test
+    void contextLoads() throws Exception {
+        Assertions.assertThat(petReportController).isNotNull();
+    }
+
+    /*@Test
     void getAllPetReport() throws Exception {
         Long id1 = 100L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
         String photoLink1 = "Ссылка на фото1";
         Pet pet1 = new Pet();
-        pet1.setId(1L);
-        pet1.setName("Бакс");
+        pet1.setName("тестБакс1234567890");
+        Long petId1 = petController.createPet(pet1).getBody().getId();
+        pet1.setId(petId1);
         PetReport expected1 = new PetReport();
-        expected1.setId(id1);
+
         expected1.setPet(pet1);
         expected1.setDateOfReport(dateOfReport1);
         expected1.setTextOfReport(textOfReport1);
@@ -63,36 +60,46 @@ class PetReportControllerTest {
         String textOfReport2 = "Текст второго отчета";
         String photoLink2 = "Ссылка на фото2";
         Pet pet2 = new Pet();
-        pet2.setId(2L);
-        pet2.setName("Банни");
+        pet2.setName("тестБанни123456789");
+        Long petId2 = petController.createPet(pet2).getBody().getId();
+        pet2.setId(petId2);
         PetReport expected2 = new PetReport();
-        expected2.setId(id2);
         expected2.setPet(pet2);
         expected2.setDateOfReport(dateOfReport2);
         expected2.setTextOfReport(textOfReport2);
         expected2.setPhotoLink(photoLink2);
 
-        when(petReportRepository.findAll()).thenReturn(List.of(expected1, expected2));
+        id1 = petReportController.createPetReport(expected1).getBody().getId();
+        expected1.setId(id1);
+        id2 = petReportController.createPetReport(expected2).getBody().getId();
+        expected2.setId(id2);
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/petReport")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(List.of(expected1, expected2))));
+        ResponseEntity<List<PetReport>> response = restTemplate.exchange("http://localhost:" + port + "/petReport", HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<PetReport>>() {});
+        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
+        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected1);
+        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected2);
+
+        petReportController.deletePetReport(id1);
+        petReportController.deletePetReport(id2);
+        petController.deletePet(petId1);
+        petController.deletePet(petId2);
     }
 
-    /*@Test
+   /* @Test
     void getAllPetReportByPet() throws Exception {
         Long id1 = 100L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
         String photoLink1 = "Ссылка на фото1";
         Pet pet1 = new Pet();
-        pet1.setId(1L);
-        pet1.setName("Бакс");
+        pet1.setName("тестБакс1234567890");
+        Pet petToFind = petController.createPet(pet1).getBody();
+        Long petId1 = petToFind.getId();
+        pet1.setId(petId1);
         PetReport expected1 = new PetReport();
-        expected1.setId(id1);
+
         expected1.setPet(pet1);
         expected1.setDateOfReport(dateOfReport1);
         expected1.setTextOfReport(textOfReport1);
@@ -103,36 +110,52 @@ class PetReportControllerTest {
         String textOfReport2 = "Текст второго отчета";
         String photoLink2 = "Ссылка на фото2";
         Pet pet2 = new Pet();
-        pet2.setId(2L);
-        pet2.setName("Банни");
+        pet2.setName("тестБанни123456789");
+        Long petId2 = petController.createPet(pet2).getBody().getId();
+        pet2.setId(petId2);
         PetReport expected2 = new PetReport();
-        expected2.setId(id2);
         expected2.setPet(pet2);
         expected2.setDateOfReport(dateOfReport2);
         expected2.setTextOfReport(textOfReport2);
         expected2.setPhotoLink(photoLink2);
 
-        Long id3 = 102L;
-        LocalDate dateOfReport3 = LocalDate.now().minusDays(1);
+        Long id3 = 101L;
+        LocalDate dateOfReport3 = LocalDate.now();
         String textOfReport3 = "Текст третьего отчета";
         String photoLink3 = "Ссылка на фото3";
         PetReport expected3 = new PetReport();
-        expected3.setId(id3);
         expected3.setPet(pet1);
         expected3.setDateOfReport(dateOfReport3);
         expected3.setTextOfReport(textOfReport3);
         expected3.setPhotoLink(photoLink3);
 
-        when(petReportRepository.findPetReportsByPetOrderByDateOfReport(eq(pet1))).thenReturn(List.of(expected3, expected1));
+        id1 = petReportController.createPetReport(expected1).getBody().getId();
+        expected1.setId(id1);
+        id2 = petReportController.createPetReport(expected2).getBody().getId();
+        expected2.setId(id2);
+        id3 = petReportController.createPetReport(expected3).getBody().getId();
+        expected3.setId(id3);
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/petReport/pet_report")
-                        .queryParam("pet", String.valueOf(pet1))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(List.of(expected3, expected1))));
-    }*/
+        RequestEntity<Pet> petRequest = RequestEntity
+                .get("http://localhost:" + port + "/petReport/pet_report/{pet}")
+                .accept(MediaType.APPLICATION_JSON)
+                .body(petToFind);
+
+        //ResponseEntity<List<PetReport>> response = restTemplate.exchange("http://localhost:" + port + "/petReport/pet_report/{petToFind}", HttpMethod.GET, null,
+        ResponseEntity<List<PetReport>> response = restTemplate.exchange(petRequest,
+                new ParameterizedTypeReference<List<PetReport>>() {});
+        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+        Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
+        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected1);
+        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected3);
+        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).doesNotContain(expected2);
+
+        petReportController.deletePetReport(id1);
+        petReportController.deletePetReport(id2);
+        petReportController.deletePetReport(id3);
+        petController.deletePet(petId1);
+        petController.deletePet(petId2);
+    }
 
     /*@Test
     void createPetReport() throws Exception {
@@ -209,7 +232,7 @@ class PetReportControllerTest {
                 .andExpect(jsonPath("$.dateOfReport").value(dateOfReport1))
                 .andExpect(jsonPath("$.textOfReport").value(textOfReport1))
                 .andExpect(jsonPath("$.photoLink").value(photoLink1));
-    }*/
+    }
 
     @Test
     void deletePetReport() throws Exception {
@@ -234,5 +257,5 @@ class PetReportControllerTest {
                         .delete("/petReport/" + id1)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-    }
+    }*/
 }

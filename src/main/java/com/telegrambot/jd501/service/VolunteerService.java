@@ -3,7 +3,6 @@ package com.telegrambot.jd501.service;
 
 import com.telegrambot.jd501.Exceptions.VolunteerNotFoundException;
 import com.telegrambot.jd501.model.Volunteer;
-import com.telegrambot.jd501.repository.UserRepository;
 import com.telegrambot.jd501.repository.VolunteerRepository;
 import org.springframework.stereotype.Service;
 

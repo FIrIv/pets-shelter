@@ -3,14 +3,13 @@ package com.telegrambot.jd501.model;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "volunteer")
 public class Volunteer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long chatId;
     private String name;
+
+    public Volunteer() {
+    }
 
     public Long getId() {
         return id;

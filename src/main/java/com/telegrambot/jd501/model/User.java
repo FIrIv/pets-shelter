@@ -1,24 +1,32 @@
 package com.telegrambot.jd501.model;
 
+import com.telegrambot.jd501.model.dog.Dog;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Entity
-@Table(name = "users")
+
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long chatId;
     private String name;
     private String phone;
-    @OneToOne
-    @JoinColumn(name = "pet_id")
     private Pet pet;
     private Boolean isAdopted;
     private LocalDate startDate;
     private LocalDate finishDate;
+
+    public User() {
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
 
     public Long getId() {
         return id;
@@ -52,14 +60,6 @@ public class User {
         this.phone = phone;
     }
 
-    public Pet getPet() {
-        return pet;
-    }
-
-    public void setPet(Pet pet) {
-        this.pet = pet;
-    }
-
     public Boolean getAdopted() {
         return isAdopted;
     }
@@ -89,12 +89,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(chatId, user.chatId) && Objects.equals(name, user.name) && Objects.equals(phone, user.phone) && Objects.equals(pet, user.pet) && Objects.equals(isAdopted, user.isAdopted) && Objects.equals(startDate, user.startDate) && Objects.equals(finishDate, user.finishDate);
+        return Objects.equals(id, user.id) && Objects.equals(pet, user.pet) && Objects.equals(chatId, user.chatId) && Objects.equals(name, user.name) && Objects.equals(phone, user.phone) && Objects.equals(isAdopted, user.isAdopted) && Objects.equals(startDate, user.startDate) && Objects.equals(finishDate, user.finishDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, phone, pet, isAdopted, startDate, finishDate);
+        return Objects.hash(id, chatId, name, phone, isAdopted, startDate, finishDate);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class User {
                 ", chatId=" + chatId +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
-                ", pet=" + pet +
+                ", pet='" + pet + '\'' +
                 ", isAdopted=" + isAdopted +
                 ", startDate=" + startDate +
                 ", finishDate=" + finishDate +

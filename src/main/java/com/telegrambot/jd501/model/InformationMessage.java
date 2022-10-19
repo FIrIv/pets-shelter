@@ -3,13 +3,14 @@ package com.telegrambot.jd501.model;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "information_message")
+
 public class InformationMessage {
-    @Id
     private Long id;
 
     private String text;
+
+    public InformationMessage() {
+    }
 
     public Long getId() {
         return id;
