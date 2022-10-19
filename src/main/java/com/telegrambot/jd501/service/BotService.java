@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Contact;
+import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -33,26 +34,48 @@ public class BotService {
     private final String START_PHRASE_TO_VOLUNTEER = "*** Панель бота для волонтёров ***";
     private final String CHOOSE_MENU_ITEM_STRING = "*** Выберите интересующий пункт меню ***";
 
-    private long messageId = 0;
+    private boolean isDog;
     private boolean isReportButtonPressed = false;
 
     /**
      * ArrayList with button's names
      */
     private final List<String> BUTTONS_NAMES = new ArrayList<>(List.of(
+            // ===== Этап 0 (Меню 1) ======
+            // ===  Меню выбора приютов (кошки/собаки) =====
+            "Приют для кошек", "Приют для собак",
+            // =========== 0 ================ 1 ===========
+
+            // === Этап 1 (Меню 2) =====
+            // === Меню "Узнать информацию о приюте"
             "Информация о приюте", "Как приютить питомца?",
+            // =========== 2 ================ 3 ===========
             "Прислать отчет", "Оставить контакт для связи",
-            "Позвать волонтера",
+            // =========== 4 ================ 5 ===========
+            "Позвать волонтера", "Выбрать приют (собаки/кошки)",
+            // =========== 6 ================ 7 ===========
 
+            // === Этап 1 (Меню 3) =====
+            // === Меню "Консультация с новым пользователем"
             "Общая информация", "Расписание работы, адрес",
-            "Техника безопасности", "вернуться в главное меню",
+            // =========== 8 ================ 9 ===========
+            "Оформить пропуск", "Техника безопасности",
+            // =========== 10 ================ 11 ===========
+            "Оставить контакт для связи", "Позвать волонтера",
+            // =========== 12 ================ 13 ===========
+            "в Главное меню",
+            // =========== 14 ================
 
+            // === Этап 2 (Меню 4) =====
+            // === Меню "Консультация с потенциальным хозяином"
             "Знакомство с питомцем", "Необходимые документы", "Как перевозить",
-            "Дом для щенка", "Дом для взрослой собаки", "Дом для собаки с огр.возможностями",
-            "Советы кинолога", "Контакты кинологов", "Причины, по которым могут отказать",
-            "вернуться в главное меню",
-            "вернуться в главное меню"
-
+            // ==== 15 ===================== 16 =================== 17 ===================
+            "Дом для детеныша", "Дом для взрослого питомца", "Дом для питомца с огр.возможностями",
+            // ==== 18 ===================== 19 =================== 20 ===================
+            "Причины, по которым могут отказать", "в Главное меню", "Позвать волонтера",
+            // ============ 21 ======================== 22 =============== 23 ================
+            "Советы кинолога", "Контакты кинологов"
+            // === 24 =============== 25 ===========
     ));
 
 
@@ -62,21 +85,6 @@ public class BotService {
         this.infoRepository = infoRepository;
         this.petReportService = petReportService;
     }
-
-
-    //              *******  Меню 1 *******
-    //        1 - Информация о приюте       (0)     2 - Как приютить питомца?     (1)
-    //        3 - Прислать отчет            (2)     4 - Оставить данные для связи (3)
-    //        5 - Позвать волонтера         (4)
-    //             *******  Меню 2 *******
-    //        11 - Общая информация         (5)     12 - Расписание работы, адрес (6)
-    //        13 - Техника безопасности     (7)     0  - вернуться в главное меню (8)
-    //             *******  Меню 3 *******
-    //        21 - Знакомство с питомцем  (9)       22 - Необходимые документы (10)   23 - Как перевозить (11)
-    //        24 - Дом для щенка (12)               25 - Дом для взрослой собаки (13) 26 - Дом для собаки с огр.возможностями (14)
-    //        27 - Советы кинолога (15)             28 - Контакты кинологов (16)      29 - Причины, по которым могут отказать (17)
-    //        0  - вернуться в главное меню (18)
-    //        0  - вернуться в главное меню (19)
 
     /**
      * Setup sending message
@@ -96,7 +104,7 @@ public class BotService {
     /**
      * Make buttons in Telegram's chat
      *
-     * @param chatId           identificator of chat
+     * @param update           list of incoming updates, must be not Null
      * @param namesOfButtons   list of button's names, must be not Null
      * @param startIndexButton start index of button
      * @param numberOfButtons  number of used buttons
@@ -104,7 +112,7 @@ public class BotService {
      */
     public SendMessage setButtons(Update update, List<String> namesOfButtons,
                                   int startIndexButton, int numberOfButtons) {
-        logger.info("Setting of keyboard...");
+        logger.info("Setting of keyboard... First button - " + namesOfButtons.get(startIndexButton));
 
         long chatId = update.getMessage().getChatId();
         SendMessage sendMessage = setupSendMessage(chatId, "");
@@ -124,7 +132,7 @@ public class BotService {
         int numberButtonsInRow;
         int counterOfButtons = 1;
         int rows;
-        if (numberOfButtons < 6) {
+        if (numberOfButtons < 7) {
             rows = 3;
             numberButtonsInRow = 2;
         } else {
@@ -157,7 +165,6 @@ public class BotService {
         }
         // Set created keyboard
         replyKeyboardMarkup.setKeyboard(keyboard);
-        messageId = update.getMessage().getMessageId();
         // Return setup message
         return sendMessage;
     }
@@ -181,6 +188,7 @@ public class BotService {
             return messageToSend;
         }
         // ****************************************************
+        // Get index of list's items
         int itemInList = -1;
         for (int i = 0; i < BUTTONS_NAMES.size(); i++) {
             if (BUTTONS_NAMES.get(i).equals(messageText)) {
@@ -188,87 +196,116 @@ public class BotService {
                 break;
             }
         }
+        // Check index and choose action
         switch (itemInList) {
-            // --- 1 - "Информация о приюте" button is pressed  (0)---
+            // --- "Приют для кошек" button is pressed  (0)---
             case 0:
+                isDog = false;
                 messageToSend = informAboutShelter(update);
                 break;
-            // --- 2 - "Как приютить питомца?" button is pressed (1)---
+            // --- "Приют для собак" button is pressed  (1)---
             case 1:
+                isDog = true;
+                messageToSend = informAboutShelter(update);
+                break;
+            // --- "Информация о приюте" button is pressed  (2)---
+            case 2:
+                messageToSend = consultNewUser(update);
+                break;
+                // --- "в Главное меню" button is pressed  (14, 22)---
+            case 14:
+            case 22:
+                messageToSend = informAboutShelter(update);
+                break;
+            // --- "Как приютить питомца?" button is pressed (3)---
+            case 3:
                 messageToSend = informToPotentialAdopter(update);
                 break;
-            // --- 3 - "Прислать отчет" button is pressed (2)---
-            case 2:
+            // ---- "Прислать отчет" button is pressed (4)---
+            case 4:
                 messageToSend = waitForReport(update);
                 isReportButtonPressed = true;
                 break;
-//            // --- 4 - "Оставить данные для связи" button is pressed (3)---
-//            case 3:
+//            // -- - "Оставить данные для связи" button is pressed (5)---
+//            case 5:
 //                //   messageToSend = getContact(update);
 //                break;
-            // --- 5 - "Позвать волонтера" (4) button is pressed ---
-            case 4:
+
+            // --- "Позвать волонтера" (6) button is pressed ---
+            case 6:
+            case 13:
+            case 23:
                 messageToSend = callToVolunteer(update);
                 break;
-            // --- 0 - "вернуться в главное меню" (8) button is pressed ---
-            case 8:
-            case 18:
-            case 19:
-                // call main menu ---
-                messageToSend = setButtons(update, BUTTONS_NAMES, 0, 5);
-                messageToSend.setText(CHOOSE_MENU_ITEM_STRING);
+            // --- "Выбрать приют (собаки/кошки)" (8) button is pressed ---
+            case 7:
+                messageToSend = startCommandReceived(update);
                 isReportButtonPressed = false;
                 break;
-            // --- 11 - "Общая информация" (5) button is pressed ---
-            case 5:
+
+            // -- - "Общая информация" (8) button is pressed ---
+            case 8:
                 messageToSend = getInfo(chatId, 11);
                 break;
-            // --- 12 - "Расписание работы, адрес" (6) button is pressed ---
-            case 6:
+
+            // --- "Расписание работы, адрес" (9) button is pressed ---
+            case 9:
                 messageToSend = getInfo(chatId, 12);
                 break;
-            // --- 13 - "Техника безопасности" (7) button is pressed ---
-            case 7:
+
+            // --- "Оформить пропуск" (10) button is pressed ---
+            case 10:
+                messageToSend = getInfo(chatId, 12);
+                break;
+
+            // ---  "Техника безопасности" (11) button is pressed ---
+            case 11:
                 messageToSend = getInfo(chatId, 13);
                 break;
 
-            //
-            //        0  - вернуться в главное меню (18)
-            // --- 21 - Знакомство с питомцем  (9) button is pressed ---
-            case 9:
+            // ---  Знакомство с питомцем  (15) button is pressed ---
+            case 15:
                 messageToSend = getInfo(chatId, 21);
                 break;
-            // --- 22 - Необходимые документы (10) button is pressed ---
-            case 10:
+
+            // ---  Необходимые документы (16) button is pressed ---
+            case 16:
                 messageToSend = getInfo(chatId, 22);
                 break;
-            // --- 23 - Как перевозить (11) button is pressed ---
-            case 11:
+
+            // ---  Как перевозить (17) button is pressed ---
+            case 17:
                 messageToSend = getInfo(chatId, 23);
                 break;
-            // --- 24 - Дом для щенка (12) button is pressed ---
-            case 12:
+
+            // ---  Дом для детеныша (18) button is pressed ---
+            case 18:
                 messageToSend = getInfo(chatId, 24);
                 break;
-            // --- 25 - Дом для взрослой собаки (13) button is pressed ---
-            case 13:
+
+            // --- Дом для взрослого питомца (19) button is pressed ---
+            case 19:
                 messageToSend = getInfo(chatId, 25);
                 break;
-            // --- 26 - Дом для собаки с огр.возможностями (14) button is pressed ---
-            case 14:
+
+            // ---  Дом для питомца с огр.возможностями (20) button is pressed ---
+            case 20:
                 messageToSend = getInfo(chatId, 26);
                 break;
-            // --- 27 - Советы кинолога (15) button is pressed ---
-            case 15:
+
+            // --- Причины, по которым могут отказать (21) button is pressed ---
+            case 21:
+                messageToSend = getInfo(chatId, 29);
+                break;
+
+            // ---  Советы кинолога (24) button is pressed ---
+            case 24:
                 messageToSend = getInfo(chatId, 27);
                 break;
-            // --- 28 - Контакты кинологов (16) button is pressed ---
-            case 16:
+
+            // ---  Контакты кинологов (25) button is pressed ---
+            case 25:
                 messageToSend = getInfo(chatId, 28);
-                break;
-            // --- 29 - Причины, по которым могут отказать (17) button is pressed ---
-            case 17:
-                messageToSend = getInfo(chatId, 29);
                 break;
 
             // -------- any other command / string -----
@@ -280,6 +317,7 @@ public class BotService {
                 }
                 break;
         }
+
         // --- /start is pressed
         if (messageText.equals(START_FIRST_COMMAND)) {
             messageToSend = startCommandReceived(update);
@@ -291,14 +329,14 @@ public class BotService {
      * Greetings to user on start.
      * We say about our shelter and offer to take a choice of menu item .
      *
-     * @param chatId identificator of user
+     * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
     private SendMessage startCommandReceived(Update update) {
         String greeting = "Здравствуйте! Это официальный телеграмм-бот приюта животных PetShelter. Мы помогаем людям, которые задумались приютить питомца. " +
                 "Для многих из Вас это первый опыт. Не волнуйтесь. Мы поможем с этим нелегким, но важным делом!\n" +
                 CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(update, BUTTONS_NAMES, 0, 5);
+        SendMessage message = setButtons(update, BUTTONS_NAMES, 0, 2);
         message.setText(greeting);
         return message;
     }
@@ -306,14 +344,34 @@ public class BotService {
     /**
      * Information menu about shelter
      *
-     * @param chatId identificator of chat
+     * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
     private SendMessage informAboutShelter(Update update) {
-        logger.info("Change keyboard to menu informAboutShelter");
-        String chooseItem = "Здесь Вы можете получить информацию о нашем приюте.\n" +
-                CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(update, BUTTONS_NAMES, 5, 4);
+        logger.info("Change keyboard to menu informAboutShelter, isDog = " + isDog);
+        String kindOfPet;
+        if (isDog) {
+            kindOfPet = "собак.";
+        } else {
+            kindOfPet = "кошек.";
+        }
+        String chooseItem = "Здесь Вы можете получить информацию о нашем приюте для " + kindOfPet + "\n"
+                + CHOOSE_MENU_ITEM_STRING;
+        SendMessage message = setButtons(update, BUTTONS_NAMES, 2, 6);
+        message.setText(chooseItem);
+        return message;
+    }
+
+    /**
+     * Menu of new user consulting
+     *
+     * @param update list of incoming updates, must be not Null
+     * @return message to reply
+     */
+    private SendMessage consultNewUser(Update update) {
+        logger.info("Change keyboard to menu consultNewUser, isDog = " + isDog);
+        String chooseItem = CHOOSE_MENU_ITEM_STRING;
+        SendMessage message = setButtons(update, BUTTONS_NAMES, 8, 7);
         message.setText(chooseItem);
         return message;
     }
@@ -321,14 +379,20 @@ public class BotService {
     /**
      * Information menu for Potential Adopter
      *
-     * @param chatId identificator of chat
+     * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
     private SendMessage informToPotentialAdopter(Update update) {
         logger.info("Change keyboard to menu informToPotentialAdopter");
         String chooseItem = "Здесь мы собрали полезную информацию, которая поможет вам подготовиться ко встрече с новым членом семьи.\n" +
                 CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(update, BUTTONS_NAMES, 9, 10);
+        int nubButt;
+        if (isDog) {
+            nubButt = 11;
+        } else {
+            nubButt = 9;
+        }
+        SendMessage message = setButtons(update, BUTTONS_NAMES, 15, nubButt);
         message.setText(chooseItem);
         return message;
     }
@@ -357,7 +421,7 @@ public class BotService {
                         "общее самочувствие и привыкание к новому месту. " +
                         "Изменение в поведении: отказ от старых привычек, приобретение новых." +
                         "Также просим приложить фотографию.";
-                message = setButtons(update, BUTTONS_NAMES, 19, 1);
+                message = setButtons(update, BUTTONS_NAMES, 14, 1);
                 message.setText(text);
             }
         }
@@ -365,19 +429,18 @@ public class BotService {
     }
 
     private SendMessage saveReportToDB(Update update) {
-        CatReport dogReport = new CatReport();
-        dogReport.setDateOfReport(LocalDate.now());
-    //    petReport.setUserId(update.getMessage().getChatId());
-        dogReport.setTextOfReport(update.getMessage().getText());
-        petReportService.createPetReport(dogReport);
+        PetReport petReport = new PetReport();
+        petReport.setDateOfReport(LocalDate.now());
+        //    petReport.setUserId(update.getMessage().getChatId());
+        petReport.setTextOfReport(update.getMessage().getText());
+        petReportService.createPetReport(petReport);
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText("Спасибо. Ваш отчет записан");
         return sendMessage;
     }
 
     /**
-
-    /**
+     * /**
      * Reply to user that his phone number has saved
      *
      * @param update list of incoming updates, must be not Null
@@ -409,6 +472,20 @@ public class BotService {
         Contact gettingContact = update.getMessage().getContact();
         logger.info(gettingContact.toString());
         return gettingContact;
+    }
+
+     SendMessage getPicture (Update update){
+        logger.info("getting picture...");
+        Document getFile = update.getMessage().getDocument();
+        String fileName = getFile.getFileName();
+        String fileType = getFile.getMimeType();
+     //   String fileTemp = getFile.getFileUniqueId();
+        long chatId = update.getMessage().getChatId();
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        String text = String.format("Получен файл %s, fileType: %s", fileName, fileType);
+        message.setText(text);
+        return message;
     }
 
     /**

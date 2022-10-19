@@ -69,6 +69,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendMessage = botService.sendUserPhoneToVolunteer(update);
                 sendMessageToUser(sendMessage);
             }
+            else if (update.getMessage() != null && update.getMessage().hasDocument()) {
+                // --- if pressed key get contact call method getContact() -----
+                // --- (1) Reply to user that his phone is saved
+                SendMessage sendMessage = botService.getPicture(update);
+                sendMessageToUser(sendMessage);
+            }
         } catch (Exception e) {
             logger.error("Error occured in method onUpdateReceived(): " + e.getMessage());
         }
