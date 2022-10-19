@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -88,7 +87,7 @@ public class UserService {
         User temp = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         userRepository.save(temp);
-        return "Probationary period" + temp.getName() + "increased by" + days + "days";
+        return "Probationary period " + temp.getName() + " increased by" + days + "days. Up to "+ temp.getFinishDate();
     }
 
     /**
