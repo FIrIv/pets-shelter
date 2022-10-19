@@ -1,9 +1,6 @@
 package com.telegrambot.jd501.service;
 
-import com.telegrambot.jd501.model.PetReport;
-import com.telegrambot.jd501.model.User;
-import com.telegrambot.jd501.model.Volunteer;
-import com.telegrambot.jd501.repository.InformationMessageRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -368,11 +365,11 @@ public class BotService {
     }
 
     private SendMessage saveReportToDB(Update update) {
-        PetReport petReport = new PetReport();
-        petReport.setDateOfReport(LocalDate.now());
+        CatReport dogReport = new CatReport();
+        dogReport.setDateOfReport(LocalDate.now());
     //    petReport.setUserId(update.getMessage().getChatId());
-        petReport.setTextOfReport(update.getMessage().getText());
-        petReportService.createPetReport(petReport);
+        dogReport.setTextOfReport(update.getMessage().getText());
+        petReportService.createPetReport(dogReport);
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText("Спасибо. Ваш отчет записан");
         return sendMessage;
@@ -429,7 +426,7 @@ public class BotService {
         String userName = update.getMessage().getChat().getUserName();
         // --- (1) send contact to volunteer ---
         // *** get first volunteer ***
-        Volunteer firstVolunteer = volunteerService.getAllVolunteer()
+        DogVolunteer firstVolunteer = volunteerService.getAllVolunteer()
                 .stream()
                 .findFirst()
                 .orElseThrow();
@@ -462,7 +459,7 @@ public class BotService {
         String userName = update.getMessage().getChat().getUserName();
         // --- (1) send contact to volunteer ---
         // *** get first volunteer ***
-        Volunteer firstVolunteer = volunteerService.getAllVolunteer()
+        DogVolunteer firstVolunteer = volunteerService.getAllVolunteer()
                 .stream()
                 .findFirst()
                 .orElseThrow();
@@ -498,8 +495,8 @@ public class BotService {
 
         // test, if users have sent reports yesterday and two days ago
         for (User petsMaster : toTestWithTrialPeriod) {
-            PetReport petReportYesterday = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(1L));
-            PetReport petReportTwoDaysAgo = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(2L));
+            CatReport petReportYesterday = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(1L));
+            CatReport petReportTwoDaysAgo = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(2L));
             if (petReportYesterday == null && petReportTwoDaysAgo == null) {
                 /* позвать волонтера!!!
                  * если пользователь не присылал 2 дня никакой информации (текст или фото), отправлять запрос волонтеру на связь с усыновителем.

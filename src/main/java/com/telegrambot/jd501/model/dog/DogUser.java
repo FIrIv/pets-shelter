@@ -1,26 +1,115 @@
 package com.telegrambot.jd501.model.dog;
 
-import com.telegrambot.jd501.model.User;
+
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "dog_user")
-public class DogUser extends User {
+public class DogUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private Long chatId;
+    private String name;
+    private String phone;
+    private Boolean isAdopted;
+    private LocalDate startDate;
+    private LocalDate finishDate;
     @OneToOne
     @JoinColumn(name = "pet_id")
-    private Dog pet;
+    private Dog dog;
 
-    @Override
-    public Dog getPet() {
-        return pet;
+    public Dog getDog() {
+        return dog;
     }
 
-    public void setPet(Dog pet) {
-        this.pet = pet;
+    public void setDog(Dog dog) {
+        this.dog = dog;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DogUser dogUser = (DogUser) o;
+        return Objects.equals(id, dogUser.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Boolean getAdopted() {
+        return isAdopted;
+    }
+
+    public void setAdopted(Boolean adopted) {
+        isAdopted = adopted;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getFinishDate() {
+        return finishDate;
+    }
+
+    public void setFinishDate(LocalDate finishDate) {
+        this.finishDate = finishDate;
+    }
+
+    @Override
+    public String toString() {
+        return "DogUser{" +
+                "id=" + id +
+                ", chatId=" + chatId +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", isAdopted=" + isAdopted +
+                ", startDate=" + startDate +
+                ", finishDate=" + finishDate +
+                ", dog=" + dog +
+                '}';
     }
 }
