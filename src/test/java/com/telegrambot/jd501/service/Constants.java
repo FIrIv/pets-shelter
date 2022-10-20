@@ -46,6 +46,7 @@ public class Constants {
     public static final User USER_11 = new User(ID1, CHAT_ID_1, NAME_1, PHONE_2);
     public static final User USER_2 = new User(ID2, CHAT_ID_2, NAME_2, PHONE_2);
     public static final User USER_3 = new User(ID1, CHAT_ID_1, NAME_1, PHONE_1, PET_1, TRUE, START_DATE, FINISH_DATE);
+    public static final User USER_4 = new User(ID1, CHAT_ID_1, NAME_1, PHONE_1, PET_1, TRUE, START_DATE, FINISH_DATE);
 
     public static final Volunteer VOLUNTEER_1 = new Volunteer(ID1, CHAT_ID_1, NAME_1);
     public static final Volunteer VOLUNTEER_11 = new Volunteer(ID1, CHAT_ID_1, NAME_2);
