@@ -57,4 +57,13 @@ public class Volunteer {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    public Volunteer() {
+    }
+
+    public Volunteer(Long id, Long chatId, String name) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+    }
 }

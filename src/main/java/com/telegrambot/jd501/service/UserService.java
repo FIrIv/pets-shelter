@@ -130,5 +130,15 @@ public class UserService {
         return userRepository.existsByChatId(userChatId);
     }
 
+    /**
+     * find user with by ID
+     * Use method User repository {@link UserRepository#findById(Object)}
+     *
+     * @return User
+     */
+    public User findUserByChatId(long userChatId) {
+        return userRepository.findUserByChatId(userChatId);
+    }
+
 
 }

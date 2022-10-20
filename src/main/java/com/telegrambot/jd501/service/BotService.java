@@ -11,18 +11,20 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import static java.lang.String.valueOf;
 
 @Service
 public class BotService {
@@ -39,6 +41,9 @@ public class BotService {
     private final String START_PHRASE_TO_VOLUNTEER = "*** Панель бота для волонтёров ***";
     private final String CHOOSE_MENU_ITEM_STRING = "*** Выберите интересующий пункт меню ***";
 
+    private long messageId = 0;
+    private boolean isReportButtonPressed = false;
+
     /**
      * ArrayList with button's names
      */
@@ -53,6 +58,7 @@ public class BotService {
             "Знакомство с питомцем", "Необходимые документы", "Как перевозить",
             "Дом для щенка", "Дом для взрослой собаки", "Дом для собаки с огр.возможностями",
             "Советы кинолога", "Контакты кинологов", "Причины, по которым могут отказать",
+            "вернуться в главное меню",
             "вернуться в главное меню"
 
     ));
@@ -78,12 +84,14 @@ public class BotService {
     //        24 - Дом для щенка (12)               25 - Дом для взрослой собаки (13) 26 - Дом для собаки с огр.возможностями (14)
     //        27 - Советы кинолога (15)             28 - Контакты кинологов (16)      29 - Причины, по которым могут отказать (17)
     //        0  - вернуться в главное меню (18)
+    //        0  - вернуться в главное меню (19)
 
     /**
      * Setup sending message
      *
      * @param chatId      identificator of chat
      * @param messageText sending text
+     * @return message to reply
      */
     public SendMessage setupSendMessage(long chatId, String messageText) {
         SendMessage message = new SendMessage();
@@ -100,18 +108,21 @@ public class BotService {
      * @param namesOfButtons   list of button's names, must be not Null
      * @param startIndexButton start index of button
      * @param numberOfButtons  number of used buttons
+     * @return message to reply
      */
-    public SendMessage setButtons(long chatId, List<String> namesOfButtons,
+    public SendMessage setButtons(Update update, List<String> namesOfButtons,
                                   int startIndexButton, int numberOfButtons) {
         logger.info("Setting of keyboard...");
+
+        long chatId = update.getMessage().getChatId();
         SendMessage sendMessage = setupSendMessage(chatId, "");
 
         // Create keyboard
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(false);
+        replyKeyboardMarkup.setResizeKeyboard(true);
 
         // Create list of strings of keyboard
         List<KeyboardRow> keyboard = new ArrayList<>();
@@ -154,6 +165,7 @@ public class BotService {
         }
         // Set created keyboard
         replyKeyboardMarkup.setKeyboard(keyboard);
+        messageId = update.getMessage().getMessageId();
         // Return setup message
         return sendMessage;
     }
@@ -162,6 +174,7 @@ public class BotService {
      * Check message from user (or what key is pressed)
      *
      * @param update list of incoming updates, must be not Null
+     * @return message to reply
      */
     SendMessage checkInputMessage(Update update) {
         String messageText = update.getMessage().getText();
@@ -176,25 +189,26 @@ public class BotService {
             return messageToSend;
         }
         // ****************************************************
-            int idMessage = -1;
+        int itemInList = -1;
         for (int i = 0; i < BUTTONS_NAMES.size(); i++) {
             if (BUTTONS_NAMES.get(i).equals(messageText)) {
-                idMessage = i;
+                itemInList = i;
                 break;
             }
         }
-        switch (idMessage) {
+        switch (itemInList) {
             // --- 1 - "Информация о приюте" button is pressed  (0)---
             case 0:
-                messageToSend = informAboutShelter(chatId);
+                messageToSend = informAboutShelter(update);
                 break;
             // --- 2 - "Как приютить питомца?" button is pressed (1)---
             case 1:
-                messageToSend = informToPotentialAdopter(chatId);
+                messageToSend = informToPotentialAdopter(update);
                 break;
             // --- 3 - "Прислать отчет" button is pressed (2)---
             case 2:
-                messageToSend = waitForReport(chatId);
+                messageToSend = waitForReport(update);
+                isReportButtonPressed = true;
                 break;
 //            // --- 4 - "Оставить данные для связи" button is pressed (3)---
 //            case 3:
@@ -202,14 +216,16 @@ public class BotService {
 //                break;
             // --- 5 - "Позвать волонтера" (4) button is pressed ---
             case 4:
-                messageToSend = callToVolunteer(chatId);
+                messageToSend = callToVolunteer(update);
                 break;
             // --- 0 - "вернуться в главное меню" (8) button is pressed ---
             case 8:
             case 18:
+            case 19:
                 // call main menu ---
-                messageToSend = setButtons(chatId, BUTTONS_NAMES, 0, 5);
+                messageToSend = setButtons(update, BUTTONS_NAMES, 0, 5);
                 messageToSend.setText(CHOOSE_MENU_ITEM_STRING);
+                isReportButtonPressed = false;
                 break;
             // --- 11 - "Общая информация" (5) button is pressed ---
             case 5:
@@ -265,12 +281,16 @@ public class BotService {
 
             // -------- any other command / string -----
             default:
-                messageToSend = setupSendMessage(chatId, CHOOSE_MENU_ITEM_STRING);
+                if (isReportButtonPressed) {
+                    messageToSend = saveReportToDB(update);
+                } else {
+                    messageToSend = setupSendMessage(chatId, CHOOSE_MENU_ITEM_STRING);
+                }
                 break;
         }
         // --- /start is pressed
         if (messageText.equals(START_FIRST_COMMAND)) {
-            messageToSend = startCommandReceived(chatId);
+            messageToSend = startCommandReceived(update);
         }
         return messageToSend;
     }
@@ -280,12 +300,13 @@ public class BotService {
      * We say about our shelter and offer to take a choice of menu item .
      *
      * @param chatId identificator of user
+     * @return message to reply
      */
-    private SendMessage startCommandReceived(long chatId) {
+    private SendMessage startCommandReceived(Update update) {
         String greeting = "Здравствуйте! Это официальный телеграмм-бот приюта животных PetShelter. Мы помогаем людям, которые задумались приютить питомца. " +
                 "Для многих из Вас это первый опыт. Не волнуйтесь. Мы поможем с этим нелегким, но важным делом!\n" +
                 CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(chatId, BUTTONS_NAMES, 0, 5);
+        SendMessage message = setButtons(update, BUTTONS_NAMES, 0, 5);
         message.setText(greeting);
         return message;
     }
@@ -294,12 +315,13 @@ public class BotService {
      * Information menu about shelter
      *
      * @param chatId identificator of chat
+     * @return message to reply
      */
-    private SendMessage informAboutShelter(long chatId) {
+    private SendMessage informAboutShelter(Update update) {
         logger.info("Change keyboard to menu informAboutShelter");
         String chooseItem = "Здесь Вы можете получить информацию о нашем приюте.\n" +
                 CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(chatId, BUTTONS_NAMES, 5, 4);
+        SendMessage message = setButtons(update, BUTTONS_NAMES, 5, 4);
         message.setText(chooseItem);
         return message;
     }
@@ -308,12 +330,13 @@ public class BotService {
      * Information menu for Potential Adopter
      *
      * @param chatId identificator of chat
+     * @return message to reply
      */
-    private SendMessage informToPotentialAdopter(long chatId) {
+    private SendMessage informToPotentialAdopter(Update update) {
         logger.info("Change keyboard to menu informToPotentialAdopter");
         String chooseItem = "Здесь мы собрали полезную информацию, которая поможет вам подготовиться ко встрече с новым членом семьи.\n" +
                 CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(chatId, BUTTONS_NAMES, 9, 10);
+        SendMessage message = setButtons(update, BUTTONS_NAMES, 9, 10);
         message.setText(chooseItem);
         return message;
     }
@@ -321,12 +344,46 @@ public class BotService {
     /**
      * Pet's report menu
      *
-     * @param chatId identificator of chat
+     * @param update list of incoming updates, must be not Null
+     * @return message to reply
      */
-    private SendMessage waitForReport(long chatId) {
-        String example = "Нажата кнопка " + "''" + BUTTONS_NAMES.get(2) + "''";
-        return setupSendMessage(chatId, example);
+    private SendMessage waitForReport(Update update) {
+        long userChatId = update.getMessage().getChatId();
+        SendMessage message = new SendMessage();
+        message.setChatId(userChatId);
+        message.setText("Вы не являетесь опекуном. Пожалуйста, обратитесь к волонтеру!");
+        // --- check User:
+        boolean userIsExists = userService.isExistsUser(userChatId);
+        logger.info("userIsExists-" + userIsExists);
+        // --- 1) exists?
+        if (userIsExists) {
+            User existUser = userService.findUserByChatId(userChatId);
+            // --- 2) is adopted?
+            if (existUser.getAdopted()) {
+                // --- change keyboard to sending report
+                String text = "Просим рассказать, как чувствует Ваш питомец. Какой сегодняшний рацион, " +
+                        "общее самочувствие и привыкание к новому месту. " +
+                        "Изменение в поведении: отказ от старых привычек, приобретение новых." +
+                        "Также просим приложить фотографию.";
+                message = setButtons(update, BUTTONS_NAMES, 19, 1);
+                message.setText(text);
+            }
+        }
+        return message;
     }
+
+    private SendMessage saveReportToDB(Update update) {
+        PetReport petReport = new PetReport();
+        petReport.setDateOfReport(LocalDate.now());
+    //    petReport.setUserId(update.getMessage().getChatId());
+        petReport.setTextOfReport(update.getMessage().getText());
+        petReportService.createPetReport(petReport);
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("Спасибо. Ваш отчет записан");
+        return sendMessage;
+    }
+
+    /**
 
     /**
      * Reply to user that his phone number has saved
@@ -338,10 +395,8 @@ public class BotService {
         SendMessage message = new SendMessage();
         String textToShow = "Телефонный номер отсутствует";
         Contact contact = getContact(update);
-        String phoneNumber = contact.getPhoneNumber();
         String userName = contact.getFirstName();
-        textToShow = userName + ". Ваш номер телефона: " + phoneNumber + " записан." +
-                "Вам обязательно перезвонят.";
+        textToShow = "Уважаемый " + userName + "! " + "С Вами обязательно свяжутся";
         message.setText(textToShow);
         long chatId = update.getMessage().getChatId();
         message.setChatId(chatId);
@@ -372,13 +427,11 @@ public class BotService {
      */
     SendMessage sendUserPhoneToVolunteer(Update update) {
         SendMessage message = new SendMessage();
-        String textToShow = "Телефонный номер отсутствует";
-        long userChatId = update.getMessage().getChatId();
         Contact contact = getContact(update);
+        long userChatId = contact.getUserId();
         String phoneNumber = contact.getPhoneNumber();
-        String userName = contact.getFirstName();
-        long userId = contact.getUserId();
-        boolean userIsExists = userService.isExistsUser(contact.getUserId());
+        String firstName = contact.getFirstName();
+        String userName = update.getMessage().getChat().getUserName();
         // --- (1) send contact to volunteer ---
         // *** get first volunteer ***
         Volunteer firstVolunteer = volunteerService.getAllVolunteer()
@@ -387,14 +440,15 @@ public class BotService {
                 .orElseThrow();
         logger.info(firstVolunteer.toString());
         message.setChatId(firstVolunteer.getChatId());
-        message.setText("Уважаемый волонтер! Просьба связаться с пользователем: id " + userId +  " phone " + phoneNumber +
-                " firstName "+ userName);
+        message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName + ". Его телефон " +
+                phoneNumber + "  https://t.me/" + userName);
         // ---- (2) check contact in base -----
+        boolean userIsExists = userService.isExistsUser(userChatId);
         if (!userIsExists) {
             // *** save phone number into DB, if contact doesn't exist
             User newUser = new User();
             newUser.setChatId(userChatId);
-            newUser.setName(userName);
+            newUser.setName(firstName);
             newUser.setPhone(phoneNumber);
             newUser.setAdopted(false);
             userService.createUser(newUser);
@@ -405,11 +459,23 @@ public class BotService {
     /**
      * Menu of volunteer's calling
      *
-     * @param chatId identificator of chat
+     * @param update identificator of chat
      */
-    private SendMessage callToVolunteer(long chatId) {
-        String example = "Нажата кнопка " + "''" + BUTTONS_NAMES.get(4) + "''";
-        return setupSendMessage(chatId, example);
+    private SendMessage callToVolunteer(Update update) {
+        SendMessage message = new SendMessage();
+        String firstName = update.getMessage().getChat().getFirstName();
+        String userName = update.getMessage().getChat().getUserName();
+        // --- (1) send contact to volunteer ---
+        // *** get first volunteer ***
+        Volunteer firstVolunteer = volunteerService.getAllVolunteer()
+                .stream()
+                .findFirst()
+                .orElseThrow();
+        logger.info(firstVolunteer.toString());
+        message.setChatId(firstVolunteer.getChatId());
+        message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName + " " +
+                "https://t.me/" + userName);
+        return message;
     }
 
     /**
