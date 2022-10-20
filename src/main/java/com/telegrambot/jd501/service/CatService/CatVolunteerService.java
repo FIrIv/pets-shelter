@@ -18,7 +18,7 @@ public class CatVolunteerService {
     }
     /**
      * get All CatVolunteer from DataBase
-     * Use method of DogVolunteer repository {@link CatVolunteerRepository#findAll()} ()} (Collection< CatVolunteer >)}
+     * Use method of CatVolunteer repository {@link CatVolunteerRepository#findAll()} ()} (Collection< CatVolunteer >)}
      *
      * @return collection of CatVolunteer
      */
@@ -30,7 +30,7 @@ public class CatVolunteerService {
      * add new CatVolunteer in DataBase
      *
      * @param catVolunteer
-     * Use  method DogVolunteer repository {@link CatVolunteerRepository#save(Object)} (CatVolunteer)}
+     * Use  method CatVolunteer repository {@link CatVolunteerRepository#save(Object)} (CatVolunteer)}
      * @return CatVolunteer
      */
     public CatVolunteer createCatVolunteer(CatVolunteer catVolunteer) {
@@ -39,7 +39,7 @@ public class CatVolunteerService {
 
     /**
      * change CatVolunteer in DataBase
-     * Use  method DogVolunteer repository {@link CatVolunteerRepository#save(Object)} (CatVolunteer)}
+     * Use  method CatVolunteer repository {@link CatVolunteerRepository#save(Object)} (CatVolunteer)}
      *
      * @param catVolunteer
      * @return CatVolunteer
@@ -58,7 +58,7 @@ public class CatVolunteerService {
      * @throws VolunteerNotFoundException if CatVolunteer with id not found
      */
     public CatVolunteer deleteCatVolunteer(Long id) {
-        CatVolunteer temp = catVolunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("DogVolunteer not found"));
+        CatVolunteer temp = catVolunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("CatVolunteer not found"));
         catVolunteerRepository.deleteById(id);
         return temp;
     }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 /**
- * class for work with Dog
+ * class for work with Cat
  * have CRUD operation
  */
 @RestController
@@ -44,7 +44,7 @@ public class CatController {
             )
     })
     @GetMapping
-    public Collection<Cat> getAllDog() {
+    public Collection<Cat> getAllCat() {
         return catService.getAllCat();
     }
 

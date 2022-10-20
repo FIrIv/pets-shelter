@@ -1,7 +1,6 @@
 package com.telegrambot.jd501.controllers.Cat;
 
 import com.telegrambot.jd501.model.cat.CatVolunteer;
-import com.telegrambot.jd501.model.dog.DogVolunteer;
 import com.telegrambot.jd501.service.CatService.CatVolunteerService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,7 +34,7 @@ public class CatVolunteerController {
     @ApiResponses({
             @ApiResponse(
              responseCode = "200",
-                    description = "Show all DogVolunteer",
+                    description = "Show all CatVolunteer",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = Collection.class)
@@ -59,7 +58,7 @@ public class CatVolunteerController {
                     description = "Create new Volunteer",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = DogVolunteer.class)
+                            schema = @Schema(implementation = CatVolunteer.class)
                     )
             )
     })

@@ -24,12 +24,12 @@ public class CatUserService {
     }
 
     /**
-     * get All DogUser from DataBase
-     * Use method of DogUser repository {@link CatUserRepository#findAll()} ()} (Collection< DogUser >)}
+     * get All CatUser from DataBase
+     * Use method of CatUser repository {@link CatUserRepository#findAll()} ()} (Collection< CatUser >)}
      *
-     * @return collection of DogUser
+     * @return collection of CatUser
      */
-    public Collection <CatUser> getAllDogUser() {
+    public Collection <CatUser> getAllCatUser() {
         return catUserRepository.findAll();
     }
 
@@ -66,7 +66,7 @@ public class CatUserService {
      *
      * @param id
      * @return Deleted CatUser
-     * @throws UserNotFoundException if DogUser with id not found
+     * @throws UserNotFoundException if CatUser with id not found
      */
     public CatUser deleteCatUser(Long id) {
         CatUser temp = catUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("CatUser not found"));
@@ -76,10 +76,10 @@ public class CatUserService {
 
     /**
      * find CatUser by id and change amount of probation period
-     * Use method DogUser repository {@link CatUserRepository#findById(Object)}
-     * Use  method DogUser repository {@link CatUserRepository#save(Object)} }
+     * Use method CatUser repository {@link CatUserRepository#findById(Object)}
+     * Use  method CatUser repository {@link CatUserRepository#save(Object)} }
      *
-     * @param id   - DogUser id for fing DogUser in repository,
+     * @param id   - CatUser id for fing CatUser in repository,
      * @param days - number of days to increase the term of the transfer
      * @return notification that probationary period has been extended (String)
      */
@@ -116,7 +116,7 @@ public class CatUserService {
      *
      * @return List<CatUser>
      */
-    public List<CatUser> findDogUsersByAdoptedIsTrue() {
+    public List<CatUser> findCatUsersByAdoptedIsTrue() {
         return catUserRepository.findCatUsersByIsAdoptedIsTrue();
     }
 
@@ -126,8 +126,8 @@ public class CatUserService {
      *
      * @return boolean
      */
-    public boolean isExistsCatUser(long dogUserChatId) {
-        return catUserRepository.existsByChatId(dogUserChatId);
+    public boolean isExistsCatUser(long catUserChatId) {
+        return catUserRepository.existsByChatId(catUserChatId);
     }
 
     /**

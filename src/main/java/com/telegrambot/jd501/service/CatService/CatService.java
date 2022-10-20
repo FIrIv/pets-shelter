@@ -21,7 +21,7 @@ public class CatService {
      * get All Cat from DataBase
      * Use method of Cat repository {@link CatRepository#findAll()} ()} (Collection < Cat >)}
      *
-     * @return collection of Dog
+     * @return collection of Cat
      */
     public Collection<Cat> getAllCat() {
         return catRepository.findAll();
@@ -54,7 +54,7 @@ public class CatService {
      *
      * @param id
      * @return Deleted cat
-     * @throws PetNotFoundException if Dog with id not found
+     * @throws PetNotFoundException if Cat with id not found
      */
     public Cat deleteCat(Long id) {
         Cat temp = catRepository.findById(id).orElseThrow(() -> new PetNotFoundException("Cat not found"));

@@ -103,7 +103,7 @@ public class DogReportService {
      * @return Collection <DogReport>
      */
     public List <DogReport> getAllReportsByChatId(Long chatId) {
-        DogUser tempDogUser = dogUserRepository.findCatUserByChatId(chatId);
+        DogUser tempDogUser = dogUserRepository.findDogUserByChatId(chatId);
         return dogReportRepository.findAllByDogUser(tempDogUser);
     }
 }
