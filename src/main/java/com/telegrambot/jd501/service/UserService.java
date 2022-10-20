@@ -83,11 +83,11 @@ public class UserService {
      * @param days - number of days to increase the term of the transfer
      * @return notification that probationary period has been extended (String)
      */
-    public String probationPeriodExtension(Long id, Integer days) {
+    public User probationPeriodExtension(Long id, Integer days) {
         User temp = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         userRepository.save(temp);
-        return "Probationary period" + temp.getName() + "increased by" + days + "days";
+        return temp;
     }
 
     /**

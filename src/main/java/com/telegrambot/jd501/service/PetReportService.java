@@ -72,7 +72,7 @@ public class PetReportService {
      *
      * @return collection of PetReport With Pet
      */
-    public Collection<PetReport> getAllPetReportByPet(Pet pet) {
+    public Collection<PetReport> getAllPetReportsByPet(Pet pet) {
         return petReportRepository.findPetReportsByPetOrderByDateOfReport(pet);
     }
 
