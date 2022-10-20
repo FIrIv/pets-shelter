@@ -36,7 +36,7 @@ public class CatInformationMessageController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Show all DogInformationMessage",
+                    description = "Show all CatInformationMessage",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = Collection.class)
@@ -44,7 +44,7 @@ public class CatInformationMessageController {
             )
     })
     @GetMapping
-    public Collection <CatInformationMessage> getAllDogInformationMessage() {
+    public Collection <CatInformationMessage> getAllCatInformationMessage() {
         return catInformationMessageService.getAllCatInformationMessage();
     }
 
@@ -65,7 +65,7 @@ public class CatInformationMessageController {
             )
     })
     @PostMapping
-    public ResponseEntity<CatInformationMessage> createDogInformationMessage(@RequestBody CatInformationMessage catInformationMessage) {
+    public ResponseEntity<CatInformationMessage> createCatInformationMessage(@RequestBody CatInformationMessage catInformationMessage) {
         return ResponseEntity.ok(catInformationMessageService.createCatInformationMessage(catInformationMessage));
     }
 
@@ -115,7 +115,7 @@ public class CatInformationMessageController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "DogInformationMessage not found"
+                    description = "CatInformationMessage not found"
             )
     })
     @DeleteMapping("{id}")

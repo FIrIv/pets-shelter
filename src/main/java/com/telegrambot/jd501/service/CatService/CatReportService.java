@@ -72,10 +72,10 @@ public class CatReportService {
     }
 
     /**
-     * get All CatReport from DataBase by Dog
+     * get All CatReport from DataBase by Cat
      * Use method of CatReport repository {@link CatReportRepository#findCatReportsByCatOrderByDateOfReport(Cat)}(List<CatReport>)}
      *
-     * @return collection of DogReport With Pet
+     * @return collection of CatReport With Pet
      */
     public Collection<CatReport> getAllCatReportByCat(Cat cat) {
         return catReportRepository.findCatReportsByCatOrderByDateOfReport(cat);
@@ -87,9 +87,9 @@ public class CatReportService {
      *
      * @param cat
      * @param dateOfReport
-     * @return DogReport With dog And dateOfReport
+     * @return CatReport With Cat And dateOfReport
      */
-    public CatReport getDogReportByDogAndDateOfReport(Cat cat, LocalDate dateOfReport) {
+    public CatReport getCatReportByCatAndDateOfReport(Cat cat, LocalDate dateOfReport) {
         return catReportRepository.findCatReportByCatAndDateOfReport(cat, dateOfReport);
     }
 

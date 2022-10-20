@@ -47,7 +47,7 @@ public class CatReportController {
     })
 
     @GetMapping
-    public Collection<CatReport> getAllDogReport() {
+    public Collection<CatReport> getAllCatReport() {
         return catReportService.getAllCatReport();
     }
 
@@ -67,7 +67,7 @@ public class CatReportController {
             )
     })
     @GetMapping("/pet_report")
-    public Collection<CatReport> getAllPetReportByPet(@RequestBody Cat cat) {
+    public Collection<CatReport> getAllCatReportByCat(@RequestBody Cat cat) {
         return catReportService.getAllCatReportByCat(cat);
     }
 
@@ -98,7 +98,7 @@ public class CatReportController {
      *
      * @param catReport
      * @return CatReport
-     * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException if DogReport with id not found
+     * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException if CatReport with id not found
      */
     @ApiResponses({
             @ApiResponse(
@@ -115,7 +115,7 @@ public class CatReportController {
             )
     })
     @PutMapping
-    public ResponseEntity<CatReport> updatePetReport(@RequestBody CatReport catReport) {
+    public ResponseEntity<CatReport> updateCatReport(@RequestBody CatReport catReport) {
         return ResponseEntity.ok(catReportService.updateCatReport(catReport));
     }
 
@@ -142,7 +142,7 @@ public class CatReportController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<CatReport> deletePetReport(@PathVariable Long id) {
+    ResponseEntity<CatReport> deleteCatReport(@PathVariable Long id) {
         return ResponseEntity.ok(catReportService.deleteCatReport(id));
     }
 }
