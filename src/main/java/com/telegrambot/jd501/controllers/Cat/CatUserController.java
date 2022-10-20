@@ -115,9 +115,9 @@ public class CatUserController {
                     description = "When User or Cat not found"
             )
     })
-    @PutMapping("/adoption")
-    public CatUser changeStatusOfTheAdopter(Long catUserId, Long catId) {
-        return catUserService.changeStatusOfTheAdopter(catUserId, catId);
+    @PutMapping("/adoption/{userId}/{petId}")
+    public CatUser changeStatusOfTheAdopter(@PathVariable Long userId, @PathVariable Long petId) {
+        return catUserService.changeStatusOfTheAdopter(userId, petId);
     }
 
     /**
@@ -138,8 +138,8 @@ public class CatUserController {
                     description = "When User not found"
             )
     })
-    @PutMapping("/change_period")
-    public String probationPeriodExtension(@RequestParam Long id, @RequestParam Integer days) {
+    @PutMapping("/change_period/{id}/{days}")
+    public CatUser probationPeriodExtension(@PathVariable Long id, @PathVariable Integer days) {
         return catUserService.probationPeriodExtension(id, days);
     }
 

@@ -114,9 +114,9 @@ public class DogUserController {
                     description = "When User or Pet not found"
             )
     })
-    @PutMapping("/adoption")
-    public DogUser changeStatusOfTheAdopter(Long dogUserId, Long dogId) {
-        return dogUserService.changeStatusOfTheAdopter(dogUserId, dogId);
+    @PutMapping("/adoption/{userId}/{petId}")
+    public DogUser changeStatusOfTheAdopter(@PathVariable Long userId, @PathVariable Long petId) {
+        return dogUserService.changeStatusOfTheAdopter(UserId, petId);
     }
 
     /**
@@ -137,8 +137,8 @@ public class DogUserController {
                     description = "When User not found"
             )
     })
-    @PutMapping("/change_period")
-    public String probationPeriodExtension(@RequestParam Long id, @RequestParam Integer days) {
+    @PutMapping("/change_period/{id}/{days}")
+    public DogUser probationPeriodExtension(@PathVariable Long id, @PathVariable Integer days) {
         return dogUserService.probationPeriodExtension(id, days);
     }
 

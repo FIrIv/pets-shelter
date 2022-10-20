@@ -51,23 +51,23 @@ public class DogReportController {
     }
 
     /**
-     * get All DogReport By Pet
-     * Use method of service {@link DogReportService#getAllDogReportByDog(Dog)}
+     * get All DogReport By ChatId
+     * Use method of service {@link DogReportService#getAllReportsByChatId(Long)}
      *
-     * @return collection of DogReport With Pet Ordered By Date
+     * @return collection of DogReport With ChatId Ordered By Date
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Show all PetReport with Dog Ordered By Date",
+                    description = "Show all PetReport with ChatId Ordered By Date",
                     content = @Content(
                             schema = @Schema(implementation = Collection.class)
                     )
             )
     })
-    @GetMapping("/pet_report")
-    public Collection<DogReport> getAllPetReportByPet(@RequestBody Dog dog) {
-        return dogReportService.getAllDogReportByDog(dog);
+    @GetMapping("/pet_report/{chatId}")
+    public Collection<DogReport> getAllPetReportsByChatId(@PathVariable Long chatId) {
+        return dogReportService.getAllReportsByChatId(chatId);
     }
 
     /**

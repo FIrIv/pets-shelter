@@ -2,13 +2,10 @@ package com.telegrambot.jd501.service.DogService;
 
 import com.telegrambot.jd501.Exceptions.PetReportNotFoundException;
 
-import com.telegrambot.jd501.model.cat.CatReport;
-import com.telegrambot.jd501.model.cat.CatUser;
-import com.telegrambot.jd501.model.dog.Dog;
 import com.telegrambot.jd501.model.dog.DogReport;
 import com.telegrambot.jd501.model.dog.DogUser;
-import com.telegrambot.jd501.repository.Cat.CatReportRepository;
 import com.telegrambot.jd501.repository.Dog.DogReportRepository;
+import com.telegrambot.jd501.repository.Dog.DogRepository;
 import com.telegrambot.jd501.repository.Dog.DogUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +18,12 @@ public class DogReportService {
     private final DogReportRepository dogReportRepository;
     private final DogUserRepository dogUserRepository;
 
-    public DogReportService(DogReportRepository dogReportRepository, DogUserRepository dogUserRepository) {
+    private final DogRepository dogRepository;
+
+    public DogReportService(DogReportRepository dogReportRepository, DogUserRepository dogUserRepository, DogRepository dogRepository) {
         this.dogReportRepository = dogReportRepository;
         this.dogUserRepository = dogUserRepository;
+        this.dogRepository = dogRepository;
     }
 
     /**
@@ -74,25 +74,15 @@ public class DogReportService {
     }
 
     /**
-     * get All DogReport from DataBase by Dog
-     * Use method of DogReport repository {@link DogReportRepository#findDogReportsByDogOrderByDateOfReport(Dog)} ()} (List<DogReport>)}
+     * get one DogReport from DataBase by User And DateOfReport
+     * Use method of DogReport repository {@link DogReportRepository#findDogReportByDogUserAndDateOfReport(DogUser, LocalDate)} (Dog, LocalDate)} ()} (<DogReport>)}
      *
-     * @return collection of DogReport With Pet
-     */
-    public Collection<DogReport> getAllDogReportByDog(Dog dog) {
-        return dogReportRepository.findDogReportsByDogOrderByDateOfReport(dog);
-    }
-
-    /**
-     * get one DogReport from DataBase by Pet And DateOfReport
-     * Use method of DogReport repository {@link DogReportRepository#findDogReportByDogAndDateOfReport(Dog, LocalDate)} (Dog, LocalDate)} ()} (<DogReport>)}
-     *
-     * @param dog
+     * @param user
      * @param dateOfReport
-     * @return DogReport With dog And dateOfReport
+     * @return DogReport With chatId And dateOfReportogUser
      */
-    public DogReport getDogReportByDogAndDateOfReport(Dog dog, LocalDate dateOfReport) {
-        return dogReportRepository.findDogReportByDogAndDateOfReport(dog, dateOfReport);
+    public DogReport getDogReportByUserAndDateOfReport(DogUser user, LocalDate dateOfReport) {
+        return dogReportRepository.findDogReportByDogUserAndDateOfReport(user, dateOfReport);
     }
 
     /**
