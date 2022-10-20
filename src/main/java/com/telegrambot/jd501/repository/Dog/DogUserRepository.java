@@ -10,4 +10,6 @@ public interface DogUserRepository extends JpaRepository <DogUser, Long> {
 
     boolean existsByChatId(Long chatId);
     DogUser findDogUserByChatId(long dogUserChatId);
+
+    DogUser findCatUserByChatId(Long chatId);
 }

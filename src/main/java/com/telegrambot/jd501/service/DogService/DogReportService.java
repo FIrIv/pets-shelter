@@ -2,22 +2,28 @@ package com.telegrambot.jd501.service.DogService;
 
 import com.telegrambot.jd501.Exceptions.PetReportNotFoundException;
 
+import com.telegrambot.jd501.model.cat.CatReport;
+import com.telegrambot.jd501.model.cat.CatUser;
 import com.telegrambot.jd501.model.dog.Dog;
 import com.telegrambot.jd501.model.dog.DogReport;
+import com.telegrambot.jd501.model.dog.DogUser;
+import com.telegrambot.jd501.repository.Cat.CatReportRepository;
 import com.telegrambot.jd501.repository.Dog.DogReportRepository;
+import com.telegrambot.jd501.repository.Dog.DogUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class DogReportService {
     private final DogReportRepository dogReportRepository;
+    private final DogUserRepository dogUserRepository;
 
-
-
-    public DogReportService(DogReportRepository dogReportRepository) {
+    public DogReportService(DogReportRepository dogReportRepository, DogUserRepository dogUserRepository) {
         this.dogReportRepository = dogReportRepository;
+        this.dogUserRepository = dogUserRepository;
     }
 
     /**
@@ -87,5 +93,17 @@ public class DogReportService {
      */
     public DogReport getDogReportByDogAndDateOfReport(Dog dog, LocalDate dateOfReport) {
         return dogReportRepository.findDogReportByDogAndDateOfReport(dog, dateOfReport);
+    }
+
+    /**
+     * Find all DogReport By Chat Id
+     * Use method DogReport repository {@link DogReportRepository # findAllByDogUser}
+     *
+     * @param chatId
+     * @return Collection <DogReport>
+     */
+    public List <DogReport> getAllReportsByChatId(Long chatId) {
+        DogUser tempDogUser = dogUserRepository.findCatUserByChatId(chatId);
+        return dogReportRepository.findAllByDogUser(tempDogUser);
     }
 }
