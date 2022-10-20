@@ -505,13 +505,13 @@ public class BotService {
         for (User petsMaster : toTestWithTrialPeriod) {
             PetReport petReportYesterday = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(1L));
             PetReport petReportTwoDaysAgo = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(2L));
-            if (petReportYesterday == null && petReportTwoDaysAgo == null) {
+            if (petReportYesterday == null && petReportTwoDaysAgo == null /*&& дата сегодня >= дата начала + 2*/) {
                 /* позвать волонтера!!!
                  * если пользователь не присылал 2 дня никакой информации (текст или фото), отправлять запрос волонтеру на связь с усыновителем.
                  * Текст: "Усыновитель petsMaster не отправляет информацию уже 2 дня".*/
                 break;
             }
-            if (petReportYesterday == null) {
+            if (petReportYesterday == null /*&& дата сегодня >= дата начала + 1*/) {
                 /* если пользователь не присылал вчера информацию (текст и фото),
                 напоминаем: "Добрый день, мы не получили отчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет и информациюю о питомце".*/
                 break;

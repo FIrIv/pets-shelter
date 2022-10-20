@@ -2,6 +2,7 @@ package com.telegrambot.jd501.controllers;
 
 import com.telegrambot.jd501.model.Pet;
 import com.telegrambot.jd501.model.PetReport;
+import com.telegrambot.jd501.repository.PetRepository;
 import com.telegrambot.jd501.service.PetReportService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,8 +23,11 @@ import java.util.Collection;
 public class PetReportController {
     private final PetReportService petReportService;
 
-    public PetReportController(PetReportService petReportService) {
+    private final PetRepository petRepository;
+
+    public PetReportController(PetReportService petReportService, PetRepository petRepository) {
         this.petReportService = petReportService;
+        this.petRepository = petRepository;
     }
 
     /**
@@ -50,7 +54,7 @@ public class PetReportController {
 
     /**
      * get All PetReport By Pet
-     * Use method of service {@link PetReportService#getAllPetReportByPet(Pet)} ()}}
+     * Use method of service {@link PetReportService#getAllPetReportsByPet(Pet)} ()}}
      *
      * @return collection of PetReport With Pet Ordered By Date
      */
@@ -63,9 +67,9 @@ public class PetReportController {
                     )
             )
     })
-    @GetMapping("/pet_report")
-    public Collection<PetReport> getAllPetReportByPet(@RequestBody Pet pet) {
-        return petReportService.getAllPetReportByPet(pet);
+    @GetMapping("/pet_report/{petId}")
+    public Collection<PetReport> getAllPetReportsByPetId(@PathVariable Long petId) {
+        return petReportService.getAllPetReportsByPet(petRepository.findById(petId).orElseThrow());
     }
 
     /**
