@@ -94,8 +94,8 @@ class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(USER_3);
 
         LocalDate updatedDate = USER_3.getFinishDate().plusDays(days);
-        String result = "Probationary period " + USER_3.getName() + " increased by" + days + "days. Up to " + updatedDate;
-        assertEquals(out.probationPeriodExtension(any(Long.class), days), result);
+        USER_4.setFinishDate(updatedDate);
+        assertEquals(out.probationPeriodExtension(any(Long.class), days), USER_4);
     }
 
     @Test

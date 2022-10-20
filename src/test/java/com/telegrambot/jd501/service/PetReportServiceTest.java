@@ -60,7 +60,7 @@ class PetReportServiceTest {
     void getAllPetReportByPetTest() {
         when(petReportRepository.findPetReportsByPetOrderByDateOfReport(PET_1)).thenReturn(List.of(PET_REPORT_1,PET_REPORT_11));
 
-        assertEquals(out.getAllPetReportByPet(PET_1), PET_REPORT_LIST_ORDERED);
+        assertEquals(out.getAllPetReportsByPet(PET_1), PET_REPORT_LIST_ORDERED);
     }
 
     @Test
