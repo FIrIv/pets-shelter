@@ -52,10 +52,10 @@ public class CatReportController {
     }
 
     /**
-     * get All CatReport By Pet
-     * Use method of service {@link CatReportService#getAllCatReportByCat(Cat)}
+     * get All CatReport By ChatId
+     * Use method of service {@link CatReportService#getAllCatReportByChatId(Long)}
      *
-     * @return collection of CatReport With Pet Ordered By Date
+     * @return collection of CatReport With ChatId Ordered By Date
      */
     @ApiResponses({
             @ApiResponse(
@@ -66,9 +66,9 @@ public class CatReportController {
                     )
             )
     })
-    @GetMapping("/pet_report")
-    public Collection<CatReport> getAllCatReportByCat(@RequestBody Cat cat) {
-        return catReportService.getAllCatReportByCat(cat);
+    @GetMapping("/pet_report/{chatId}")
+    public Collection<CatReport> getAllPetReportsByChatId(@PathVariable Long chatId) {
+        return catReportService.getAllReportsByChatId(chatId);
     }
 
     /**
