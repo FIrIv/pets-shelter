@@ -110,4 +110,25 @@ public class User {
                 ", finishDate=" + finishDate +
                 '}';
     }
+
+    public User() {
+    }
+
+    public User(Long id, Long chatId, String name, String phone) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+    }
+
+    public User(Long id, Long chatId, String name, String phone, Pet pet, Boolean isAdopted, LocalDate startDate, LocalDate finishDate) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+        this.pet = pet;
+        this.isAdopted = isAdopted;
+        this.startDate = startDate;
+        this.finishDate = finishDate;
+    }
 }

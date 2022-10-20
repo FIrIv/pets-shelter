@@ -47,4 +47,12 @@ public class Pet {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    public Pet() {
+    }
+
+    public Pet(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
