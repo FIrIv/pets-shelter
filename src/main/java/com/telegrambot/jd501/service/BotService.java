@@ -104,7 +104,7 @@ public class BotService {
     /**
      * Make buttons in Telegram's chat
      *
-     * @param chatId           identificator of chat
+     * @param update           identificator of chat in Update
      * @param namesOfButtons   list of button's names, must be not Null
      * @param startIndexButton start index of button
      * @param numberOfButtons  number of used buttons
@@ -299,7 +299,7 @@ public class BotService {
      * Greetings to user on start.
      * We say about our shelter and offer to take a choice of menu item .
      *
-     * @param chatId identificator of user
+     * @param update identificator of user in Update
      * @return message to reply
      */
     private SendMessage startCommandReceived(Update update) {
@@ -314,7 +314,7 @@ public class BotService {
     /**
      * Information menu about shelter
      *
-     * @param chatId identificator of chat
+     * @param update identificator of chat in Update
      * @return message to reply
      */
     private SendMessage informAboutShelter(Update update) {
@@ -329,7 +329,7 @@ public class BotService {
     /**
      * Information menu for Potential Adopter
      *
-     * @param chatId identificator of chat
+     * @param update identificator of chat in Update
      * @return message to reply
      */
     private SendMessage informToPotentialAdopter(Update update) {
