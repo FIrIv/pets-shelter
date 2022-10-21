@@ -11,8 +11,9 @@ import java.util.List;
 
 public interface CatReportRepository extends JpaRepository<CatReport, Long> {
 
-    List<CatReport> findCatReportsByCatOrderByDateOfReport(Cat cat);
+    List<CatReport> findCatReportsByCatUserOrderByDateOfReport(CatUser user);
 
-//    CatReport findCatReportByCatAndDateOfReport (Cat cat, LocalDate dateOfReport);
+    CatReport findCatReportByCatUserAndDateOfReport (CatUser user, LocalDate dateOfReport);
+
     List<CatReport> findAllByCatUser (CatUser catUser);
 }

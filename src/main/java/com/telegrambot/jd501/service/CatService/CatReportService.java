@@ -2,7 +2,6 @@ package com.telegrambot.jd501.service.CatService;
 
 import com.telegrambot.jd501.Exceptions.PetReportNotFoundException;
 
-import com.telegrambot.jd501.model.cat.Cat;
 import com.telegrambot.jd501.model.cat.CatReport;
 import com.telegrambot.jd501.model.cat.CatUser;
 import com.telegrambot.jd501.repository.Cat.CatReportRepository;
@@ -72,29 +71,29 @@ public class CatReportService {
     }
 
     /**
-     * get All CatReport from DataBase by Dog
-     * Use method of CatReport repository {@link CatReportRepository#findCatReportsByCatOrderByDateOfReport(Cat)}(List<CatReport>)}
+     * get All CatReport from DataBase by User
+     * Use method of CatReport repository {@link CatReportRepository#findCatReportsByCatUserOrderByDateOfReport(CatUser)}(List<CatReport>)}
      *
-     * @return collection of DogReport With Pet
+     * @return collection of CatReport With User
      */
-    public Collection<CatReport> getAllCatReportByCat(Cat cat) {
-        return catReportRepository.findCatReportsByCatOrderByDateOfReport(cat);
+    public Collection<CatReport> getAllCatReportByCatUser(CatUser user) {
+        return catReportRepository.findCatReportsByCatUserOrderByDateOfReport(user);
     }
 
     /**
-     * get one CatReport from DataBase by Pet And DateOfReport
-     * Use method of CatReport repository {@link CatReportRepository#findCatReportByCatAndDateOfReport(Cat, LocalDate)} (<CatReport>)}
+     * get one CatReport from DataBase by User And DateOfReport
+     * Use method of CatReport repository {@link CatReportRepository#findCatReportByCatUserAndDateOfReport(CatUser, LocalDate)} (<CatReport>)}
      *
-     * @param cat
+     * @param user
      * @param dateOfReport
-     * @return DogReport With dog And dateOfReport
+     * @return CatReport With Cat And dateOfReport
      */
-//    public CatReport getDogReportByDogAndDateOfReport(Cat cat, LocalDate dateOfReport) {
-//        return catReportRepository.findCatReportByCatAndDateOfReport(cat, dateOfReport);
-//    }
+    public CatReport getCatReportByCatUserAndDateOfReport(CatUser user, LocalDate dateOfReport) {
+        return catReportRepository.findCatReportByCatUserAndDateOfReport(user, dateOfReport);
+    }
 
     /**
-     * Find all CatReport By Chat Id
+     * Find all CatReport By ChatId
      *
      * Use method CatReport repository {@link CatReportRepository # }
      * @param chatId

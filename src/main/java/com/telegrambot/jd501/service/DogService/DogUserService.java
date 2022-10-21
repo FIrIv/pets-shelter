@@ -84,11 +84,11 @@ public class DogUserService {
      * @param days - number of days to increase the term of the transfer
      * @return notification that probationary period has been extended (String)
      */
-    public String probationPeriodExtension(Long id, Integer days) {
+    public DogUser probationPeriodExtension(Long id, Integer days) {
         DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         dogUserRepository.save(temp);
-        return "Probationary period" + temp.getName() + "increased by" + days + "days";
+        return temp;
     }
 
     /**

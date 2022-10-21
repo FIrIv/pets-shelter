@@ -9,5 +9,5 @@ public interface CatUserRepository extends JpaRepository <CatUser, Long> {
     List<CatUser> findCatUsersByIsAdoptedIsTrue ();
 
     boolean existsByChatId(Long chatId);
-    CatUser findCatUserByChatId(long catUserChatId);
+    CatUser findCatUserByChatId(Long catUserChatId);
 }

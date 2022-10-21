@@ -52,7 +52,7 @@ public class CatInformationMessageService {
      *
      * @param id
      * @return Deleted CatInformationMessage
-     * @throws InformationMessageNotFoundException if DogInformationMessage with id not found
+     * @throws InformationMessageNotFoundException if CatInformationMessage with id not found
      */
     public CatInformationMessage deleteCatInformationMessage(Long id) {
         CatInformationMessage temp = catInformationMessageRepository.findById(id).orElseThrow(() -> new InformationMessageNotFoundException("CatInformationMessage not found"));

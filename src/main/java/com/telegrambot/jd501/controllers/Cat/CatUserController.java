@@ -29,7 +29,7 @@ public class CatUserController {
 
     /**
      * get All CatUser from DataBase
-     * Use method of CatUser servise {@link CatUserService#getAllDogUser()} (Collection<CatUser>)}
+     * Use method of CatUser servise {@link CatUserService#getAllCatUser()} (Collection<CatUser>)}
      *
      * @return collection of CatUser
      */
@@ -44,8 +44,8 @@ public class CatUserController {
             )
     })
     @GetMapping
-    public Collection<CatUser> getAllDogUser() {
-        return catUserService.getAllDogUser();
+    public Collection<CatUser> getAllCatUser() {
+        return catUserService.getAllCatUser();
     }
 
     /**
@@ -101,7 +101,7 @@ public class CatUserController {
      * add adopted Cat, Date of adoption, and set test day at 30 days
      * Use method User repository {@link }
      *
-     * @param catUserId - dogUser id for fing dogUser in repository,
+     * @param catUserId - catUser id for fing catUser in repository,
      * @param catId  - pet id for fing user in repository,
      * @return Changed User
      */
@@ -115,9 +115,9 @@ public class CatUserController {
                     description = "When User or Cat not found"
             )
     })
-    @PutMapping("/adoption")
-    public CatUser changeStatusOfTheAdopter(Long catUserId, Long catId) {
-        return catUserService.changeStatusOfTheAdopter(catUserId, catId);
+    @PutMapping("/adoption/{userId}/{petId}")
+    public CatUser changeStatusOfTheAdopter(@PathVariable Long userId, @PathVariable Long petId) {
+        return catUserService.changeStatusOfTheAdopter(userId, petId);
     }
 
     /**
@@ -138,8 +138,8 @@ public class CatUserController {
                     description = "When User not found"
             )
     })
-    @PutMapping("/change_period")
-    public String probationPeriodExtension(@RequestParam Long id, @RequestParam Integer days) {
+    @PutMapping("/change_period/{id}/{days}")
+    public CatUser probationPeriodExtension(@PathVariable Long id, @PathVariable Integer days) {
         return catUserService.probationPeriodExtension(id, days);
     }
 
@@ -149,7 +149,7 @@ public class CatUserController {
      *
      * @param id
      * @return Deleted CatUser
-     * @throws com.telegrambot.jd501.Exceptions.UserNotFoundException if DogUser with id not found
+     * @throws com.telegrambot.jd501.Exceptions.UserNotFoundException if CatUser with id not found
      */
     @ApiResponses({
             @ApiResponse(

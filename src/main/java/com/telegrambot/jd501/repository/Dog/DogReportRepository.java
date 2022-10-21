@@ -10,8 +10,9 @@ import java.util.List;
 
 public interface DogReportRepository extends JpaRepository<DogReport, Long> {
 
-    List <DogReport> findDogReportsByDogOrderByDateOfReport(Dog dog);
+    List <DogReport> findDogReportsByDogUserOrderByDateOfReport (DogUser user);
 
-    DogReport findDogReportByDogAndDateOfReport (Dog dog, LocalDate dateOfReport);
+    DogReport findDogReportByDogUserAndDateOfReport (DogUser user, LocalDate dateOfReport);
+
     List <DogReport> findAllByDogUser (DogUser tempDogUser);
 }
