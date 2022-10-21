@@ -5,7 +5,6 @@ import com.telegrambot.jd501.Exceptions.PetReportNotFoundException;
 import com.telegrambot.jd501.model.dog.DogReport;
 import com.telegrambot.jd501.model.dog.DogUser;
 import com.telegrambot.jd501.repository.Dog.DogReportRepository;
-import com.telegrambot.jd501.repository.Dog.DogRepository;
 import com.telegrambot.jd501.repository.Dog.DogUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +17,9 @@ public class DogReportService {
     private final DogReportRepository dogReportRepository;
     private final DogUserRepository dogUserRepository;
 
-    private final DogRepository dogRepository;
-
-    public DogReportService(DogReportRepository dogReportRepository, DogUserRepository dogUserRepository, DogRepository dogRepository) {
+    public DogReportService(DogReportRepository dogReportRepository, DogUserRepository dogUserRepository) {
         this.dogReportRepository = dogReportRepository;
         this.dogUserRepository = dogUserRepository;
-        this.dogRepository = dogRepository;
     }
 
     /**
@@ -85,6 +81,16 @@ public class DogReportService {
         return dogReportRepository.findDogReportByDogUserAndDateOfReport(user, dateOfReport);
     }
 
+ /**
+     * get All DogReport from DataBase by Dog
+     * Use method of DogReport repository {@link DogReportRepository#findDogReportsByDogOrderByDateOfReport(Dog)} ()} (List<DogReport>)}
+     *
+     * @return collection of DogReport With Pet
+     */
+//    public Collection<DogReport> getAllDogReportByChatId(long chatId) {
+//        return dogReportRepository.findDogReportsByDogOrderByDateOfReport(dog);
+//    }
+
     /**
      * Find all DogReport By Chat Id
      * Use method DogReport repository {@link DogReportRepository # findAllByDogUser}
@@ -93,6 +99,18 @@ public class DogReportService {
      * @return Collection <DogReport>
      */
     public List <DogReport> getAllReportsByChatId(Long chatId) {
+        DogUser tempDogUser = dogUserRepository.findDogUserByChatId(chatId);
+        return dogReportRepository.findAllByDogUser(tempDogUser);
+    }
+
+    /**
+     * Find all DogReport By Chat Id
+     * Use method DogReport repository {@link DogReportRepository # findAllByDogUser}
+     *
+     * @param chatId
+     * @return Collection <DogReport>
+     */
+    public List<DogReport> getAllReportsByChatId(Long chatId) {
         DogUser tempDogUser = dogUserRepository.findDogUserByChatId(chatId);
         return dogReportRepository.findAllByDogUser(tempDogUser);
     }

@@ -9,6 +9,6 @@ public interface DogUserRepository extends JpaRepository <DogUser, Long> {
     List<DogUser> findDogUsersByIsAdoptedIsTrue ();
 
     boolean existsByChatId(Long chatId);
+    
     DogUser findDogUserByChatId(long dogUserChatId);
-
 }

@@ -99,8 +99,8 @@ public class CatReportService {
      * @param chatId
      * @return Collection CatReport
      */
-    public List <CatReport> getAllReportsByChatId (Long chatId){
-       CatUser tempCatUser = catUserRepository.findCatUserByChatId(chatId);
-       return catReportRepository.findAllByCatUser(tempCatUser);
+    public List<CatReport> getAllReportsByChatId (Long chatId){
+        CatUser tempCatUser = catUserRepository.findCatUserByChatId(chatId);
+        return catReportRepository.findAllByCatUser(tempCatUser);
     }
 }
