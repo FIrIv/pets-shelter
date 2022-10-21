@@ -2,6 +2,7 @@ package com.telegrambot.jd501.service.CatService;
 
 import com.telegrambot.jd501.Exceptions.InformationMessageNotFoundException;
 import com.telegrambot.jd501.model.cat.CatInformationMessage;
+import com.telegrambot.jd501.model.dog.DogInformationMessage;
 import com.telegrambot.jd501.repository.Cat.CatInformationMessageRepository;
 import org.springframework.stereotype.Service;
 
@@ -57,5 +58,9 @@ public class CatInformationMessageService {
         CatInformationMessage temp = catInformationMessageRepository.findById(id).orElseThrow(() -> new InformationMessageNotFoundException("CatInformationMessage not found"));
         catInformationMessageRepository.deleteById(id);
         return temp;
+    }
+
+    public CatInformationMessage findCatInformationMessageById(Long id) {
+        return catInformationMessageRepository.findById(id).orElseThrow();
     }
 }

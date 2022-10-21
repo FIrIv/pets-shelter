@@ -59,4 +59,8 @@ public class DogInformationMessageService {
         dogInformationMessageRepository.deleteById(id);
         return temp;
     }
+
+    public DogInformationMessage findDogInformationMessageById(Long id) {
+        return dogInformationMessageRepository.findById(id).orElseThrow();
+    }
 }

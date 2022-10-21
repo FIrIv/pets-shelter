@@ -72,4 +72,5 @@ public class DogVolunteerService {
     public boolean isExistsDogVolunteer(long userChatId) {
         return dogVolunteerRepository.existsByChatId(userChatId);
     }
+
 }
