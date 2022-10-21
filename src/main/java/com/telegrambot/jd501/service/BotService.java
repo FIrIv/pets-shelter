@@ -476,27 +476,34 @@ public class BotService {
      * @return message to reply
      */
     private SendMessage saveReportToDB(Update update) {
+        logger.info("saveReportToDB is running...");
         long chatId = update.getMessage().getChatId();
         LocalDate today = LocalDate.now();
-        String reportText = "Вы уже направили отчет. Для его корректировки, обратитесь к волонтеру.";
+        String reportText = "???";
         // *** 1) check who is sending report: dogUser or catUser
         //     2) check saving report from this user today
         if (isDog) {
             Collection<DogReport> reports = dogReportService.getAllReportsByChatId(chatId);
-            if (reports != null) {
+            logger.info(reports.toString());
+            if (reports.isEmpty()) {
+                // save into db new report
+                //.............
+                reportText = "Спасибо. Ваш отчет записан";
+            } else {
                 DogReport dogReport = reports.stream()
                         .filter(r -> r.getDateOfReport() == today)
                         .findFirst()
                         .orElseThrow();
-                System.out.println(dogReport);
-                reportText = "Спасибо. Ваш отчет записан";
-                // save into db new report
-                //.............
+                // === check for existing report ==
+                if (dogReport != null && !dogReport.getTextOfReport().isEmpty()){
+                    reportText = "Вы уже направили отчет. Для его корректировки, обратитесь к волонтеру.";
+                }
             }
 
         } else {
             Collection<CatReport> reports = catReportService.getAllReportsByChatId(chatId);
-            if (reports != null) {
+
+            if (reports == null) {
                 CatReport catReport = reports.stream()
                         .filter(r -> r.getDateOfReport() == today)
                         .findFirst()
@@ -572,15 +579,19 @@ public class BotService {
      * @return message to send
      */
     SendMessage sendUserPhoneToVolunteer(Update update) {
+        // --- Make message for sending contact to volunteer ---
         SendMessage message = callToVolunteer(update);
+        String textToVolunter = message.getText();
+        // --- extract from contact's data: chatId, first name and phone number
         Contact contact = getContact(update);
         long userChatId = contact.getUserId();
         String phoneNumber = contact.getPhoneNumber();
         String firstName = contact.getFirstName();
-        // --- (1) send contact to volunteer ---
-        // *** get first volunteer ***
+        String addPhoneNumberToVolunteerText = textToVolunter + " . Его телефон " + phoneNumber;
+        message.setText(addPhoneNumberToVolunteerText);
+        // --- work with data base ---
         if(isDog){
-            // ---- (2) check contact in base -----
+            // ---- check contact in base -----
             boolean userIsExists = dogUserService.isExistsDogUser(userChatId);
             if (!userIsExists) {
                 // *** save phone number into DB, if contact doesn't exist
@@ -614,13 +625,11 @@ public class BotService {
      */
     private SendMessage callToVolunteer(Update update) {
         SendMessage message = new SendMessage();
-        Contact contact = getContact(update);
-        String phoneNumber = contact.getPhoneNumber();
-        String firstName = contact.getFirstName();
+        String firstName = update.getMessage().getChat().getFirstName();
         String userName = update.getMessage().getChat().getUserName();
         DogVolunteer firstDogVolunteer;
         CatVolunteer firstCatVolunteer;
-        // --- (1) send contact to volunteer ---
+        // --- Make message for sending contact to volunteer ---
         // *** get first volunteer ***
         if(isDog){
             firstDogVolunteer = dogVolunteerService.getAllDogVolunteer()
@@ -629,8 +638,8 @@ public class BotService {
                     .orElseThrow();
             logger.info(firstDogVolunteer.toString());
             message.setChatId(firstDogVolunteer.getChatId());
-            message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName + ". Его телефон " +
-                    phoneNumber + "  https://t.me/" + userName);
+            message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
+                     "  https://t.me/" + userName);
         } else {
             firstCatVolunteer = catVolunteerService.getAllCatVolunteer()
                     .stream()
@@ -638,8 +647,8 @@ public class BotService {
                     .orElseThrow();
             logger.info(firstCatVolunteer.toString());
             message.setChatId(firstCatVolunteer.getChatId());
-            message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName + ". Его телефон " +
-                    phoneNumber + "  https://t.me/" + userName);
+            message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
+                    "  https://t.me/" + userName);
         }
         return message;
     }
