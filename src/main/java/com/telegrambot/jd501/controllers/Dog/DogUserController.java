@@ -100,8 +100,8 @@ public class DogUserController {
      * add adopted Pet, Date of adoption, and set test day at 30 days
      * Use method User repository {@link }
      *
-     * @param dogUserId - dogUser id for fing dogUser in repository,
-     * @param dogId  - pet id for fing user in repository,
+     * @param userId - dogUser id for fing dogUser in repository,
+     * @param petId  - pet id for fing user in repository,
      * @return Changed User
      */
     @ApiResponses({
@@ -116,7 +116,7 @@ public class DogUserController {
     })
     @PutMapping("/adoption/{userId}/{petId}")
     public DogUser changeStatusOfTheAdopter(@PathVariable Long userId, @PathVariable Long petId) {
-        return dogUserService.changeStatusOfTheAdopter(UserId, petId);
+        return dogUserService.changeStatusOfTheAdopter(userId, petId);
     }
 
     /**
