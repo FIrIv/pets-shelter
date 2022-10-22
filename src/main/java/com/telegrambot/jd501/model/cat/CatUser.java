@@ -27,10 +27,6 @@ public class CatUser  {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getChatId() {
         return chatId;
     }

@@ -52,10 +52,6 @@ public class DogReport {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public LocalDate getDateOfReport() {
         return dateOfReport;
     }
