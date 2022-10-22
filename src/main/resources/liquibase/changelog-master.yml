@@ -1,3 +1,5 @@
 databaseChangeLog:
  - include:
     file: liquibase/scripts/petShelter.sql
+ - include:
+    file: liquibase/scripts/petShelter-1.sql
