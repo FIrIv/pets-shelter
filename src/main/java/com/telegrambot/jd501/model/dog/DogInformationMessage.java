@@ -56,4 +56,12 @@ public class DogInformationMessage  {
     public void setText(String text) {
         this.text = text;
     }
+
+    public DogInformationMessage() {
+    }
+
+    public DogInformationMessage(Long id, String text) {
+        this.id = id;
+        this.text = text;
+    }
 }

@@ -110,4 +110,25 @@ public class CatUser  {
                 ", pet=" + cat +
                 '}';
     }
+
+    public CatUser() {
+    }
+
+    public CatUser(Long id, Long chatId, String name, String phone) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+    }
+
+    public CatUser(Long id, Long chatId, String name, String phone, Boolean isAdopted, LocalDate startDate, LocalDate finishDate, Cat cat) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+        this.isAdopted = isAdopted;
+        this.startDate = startDate;
+        this.finishDate = finishDate;
+        this.cat = cat;
+    }
 }

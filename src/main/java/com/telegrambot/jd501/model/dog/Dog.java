@@ -47,5 +47,11 @@ public class Dog  {
         return Objects.equals(id, dog.id);
     }
 
+    public Dog() {
+    }
 
+    public Dog(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

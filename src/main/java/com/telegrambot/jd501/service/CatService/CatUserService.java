@@ -101,8 +101,8 @@ public class CatUserService {
      * @return Changed User
      */
     public CatUser changeStatusOfTheAdopter(Long userId, Long catId) {
-        CatUser userTemp = catUserRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Cat petTemp = catRepository.findById(catId).orElseThrow(() -> new PetNotFoundException("Pet not found"));
+        CatUser userTemp = catUserRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Cat User not found"));
+        Cat petTemp = catRepository.findById(catId).orElseThrow(() -> new PetNotFoundException("Cat not found"));
         userTemp.setAdopted(true);
         userTemp.setCat(petTemp);
         userTemp.setStartDate(LocalDate.now());
