@@ -55,4 +55,13 @@ public class CatVolunteer {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    public CatVolunteer() {
+    }
+
+    public CatVolunteer(Long id, Long chatId, String name) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+    }
 }

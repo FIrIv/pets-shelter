@@ -50,4 +50,12 @@ public class CatInformationMessage {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public CatInformationMessage() {
+    }
+
+    public CatInformationMessage(Long id, String text) {
+        this.id = id;
+        this.text = text;
+    }
 }

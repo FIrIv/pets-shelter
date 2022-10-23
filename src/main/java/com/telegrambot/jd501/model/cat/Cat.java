@@ -46,4 +46,12 @@ public class Cat {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public Cat() {
+    }
+
+    public Cat(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

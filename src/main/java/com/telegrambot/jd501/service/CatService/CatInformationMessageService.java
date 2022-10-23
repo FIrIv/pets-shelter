@@ -61,6 +61,6 @@ public class CatInformationMessageService {
     }
 
     public CatInformationMessage findCatInformationMessageById(Long id) {
-        return catInformationMessageRepository.findById(id).orElseThrow();
+        return catInformationMessageRepository.findById(id).orElseThrow(() ->new InformationMessageNotFoundException("CatInformationMessage not found"));
     }
 }

@@ -80,4 +80,15 @@ public class DogReport {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public DogReport() {
+    }
+
+    public DogReport(Long id, LocalDate dateOfReport, String textOfReport, String photoLink, DogUser dogUser) {
+        this.id = id;
+        this.dateOfReport = dateOfReport;
+        this.textOfReport = textOfReport;
+        this.photoLink = photoLink;
+        this.dogUser = dogUser;
+    }
 }

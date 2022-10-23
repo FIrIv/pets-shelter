@@ -51,7 +51,7 @@ public class DogReportService {
      * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException if DogReport with id not found
      */
     public DogReport updateDogReport(DogReport dogReport) {
-        dogReportRepository.findById(dogReport.getId()).orElseThrow(() -> new PetReportNotFoundException("Report not found"));
+        dogReportRepository.findById(dogReport.getId()).orElseThrow(() -> new PetReportNotFoundException("DogReport not found"));
         return dogReportRepository.save(dogReport);
     }
 
@@ -64,7 +64,7 @@ public class DogReportService {
      * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException if PetReport with id not found
      */
     public DogReport deleteDogReport(Long id) {
-        DogReport temp = dogReportRepository.findById(id).orElseThrow(() -> new PetReportNotFoundException("Report not found"));
+        DogReport temp = dogReportRepository.findById(id).orElseThrow(() -> new PetReportNotFoundException("DogReport not found"));
         dogReportRepository.deleteById(id);
         return temp;
     }

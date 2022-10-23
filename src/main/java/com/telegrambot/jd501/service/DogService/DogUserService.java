@@ -85,7 +85,7 @@ public class DogUserService {
      * @return notification that probationary period has been extended (String)
      */
     public DogUser probationPeriodExtension(Long id, Integer days) {
-        DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         dogUserRepository.save(temp);
         return temp;
@@ -102,8 +102,8 @@ public class DogUserService {
      * @return Changed User
      */
     public DogUser changeStatusOfTheAdopter(Long dogUserId, Long dogId) {
-        DogUser userTemp = dogUserRepository.findById(dogUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Dog petTemp = dogRepository.findById(dogId).orElseThrow(() -> new PetNotFoundException("Pet not found"));
+        DogUser userTemp = dogUserRepository.findById(dogUserId).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
+        Dog petTemp = dogRepository.findById(dogId).orElseThrow(() -> new PetNotFoundException("Dog not found"));
         userTemp.setAdopted(true);
         userTemp.setDog(petTemp);
         userTemp.setStartDate(LocalDate.now());
