@@ -15,6 +15,7 @@ import com.telegrambot.jd501.service.DogService.DogInformationMessageService;
 import com.telegrambot.jd501.service.DogService.DogReportService;
 import com.telegrambot.jd501.service.DogService.DogUserService;
 import com.telegrambot.jd501.service.DogService.DogVolunteerService;
+import org.checkerframework.checker.nullness.Opt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,9 +30,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -46,6 +45,7 @@ public class BotService {
     private final DogInformationMessageService dogInformationMessageService;
     private final CatReportService catReportService;
     private final DogReportService dogReportService;
+
     public BotService(CatUserService catUserService, DogUserService dogUserService,
                       CatVolunteerService catVolunteerService, DogVolunteerService dogVolunteerService,
                       CatInformationMessageService catInformationMessageService, DogInformationMessageService dogInformationMessageService,
@@ -140,11 +140,11 @@ public class BotService {
      * @param numberOfButtons  number of used buttons
      * @return message to reply
      */
-    public SendMessage setButtons(Update update, List<String> namesOfButtons,
+    public SendMessage setButtons(long chatId, List<String> namesOfButtons,
                                   int startIndexButton, int numberOfButtons) {
         logger.info("Setting of keyboard... First button - " + namesOfButtons.get(startIndexButton));
 
-        long chatId = update.getMessage().getChatId();
+        // long chatId = update.getMessage().getChatId();
         SendMessage sendMessage = setupSendMessage(chatId, "");
 
         // Create keyboard
@@ -213,10 +213,9 @@ public class BotService {
         // *** If it exists, return start greeting to volunteer.
         boolean isExistsVolunteer;
         if (isDog) {
-             isExistsVolunteer = dogVolunteerService.isExistsDogVolunteer(chatId);
-        }
-        else {
-             isExistsVolunteer = catVolunteerService.isExistsCatVolunteer(chatId);
+            isExistsVolunteer = dogVolunteerService.isExistsDogVolunteer(chatId);
+        } else {
+            isExistsVolunteer = catVolunteerService.isExistsCatVolunteer(chatId);
         }
         if (isExistsVolunteer) {
             messageToSend.setText(START_PHRASE_TO_VOLUNTEER);
@@ -237,29 +236,29 @@ public class BotService {
             // --- "Приют для кошек" button is pressed  (0)---
             case 0:
                 isDog = false;
-                messageToSend = informAboutShelter(update);
+                messageToSend = informAboutShelter(chatId);
                 break;
             // --- "Приют для собак" button is pressed  (1)---
             case 1:
                 isDog = true;
-                messageToSend = informAboutShelter(update);
+                messageToSend = informAboutShelter(chatId);
                 break;
             // --- "Информация о приюте" button is pressed  (2)---
             case 2:
-                messageToSend = consultNewUser(update);
+                messageToSend = consultNewUser(chatId);
                 break;
-                // --- "в Главное меню" button is pressed  (14, 22)---
+            // --- "в Главное меню" button is pressed  (14, 22)---
             case 14:
             case 22:
-                messageToSend = informAboutShelter(update);
+                messageToSend = informAboutShelter(chatId);
                 break;
             // --- "Как приютить питомца?" button is pressed (3)---
             case 3:
-                messageToSend = informToPotentialAdopter(update);
+                messageToSend = informToPotentialAdopter(chatId);
                 break;
             // ---- "Прислать отчет" button is pressed (4)---
             case 4:
-                messageToSend = waitForReport(update);
+                messageToSend = waitForReport(chatId);
 
                 break;
 //            // -- - "Оставить данные для связи" button is pressed (5)---
@@ -275,7 +274,7 @@ public class BotService {
                 break;
             // --- "Выбрать приют (собаки/кошки)" (8) button is pressed ---
             case 7:
-                messageToSend = startCommandReceived(update);
+                messageToSend = startCommandReceived(chatId);
                 isReportButtonPressed = false;
                 break;
 
@@ -356,7 +355,7 @@ public class BotService {
 
         // --- /start is pressed
         if (messageText.equals(START_FIRST_COMMAND)) {
-            messageToSend = startCommandReceived(update);
+            messageToSend = startCommandReceived(chatId);
         }
         return messageToSend;
     }
@@ -368,11 +367,11 @@ public class BotService {
      * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
-    private SendMessage startCommandReceived(Update update) {
+    private SendMessage startCommandReceived(long chatId) {
         String greeting = "Здравствуйте! Это официальный телеграмм-бот приютов для животных PetShelter. Мы помогаем людям, которые задумались приютить питомца. " +
                 "Для многих из Вас это первый опыт. Не волнуйтесь. Мы поможем с этим нелегким, но важным делом!\n" +
                 CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(update, BUTTONS_NAMES, 0, 2);
+        SendMessage message = setButtons(chatId, BUTTONS_NAMES, 0, 2);
         message.setText(greeting);
         return message;
     }
@@ -383,7 +382,7 @@ public class BotService {
      * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
-    private SendMessage informAboutShelter(Update update) {
+    private SendMessage informAboutShelter(long chatId) {
         logger.info("Change keyboard to menu informAboutShelter, isDog = " + isDog);
         String kindOfPet;
         if (isDog) {
@@ -393,7 +392,7 @@ public class BotService {
         }
         String chooseItem = "Здесь Вы можете получить информацию о нашем приюте для " + kindOfPet + "\n"
                 + CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(update, BUTTONS_NAMES, 2, 6);
+        SendMessage message = setButtons(chatId, BUTTONS_NAMES, 2, 6);
         message.setText(chooseItem);
         return message;
     }
@@ -404,10 +403,10 @@ public class BotService {
      * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
-    private SendMessage consultNewUser(Update update) {
+    private SendMessage consultNewUser(long chatId) {
         logger.info("Change keyboard to menu consultNewUser, isDog = " + isDog);
         String chooseItem = CHOOSE_MENU_ITEM_STRING;
-        SendMessage message = setButtons(update, BUTTONS_NAMES, 8, 7);
+        SendMessage message = setButtons(chatId, BUTTONS_NAMES, 8, 7);
         message.setText(chooseItem);
         return message;
     }
@@ -418,7 +417,7 @@ public class BotService {
      * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
-    private SendMessage informToPotentialAdopter(Update update) {
+    private SendMessage informToPotentialAdopter(long chatId) {
         logger.info("Change keyboard to menu informToPotentialAdopter");
         String chooseItem = "Здесь мы собрали полезную информацию, которая поможет вам подготовиться ко встрече с новым членом семьи.\n" +
                 CHOOSE_MENU_ITEM_STRING;
@@ -428,7 +427,7 @@ public class BotService {
         } else {
             nubButt = 9;
         }
-        SendMessage message = setButtons(update, BUTTONS_NAMES, 15, nubButt);
+        SendMessage message = setButtons(chatId, BUTTONS_NAMES, 15, nubButt);
         message.setText(chooseItem);
         return message;
     }
@@ -439,33 +438,39 @@ public class BotService {
      * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
-    private SendMessage waitForReport(Update update) {
-        long userChatId = update.getMessage().getChatId();
+    private SendMessage waitForReport(long userChatId) {
+        logger.info("Wait for report......");
         SendMessage message = new SendMessage();
         message.setChatId(userChatId);
-        String text = "Вы не являетесь опекуном. Пожалуйста, обратитесь к волонтеру!";
         // --- check User:
         boolean userIsExists;
+        boolean userIsAdopted;
         if (isDog) {
             // --- 1) exists? 2) adopted? ---
-            if (dogUserService.isExistsDogUser(userChatId) && dogUserService.findDogUserByChatId(userChatId).getAdopted()) {
-                logger.info("Take report from DogUser");
-                text = TEXT_ABOUT_REPORT;
-                // --- change keyboard to sending report
-                message = setButtons(update, BUTTONS_NAMES, 14, 1);
-                isReportButtonPressed = true;
-            }
+            userIsExists = dogUserService.isExistsDogUser(userChatId);
+            userIsAdopted = dogUserService.findDogUserByChatId(userChatId).getAdopted();
+            message = goToTakingForReport(userChatId, userIsExists, userIsAdopted);
         } else {
             // --- 1) exists? 2) adopted? ---
-            if (catUserService.isExistsCatUser(userChatId) && catUserService.findCatUserByChatId(userChatId).getAdopted()) {
-                logger.info("Take report from CatUser");
-                text = TEXT_ABOUT_REPORT;
-                // --- change keyboard to sending report
-                message = setButtons(update, BUTTONS_NAMES, 14, 1);
-                isReportButtonPressed = true;
-            }
+            userIsExists = catUserService.isExistsCatUser(userChatId);
+            userIsAdopted = catUserService.findCatUserByChatId(userChatId).getAdopted();
+            message = goToTakingForReport(userChatId, userIsExists, userIsAdopted);
         }
-        message.setText(text);
+//        message.setText(text);
+        return message;
+    }
+
+    private SendMessage goToTakingForReport(long chatId, boolean isExists, boolean isAdopted) {
+        String text = "Вы не являетесь опекуном. Пожалуйста, обратитесь к волонтеру!";
+        SendMessage message = setupSendMessage(chatId, text);
+        logger.info(String.format("chatId-%s, isExists-%s, isAdopted-%s", chatId, isExists, isAdopted));
+        if (isExists && isAdopted) {
+            logger.info("User is exists and adopted. Take report ");
+            // --- change keyboard to sending report
+            message = setButtons(chatId, BUTTONS_NAMES, 14, 1);
+            message.setText(TEXT_ABOUT_REPORT);
+            isReportButtonPressed = true;
+        }
         return message;
     }
 
@@ -476,51 +481,75 @@ public class BotService {
      * @return message to reply
      */
     private SendMessage saveReportToDB(Update update) {
-        logger.info("saveReportToDB is running...");
+        logger.info("saveReportToDB method is running...");
         long chatId = update.getMessage().getChatId();
+        String reportText = update.getMessage().getText();
         LocalDate today = LocalDate.now();
-        String reportText = "???";
+        String answerText = "";
         // *** 1) check who is sending report: dogUser or catUser
         //     2) check saving report from this user today
         if (isDog) {
             Collection<DogReport> reports = dogReportService.getAllReportsByChatId(chatId);
-            logger.info(reports.toString());
             if (reports.isEmpty()) {
                 // save into db new report
-                //.............
-                reportText = "Спасибо. Ваш отчет записан";
+                DogReport dogReport = new DogReport();
+                DogUser dogUser = dogUserService.findDogUserByChatId(chatId);
+                dogReport.setDateOfReport(today);
+                dogReport.setTextOfReport(reportText);
+                dogReport.setDogUser(dogUser);
+                dogReportService.createDogReport(dogReport);
+                answerText = "Спасибо. Ваш отчет записан";
+                logger.info("Text of report has saved into DB");
             } else {
+                logger.info("check for existing report...");
                 DogReport dogReport = reports.stream()
-                        .filter(r -> r.getDateOfReport() == today)
+                        .filter(r -> r.getDateOfReport().isEqual(today))
                         .findFirst()
-                        .orElseThrow();
-                // === check for existing report ==
-                if (dogReport != null && !dogReport.getTextOfReport().isEmpty()){
-                    reportText = "Вы уже направили отчет. Для его корректировки, обратитесь к волонтеру.";
+                        .get();
+                logger.info("### " + dogReport);//.getTextOfReport());
+                // === check for existing text report ==
+                if (!dogReport.getTextOfReport().contains("textOfReport='null'")) {
+                    logger.warn("* Report already has saved! *");
+                    answerText = "Вы уже направили отчет. Для его корректировки, обратитесь к волонтеру.";
+                }
+                // === check for existing photo in report ==
+                if (dogReport.getPhotoLink() == null) {
+                    logger.warn("# Report doesn't have photo! #");
+                    answerText += "\n* Не забудьте приложить фотографию питомца! *";
                 }
             }
-
         } else {
             Collection<CatReport> reports = catReportService.getAllReportsByChatId(chatId);
-
-            if (reports == null) {
-                CatReport catReport = reports.stream()
-                        .filter(r -> r.getDateOfReport() == today)
-                        .findFirst()
-                        .orElseThrow();
-                System.out.println(catReport);
-                reportText = "Спасибо. Ваш отчет записан";
+            if (reports.isEmpty()) {
                 // save into db new report
-                //.............
+                CatReport catReport = new CatReport();
+                CatUser catUser = catUserService.findCatUserByChatId(chatId);
+                catReport.setDateOfReport(today);
+                catReport.setTextOfReport(reportText);
+                catReport.setCatUser(catUser);
+                catReportService.createCatReport(catReport);
+                answerText = "Спасибо. Ваш отчет записан";
+                logger.info("Text of report has saved into DB");
+            } else {
+                logger.info("check for existing report...");
+                CatReport catReport = reports.stream()
+                        .filter(r -> r.getDateOfReport().isEqual(today))
+                        .findFirst()
+                        .get();
+                logger.info("### " + catReport);//.getTextOfReport());
+                // === check for existing text report ==
+                if (!catReport.getTextOfReport().contains("textOfReport='null'")) {
+                    logger.warn("* Report already has saved! *");
+                    answerText = "Вы уже направили отчет. Для его корректировки, обратитесь к волонтеру.";
+                }
+                // === check for existing photo in report ==
+                if (catReport.getPhotoLink() == null) {
+                    logger.warn("# Report doesn't have photo! #");
+                    answerText += "\n* Не забудьте приложить фотографию питомца! *";
+                }
             }
-
         }
-//        PetReport petReport = new PetReport();
-//        petReport.setDateOfReport(LocalDate.now());
-        //    petReport.setUserId(update.getMessage().getChatId());
-//        petReport.setTextOfReport(update.getMessage().getText());
-//        petReportService.createPetReport(petReport);
-        return setupSendMessage(chatId,reportText);
+        return setupSendMessage(chatId, answerText);
     }
 
     /**
@@ -558,12 +587,12 @@ public class BotService {
         return gettingContact;
     }
 
-     SendMessage getPicture (Update update){
+    SendMessage getPicture(Update update) {
         logger.info("getting picture...");
         Document getFile = update.getMessage().getDocument();
         String fileName = getFile.getFileName();
         String fileType = getFile.getMimeType();
-     //   String fileTemp = getFile.getFileUniqueId();
+        //   String fileTemp = getFile.getFileUniqueId();
         long chatId = update.getMessage().getChatId();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -587,10 +616,15 @@ public class BotService {
         long userChatId = contact.getUserId();
         String phoneNumber = contact.getPhoneNumber();
         String firstName = contact.getFirstName();
-        String addPhoneNumberToVolunteerText = textToVolunter + " . Его телефон " + phoneNumber;
+        String addPhoneNumberToVolunteerText;
+        if (textToVolunter.contains("*** Извините, произошла ошибка!")) {
+            addPhoneNumberToVolunteerText = textToVolunter;
+        } else {
+            addPhoneNumberToVolunteerText = textToVolunter + " . Его телефон " + phoneNumber + " chatId-" + userChatId;
+        }
         message.setText(addPhoneNumberToVolunteerText);
         // --- work with data base ---
-        if(isDog){
+        if (isDog) {
             // ---- check contact in base -----
             boolean userIsExists = dogUserService.isExistsDogUser(userChatId);
             if (!userIsExists) {
@@ -631,25 +665,33 @@ public class BotService {
         CatVolunteer firstCatVolunteer;
         // --- Make message for sending contact to volunteer ---
         // *** get first volunteer ***
-        if(isDog){
-            firstDogVolunteer = dogVolunteerService.getAllDogVolunteer()
-                    .stream()
-                    .findFirst()
-                    .orElseThrow();
-            logger.info(firstDogVolunteer.toString());
-            message.setChatId(firstDogVolunteer.getChatId());
-            message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
-                     "  https://t.me/" + userName);
-        } else {
-            firstCatVolunteer = catVolunteerService.getAllCatVolunteer()
-                    .stream()
-                    .findFirst()
-                    .orElseThrow();
-            logger.info(firstCatVolunteer.toString());
-            message.setChatId(firstCatVolunteer.getChatId());
-            message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
-                    "  https://t.me/" + userName);
+        message.setText("\n*** Извините, произошла ошибка! *** \n Мы уже работаем над ее устранением. \n" +
+                "Просьба повторить запрос позднее.");
+        message.setChatId(update.getMessage().getChatId());
+        try {
+            if (isDog) {
+                firstDogVolunteer = dogVolunteerService.getAllDogVolunteer()
+                        .stream()
+                        .findFirst()
+                        .orElseThrow();
+                logger.info(firstDogVolunteer.toString());
+                message.setChatId(firstDogVolunteer.getChatId());
+                message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
+                        "  https://t.me/" + userName);
+            } else {
+                firstCatVolunteer = catVolunteerService.getAllCatVolunteer()
+                        .stream()
+                        .findFirst()
+                        .orElseThrow();
+                logger.info(firstCatVolunteer.toString());
+                message.setChatId(firstCatVolunteer.getChatId());
+                message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
+                        "  https://t.me/" + userName);
+            }
+        } catch (NoSuchElementException e) {
+            logger.error("Volunteer doesn't exist in DB ### " + e.getMessage());
         }
+        logger.info("Contact of volunteer is ::::::::::::::: " + message.toString());
         return message;
     }
 
