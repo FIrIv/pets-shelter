@@ -91,7 +91,7 @@ public class DogInformationMessageController {
             )
     })
     @PutMapping
-    public ResponseEntity<DogInformationMessage> updateInformationMessage(@RequestBody DogInformationMessage dogInformationMessage) {
+    public ResponseEntity<DogInformationMessage> updateDogInformationMessage(@RequestBody DogInformationMessage dogInformationMessage) {
         return ResponseEntity.ok(dogInformationMessageService.updateDogInformationMessage(dogInformationMessage));
     }
 
@@ -118,7 +118,7 @@ public class DogInformationMessageController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<DogInformationMessage> deleteInformationMessage(@PathVariable Long id) {
+    public ResponseEntity<DogInformationMessage> deleteDogInformationMessage(@PathVariable Long id) {
         return ResponseEntity.ok(dogInformationMessageService.deleteDogInformationMessage(id));
     }
 }

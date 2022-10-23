@@ -9,9 +9,16 @@ import java.util.Objects;
 public class CatInformationMessage {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
     private String text;
+
+    public CatInformationMessage() {
+    }
+
+    public CatInformationMessage(Long id, String text) {
+        this.id = id;
+        this.text = text;
+    }
 
     public Long getId() {
         return id;
