@@ -92,7 +92,7 @@ public class CatInformationMessageController {
             )
     })
     @PutMapping
-    public ResponseEntity<CatInformationMessage> updateInformationMessage(@RequestBody CatInformationMessage catInformationMessage) {
+    public ResponseEntity<CatInformationMessage> updateCatInformationMessage(@RequestBody CatInformationMessage catInformationMessage) {
         return ResponseEntity.ok(catInformationMessageService.updateCatInformationMessage(catInformationMessage));
     }
 
@@ -119,7 +119,7 @@ public class CatInformationMessageController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<CatInformationMessage> deleteCatInformationMessage(@PathVariable Long id) {
+    public ResponseEntity<CatInformationMessage> deleteCatInformationMessage(@PathVariable Long id) {
         return ResponseEntity.ok(catInformationMessageService.deleteCatInformationMessage(id));
     }
 }

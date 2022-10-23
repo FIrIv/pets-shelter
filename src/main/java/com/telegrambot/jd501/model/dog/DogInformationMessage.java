@@ -8,13 +8,17 @@ import java.util.Objects;
 @Entity
 @Table(name = "dog_information_message")
 public class DogInformationMessage  {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String text;
 
+    public DogInformationMessage() {
+    }
+
+    public DogInformationMessage(Long id, String text) {
+        this.id = id;
+        this.text = text;
+    }
     @Override
     public String toString() {
         return "DogInformationMessage{" +
