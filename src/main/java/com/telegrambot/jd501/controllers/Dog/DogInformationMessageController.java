@@ -27,8 +27,8 @@ public class DogInformationMessageController {
     }
 
     /**
-     * get All DogInformationMessage from DataBase
-     * Use method of DogInformationMessage servise {@link DogInformationMessageService#getAllDogInformationMessage()} ()} (Collection< DogInformationMessage >)}
+     * get All CatInformationMessage from DataBase
+     * Use method of DogInformationMessage servise {@link DogInformationMessageService#getAllInformationMessages()} ()} (Collection< DogInformationMessage >)}
      *
      * @return collection of DogInformationMessage
      */
@@ -43,14 +43,14 @@ public class DogInformationMessageController {
             )
     })
     @GetMapping
-    public Collection <DogInformationMessage> getAllDogInformationMessage() {
-        return dogInformationMessageService.getAllDogInformationMessage();
+    public Collection <DogInformationMessage> getAllInformationMessage() {
+        return dogInformationMessageService.getAllInformationMessages();
     }
 
     /**
-     * add new DogInformationMessage in DataBase
+     * add new CatInformationMessage in DataBase
      *
-     * @param dogInformationMessage Use method of DogInformationMessageServise {@link DogInformationMessageService#createDogInformationMessage(DogInformationMessage)}
+     * @param dogInformationMessage Use method of DogInformationMessageServise {@link DogInformationMessageService#createInformationMessage(DogInformationMessage)}
      * @return DogInformationMessage
      */
     @ApiResponses({
@@ -64,13 +64,13 @@ public class DogInformationMessageController {
             )
     })
     @PostMapping
-    public ResponseEntity<DogInformationMessage> createDogInformationMessage(@RequestBody DogInformationMessage dogInformationMessage) {
-        return ResponseEntity.ok(dogInformationMessageService.createDogInformationMessage(dogInformationMessage));
+    public ResponseEntity<DogInformationMessage> createInformationMessage(@RequestBody DogInformationMessage dogInformationMessage) {
+        return ResponseEntity.ok(dogInformationMessageService.createInformationMessage(dogInformationMessage));
     }
 
     /**
-     * change DogInformationMessage in DataBase
-     * Use method of Servise {@link DogInformationMessageService#updateDogInformationMessage(DogInformationMessage)}
+     * change CatInformationMessage in DataBase
+     * Use method of Servise {@link DogInformationMessageService#updateInformationMessage(DogInformationMessage)}
      *
      * @param dogInformationMessage
      * @return DogInformationMessage
@@ -92,12 +92,12 @@ public class DogInformationMessageController {
     })
     @PutMapping
     public ResponseEntity<DogInformationMessage> updateInformationMessage(@RequestBody DogInformationMessage dogInformationMessage) {
-        return ResponseEntity.ok(dogInformationMessageService.updateDogInformationMessage(dogInformationMessage));
+        return ResponseEntity.ok(dogInformationMessageService.updateInformationMessage(dogInformationMessage));
     }
 
     /**
-     * delete DogInformationMessage from DataBase by id
-     * Use method of Servise {@link DogInformationMessageService#deleteDogInformationMessage(Long id)}
+     * delete CatInformationMessage from DataBase by id
+     * Use method of Servise {@link DogInformationMessageService#deleteInformationMessage(Long id)}
      *
      * @param id
      * @return Deleted DogInformationMessage
@@ -118,7 +118,7 @@ public class DogInformationMessageController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<DogInformationMessage> deleteInformationMessage(@PathVariable Long id) {
-        return ResponseEntity.ok(dogInformationMessageService.deleteDogInformationMessage(id));
+    public ResponseEntity<DogInformationMessage> deleteInformationMessage(@PathVariable Long id) {
+        return ResponseEntity.ok(dogInformationMessageService.deleteInformationMessage(id));
     }
 }

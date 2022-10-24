@@ -22,7 +22,7 @@ public class DogVolunteerService {
      *
      * @return collection of DogVolunteer
      */
-    public Collection<DogVolunteer> getAllDogVolunteer() {
+    public Collection<DogVolunteer> getAllVolunteers() {
         return dogVolunteerRepository.findAll();
     }
 
@@ -33,7 +33,7 @@ public class DogVolunteerService {
      * Use  method DogVolunteer repository {@link DogVolunteerRepository#save(Object)} (DogVolunteer)}
      * @return DogVolunteer
      */
-    public DogVolunteer createDogVolunteer(DogVolunteer dogVolunteer) {
+    public DogVolunteer createVolunteer(DogVolunteer dogVolunteer) {
         return dogVolunteerRepository.save(dogVolunteer);
     }
 
@@ -45,7 +45,7 @@ public class DogVolunteerService {
      * @return DogVolunteer
      * @throws com.telegrambot.jd501.Exceptions.VolunteerNotFoundException if DogVolunteer with id not found
      */
-    public DogVolunteer updateDogVolunteer(DogVolunteer dogVolunteer) {
+    public DogVolunteer updateVolunteer(DogVolunteer dogVolunteer) {
         dogVolunteerRepository.findById(dogVolunteer.getId()).orElseThrow(() -> new VolunteerNotFoundException("DogVolunteer not found"));
         return dogVolunteerRepository.save(dogVolunteer);
     }
@@ -57,7 +57,7 @@ public class DogVolunteerService {
      * @return Deleted DogVolunteer
      * @throws com.telegrambot.jd501.Exceptions.VolunteerNotFoundException if DogVolunteer with id not found
      */
-    public DogVolunteer deleteDogVolunteer(Long id) {
+    public DogVolunteer deleteVolunteer(Long id) {
         DogVolunteer temp = dogVolunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("DogVolunteer not found"));
         dogVolunteerRepository.deleteById(id);
         return temp;
@@ -69,7 +69,7 @@ public class DogVolunteerService {
      *
      * @return boolean
      */
-    public boolean isExistsDogVolunteer(long userChatId) {
+    public boolean isExistsVolunteer(long userChatId) {
         return dogVolunteerRepository.existsByChatId(userChatId);
     }
 

@@ -30,7 +30,7 @@ public class DogUserService {
      *
      * @return collection of DogUser
      */
-    public Collection <DogUser> getAllDogUser() {
+    public Collection <DogUser> getAllUsers() {
         return dogUserRepository.findAll();
     }
 
@@ -40,7 +40,7 @@ public class DogUserService {
      * @param dogUser Use  method InformationMessage repository {@link DogUserRepository#save(Object)} (User)}
      * @return InformationMessage
      */
-    public DogUser createDogUser(DogUser dogUser) {
+    public DogUser createUser(DogUser dogUser) {
         dogUser.setStartDate(null);
         dogUser.setFinishDate(null);
         dogUser.setDog(null);
@@ -56,7 +56,7 @@ public class DogUserService {
      * @return DogUser
      * @throws com.telegrambot.jd501.Exceptions.UserNotFoundException if DogUser with id not found
      */
-    public DogUser updateDogUser(DogUser dogUser) {
+    public DogUser updateUser(DogUser dogUser) {
         dogUserRepository.findById(dogUser.getId()).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         return dogUserRepository.save(dogUser);
     }
@@ -69,7 +69,7 @@ public class DogUserService {
      * @return Deleted DogUser
      * @throws com.telegrambot.jd501.Exceptions.UserNotFoundException if DogUser with id not found
      */
-    public DogUser deleteDogUser(Long id) {
+    public DogUser deleteUser(Long id) {
         DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         dogUserRepository.deleteById(id);
         return temp;
@@ -85,7 +85,7 @@ public class DogUserService {
      * @return notification that probationary period has been extended (String)
      */
     public DogUser probationPeriodExtension(Long id, Integer days) {
-        DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         dogUserRepository.save(temp);
         return temp;
@@ -102,8 +102,8 @@ public class DogUserService {
      * @return Changed User
      */
     public DogUser changeStatusOfTheAdopter(Long dogUserId, Long dogId) {
-        DogUser userTemp = dogUserRepository.findById(dogUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Dog petTemp = dogRepository.findById(dogId).orElseThrow(() -> new PetNotFoundException("Pet not found"));
+        DogUser userTemp = dogUserRepository.findById(dogUserId).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
+        Dog petTemp = dogRepository.findById(dogId).orElseThrow(() -> new PetNotFoundException("Dog not found"));
         userTemp.setAdopted(true);
         userTemp.setDog(petTemp);
         userTemp.setStartDate(LocalDate.now());
@@ -117,7 +117,7 @@ public class DogUserService {
      *
      * @return List<DogUser>
      */
-    public List<DogUser> findDogUsersByAdoptedIsTrue() {
+    public List<DogUser> findUsersByAdoptedIsTrue() {
         return dogUserRepository.findDogUsersByIsAdoptedIsTrue();
     }
 
@@ -127,7 +127,7 @@ public class DogUserService {
      *
      * @return boolean
      */
-    public boolean isExistsDogUser(long dogUserChatId) {
+    public boolean isExistsUser(long dogUserChatId) {
         return dogUserRepository.existsByChatId(dogUserChatId);
     }
 
@@ -137,7 +137,7 @@ public class DogUserService {
      *
      * @return User
      */
-    public DogUser findDogUserByChatId(long userChatId) {
+    public DogUser findUserByChatId(long userChatId) {
         return dogUserRepository.findDogUserByChatId(userChatId);
     }
 

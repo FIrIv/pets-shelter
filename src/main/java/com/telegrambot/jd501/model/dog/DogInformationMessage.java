@@ -8,11 +8,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "dog_information_message")
 public class DogInformationMessage  {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String text;
 
     @Override
@@ -50,6 +47,14 @@ public class DogInformationMessage  {
     }
 
     public void setText(String text) {
+        this.text = text;
+    }
+
+    public DogInformationMessage() {
+    }
+
+    public DogInformationMessage(Long id, String text) {
+        this.id = id;
         this.text = text;
     }
 }

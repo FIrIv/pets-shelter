@@ -78,4 +78,15 @@ public class CatReport  {
     public void setCatUser(CatUser catUser) {
         this.catUser = catUser;
     }
+
+    public CatReport() {
+    }
+
+    public CatReport(Long id, LocalDate dateOfReport, String textOfReport, String photoLink, CatUser catUser) {
+        this.id = id;
+        this.dateOfReport = dateOfReport;
+        this.textOfReport = textOfReport;
+        this.photoLink = photoLink;
+        this.catUser = catUser;
+    }
 }

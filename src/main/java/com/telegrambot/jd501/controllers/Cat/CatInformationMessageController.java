@@ -1,6 +1,5 @@
 package com.telegrambot.jd501.controllers.Cat;
 
-
 import com.telegrambot.jd501.model.cat.CatInformationMessage;
 import com.telegrambot.jd501.service.CatService.CatInformationMessageService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,8 +27,8 @@ public class CatInformationMessageController {
     }
 
     /**
-     * get All CatInformationMessage from DataBase
-     * Use method of CatInformationMessage servise {@link CatInformationMessageService#getAllCatInformationMessage()} ()} (Collection< CatInformationMessage >)}
+     * get All CatInformationMessage-s from DataBase
+     * Use method of CatInformationMessage servise {@link CatInformationMessageService#getAllInformationMessages()} ()} (Collection< CatInformationMessage >)}
      *
      * @return collection of CatInformationMessage
      */
@@ -44,14 +43,14 @@ public class CatInformationMessageController {
             )
     })
     @GetMapping
-    public Collection <CatInformationMessage> getAllCatInformationMessage() {
-        return catInformationMessageService.getAllCatInformationMessage();
+    public Collection <CatInformationMessage> getAllInformationMessages() {
+        return catInformationMessageService.getAllInformationMessages();
     }
 
     /**
      * add new CatInformationMessage in DataBase
      *
-     * @param catInformationMessage Use method of CatInformationMessageService {@link CatInformationMessageService#createCatInformationMessage(CatInformationMessage)}
+     * @param catInformationMessage Use method of CatInformationMessageService {@link CatInformationMessageService#createInformationMessage(CatInformationMessage)}
      * @return CatInformationMessage
      */
     @ApiResponses({
@@ -65,13 +64,13 @@ public class CatInformationMessageController {
             )
     })
     @PostMapping
-    public ResponseEntity<CatInformationMessage> createCatInformationMessage(@RequestBody CatInformationMessage catInformationMessage) {
-        return ResponseEntity.ok(catInformationMessageService.createCatInformationMessage(catInformationMessage));
+    public ResponseEntity<CatInformationMessage> createInformationMessage(@RequestBody CatInformationMessage catInformationMessage) {
+        return ResponseEntity.ok(catInformationMessageService.createInformationMessage(catInformationMessage));
     }
 
     /**
-     * change CatInformationMessage in DataBase
-     * Use method of Servise {@link CatInformationMessageService#updateCatInformationMessage(CatInformationMessage)}
+     * change InformationMessage in DataBase
+     * Use method of Servise {@link CatInformationMessageService#updateInformationMessage(CatInformationMessage)}
      *
      * @param catInformationMessage
      * @return CatInformationMessage
@@ -93,12 +92,12 @@ public class CatInformationMessageController {
     })
     @PutMapping
     public ResponseEntity<CatInformationMessage> updateInformationMessage(@RequestBody CatInformationMessage catInformationMessage) {
-        return ResponseEntity.ok(catInformationMessageService.updateCatInformationMessage(catInformationMessage));
+        return ResponseEntity.ok(catInformationMessageService.updateInformationMessage(catInformationMessage));
     }
 
     /**
      * delete CatInformationMessage from DataBase by id
-     * Use method of Servise {@link CatInformationMessageService#deleteCatInformationMessage(Long id)}
+     * Use method of Servise {@link CatInformationMessageService#deleteInformationMessage(Long id)}
      *
      * @param id
      * @return Deleted CatInformationMessage
@@ -119,7 +118,7 @@ public class CatInformationMessageController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<CatInformationMessage> deleteCatInformationMessage(@PathVariable Long id) {
-        return ResponseEntity.ok(catInformationMessageService.deleteCatInformationMessage(id));
+    public ResponseEntity<CatInformationMessage> deleteInformationMessage(@PathVariable Long id) {
+        return ResponseEntity.ok(catInformationMessageService.deleteInformationMessage(id));
     }
 }

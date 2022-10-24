@@ -29,7 +29,7 @@ public class CatReportService {
      *
      * @return collection of CatReport
      */
-    public Collection<CatReport> getAllCatReport() {
+    public Collection<CatReport> getAllPetReports() {
         return catReportRepository.findAll();
     }
 
@@ -39,7 +39,7 @@ public class CatReportService {
      * @param catReport Use  method CatReport repository {@link CatReportRepository#save(Object)} (CatReport)}
      * @return CatReport
      */
-    public CatReport createCatReport(CatReport catReport) {
+    public CatReport createPetReport(CatReport catReport) {
         return catReportRepository.save(catReport);
     }
 
@@ -51,7 +51,7 @@ public class CatReportService {
      * @return CatReport
      * @throws PetReportNotFoundException if CatReport with id not found
      */
-    public CatReport updateCatReport(CatReport catReport) {
+    public CatReport updatePetReport(CatReport catReport) {
         catReportRepository.findById(catReport.getId()).orElseThrow(() -> new PetReportNotFoundException("CatReport not found"));
         return catReportRepository.save(catReport);
     }
@@ -64,7 +64,7 @@ public class CatReportService {
      * @return Deleted CatReport
      * @throws PetReportNotFoundException if CatReport with id not found
      */
-    public CatReport deleteCatReport(Long id) {
+    public CatReport deletePetReport(Long id) {
         CatReport temp = catReportRepository.findById(id).orElseThrow(() -> new PetReportNotFoundException("CatReport not found"));
         catReportRepository.deleteById(id);
         return temp;
@@ -76,7 +76,7 @@ public class CatReportService {
      *
      * @return collection of CatReport With User
      */
-    public Collection<CatReport> getAllCatReportByCatUser(CatUser user) {
+    public Collection<CatReport> getAllPetReportsByUser(CatUser user) {
         return catReportRepository.findCatReportsByCatUserOrderByDateOfReport(user);
     }
 
@@ -88,7 +88,7 @@ public class CatReportService {
      * @param dateOfReport
      * @return CatReport With Cat And dateOfReport
      */
-    public CatReport getCatReportByCatUserAndDateOfReport(CatUser user, LocalDate dateOfReport) {
+    public CatReport getPetReportByUserAndDateOfReport(CatUser user, LocalDate dateOfReport) {
         return catReportRepository.findCatReportByCatUserAndDateOfReport(user, dateOfReport);
     }
 
@@ -99,7 +99,7 @@ public class CatReportService {
      * @param chatId
      * @return Collection CatReport
      */
-    public List<CatReport> getAllReportsByChatId (Long chatId){
+    public List<CatReport> getAllPetReportsByChatId(Long chatId){
         CatUser tempCatUser = catUserRepository.findCatUserByChatId(chatId);
         return catReportRepository.findAllByCatUser(tempCatUser);
     }

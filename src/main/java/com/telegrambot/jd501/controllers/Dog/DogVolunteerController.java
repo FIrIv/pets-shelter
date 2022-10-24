@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collection;
 
 /**
@@ -26,8 +27,8 @@ public class DogVolunteerController {
     }
 
     /**
-     * get All DogVolunteer from DataBase
-     * Use method of servise {@link DogVolunteerService#getAllDogVolunteer()} (Collection< DogVolunteer >)}
+     * get All DogVolunteer-s from DataBase
+     * Use method of servise {@link DogVolunteerService#getAllVolunteers()} (Collection< DogVolunteer >)}
      *
      * @return collection of DogVolunteer
      */
@@ -42,14 +43,14 @@ public class DogVolunteerController {
             )
     })
     @GetMapping
-    public Collection <DogVolunteer> getAllDogVolunteer() {
-        return dogVolunteerService.getAllDogVolunteer();
+    public Collection <DogVolunteer> getAllVolunteers() {
+        return dogVolunteerService.getAllVolunteers();
     }
 
     /**
      * add new DogVolunteer in DataBase
      *
-     * @param dogVolunteer Use method of Servise {@link DogVolunteerService#createDogVolunteer(DogVolunteer)}}
+     * @param dogVolunteer Use method of Servise {@link DogVolunteerService#createVolunteer(DogVolunteer)}}
      * @return DogVolunteer
      */
     @ApiResponses({
@@ -64,12 +65,12 @@ public class DogVolunteerController {
     })
     @PostMapping
     public ResponseEntity<DogVolunteer> createVolunteer(@RequestBody DogVolunteer dogVolunteer) {
-        return ResponseEntity.ok(dogVolunteerService.createDogVolunteer(dogVolunteer));
+        return ResponseEntity.ok(dogVolunteerService.createVolunteer(dogVolunteer));
     }
 
     /**
      * change DogVolunteer in DataBase
-     * Use method of Servise {@link DogVolunteerService#updateDogVolunteer(DogVolunteer)}
+     * Use method of Servise {@link DogVolunteerService#updateVolunteer(DogVolunteer)}
      *
      * @param dogVolunteer
      * @return DogVolunteer
@@ -91,12 +92,12 @@ public class DogVolunteerController {
     })
     @PutMapping
     public ResponseEntity<DogVolunteer> updateVolunteer(@RequestBody DogVolunteer dogVolunteer) {
-        return ResponseEntity.ok(dogVolunteerService.updateDogVolunteer(dogVolunteer));
+        return ResponseEntity.ok(dogVolunteerService.updateVolunteer(dogVolunteer));
     }
 
     /**
      * delete Volunteer from DataBase by id
-     * Use method of Servise {@link DogVolunteerService#deleteDogVolunteer(Long id)}
+     * Use method of Servise {@link DogVolunteerService#deleteVolunteer(Long id)}
      *
      * @param id
      * @return Deleted DogVolunteer
@@ -117,7 +118,7 @@ public class DogVolunteerController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<DogVolunteer> deleteVolunteer(@PathVariable Long id) {
-        return ResponseEntity.ok(dogVolunteerService.deleteDogVolunteer(id));
+    public ResponseEntity<DogVolunteer> deleteVolunteer(@PathVariable Long id) {
+        return ResponseEntity.ok(dogVolunteerService.deleteVolunteer(id));
     }
 }

@@ -21,7 +21,7 @@ public class DogInformationMessageService {
      *
      * @return collection of DogInformationMessage
      */
-    public Collection<DogInformationMessage> getAllDogInformationMessage() {
+    public Collection<DogInformationMessage> getAllInformationMessages() {
         return dogInformationMessageRepository.findAll();
     }
     /**
@@ -31,7 +31,7 @@ public class DogInformationMessageService {
      * Use  method DogInformationMessage repository {@link DogInformationMessageRepository#save(Object)} (DogInformationMessageRepository)}
      * @return DogInformationMessage
      */
-    public DogInformationMessage createDogInformationMessage (DogInformationMessage dogInformationMessage) {
+    public DogInformationMessage createInformationMessage(DogInformationMessage dogInformationMessage) {
         return dogInformationMessageRepository.save(dogInformationMessage);
     }
     /**
@@ -42,7 +42,7 @@ public class DogInformationMessageService {
      * @return DogInformationMessage
      * @throws com.telegrambot.jd501.Exceptions.InformationMessageNotFoundException if InformationMessage with id not found
      */
-    public DogInformationMessage updateDogInformationMessage(DogInformationMessage doginformationMessage) {
+    public DogInformationMessage updateInformationMessage(DogInformationMessage doginformationMessage) {
         dogInformationMessageRepository.findById(doginformationMessage.getId()).orElseThrow(() -> new InformationMessageNotFoundException("DogInformationMessage not found"));
         return dogInformationMessageRepository.save(doginformationMessage);
     }
@@ -54,13 +54,13 @@ public class DogInformationMessageService {
      * @return Deleted DogInformationMessage
      * @throws com.telegrambot.jd501.Exceptions.InformationMessageNotFoundException if DogInformationMessage with id not found
      */
-    public DogInformationMessage deleteDogInformationMessage(Long id) {
+    public DogInformationMessage deleteInformationMessage(Long id) {
         DogInformationMessage temp = dogInformationMessageRepository.findById(id).orElseThrow(() -> new InformationMessageNotFoundException("DogInformationMessage not found"));
         dogInformationMessageRepository.deleteById(id);
         return temp;
     }
 
-    public DogInformationMessage findDogInformationMessageById(Long id) {
+    public DogInformationMessage findInformationMessageById(Long id) {
         return dogInformationMessageRepository.findById(id).orElseThrow();
     }
 }

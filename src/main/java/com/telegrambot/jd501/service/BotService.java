@@ -15,10 +15,8 @@ import com.telegrambot.jd501.service.DogService.DogInformationMessageService;
 import com.telegrambot.jd501.service.DogService.DogReportService;
 import com.telegrambot.jd501.service.DogService.DogUserService;
 import com.telegrambot.jd501.service.DogService.DogVolunteerService;
-import org.checkerframework.checker.nullness.Opt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -666,7 +664,7 @@ public class BotService {
             }
         } else {
             // ---- (2) check contact in base -----
-            boolean userIsExists = catUserService.isExistsCatUser(userChatId);
+            boolean userIsExists = catUserService.isExistsUser(userChatId);
             if (!userIsExists) {
                 // *** save phone number into DB, if contact doesn't exist
                 CatUser newUser = new CatUser();
@@ -674,7 +672,7 @@ public class BotService {
                 newUser.setName(firstName);
                 newUser.setPhone(phoneNumber);
                 newUser.setAdopted(false);
-                catUserService.createCatUser(newUser);
+                catUserService.createUser(newUser);
             }
         }
         return message;
@@ -698,7 +696,7 @@ public class BotService {
         message.setChatId(update.getMessage().getChatId());
         try {
             if (isDog) {
-                firstDogVolunteer = dogVolunteerService.getAllDogVolunteer()
+                firstDogVolunteer = dogVolunteerService.getAllVolunteers()
                         .stream()
                         .findFirst()
                         .orElseThrow();
@@ -707,7 +705,7 @@ public class BotService {
                 message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
                         "  https://t.me/" + userName);
             } else {
-                firstCatVolunteer = catVolunteerService.getAllCatVolunteer()
+                firstCatVolunteer = catVolunteerService.getAllVolunteers()
                         .stream()
                         .findFirst()
                         .orElseThrow();
@@ -732,9 +730,9 @@ public class BotService {
     private SendMessage getInfo(long chatId, long menuItemNumber) {
         String info;
         if (isDog) {
-            info = dogInformationMessageService.findDogInformationMessageById(menuItemNumber).getText();
+            info = dogInformationMessageService.findInformationMessageById(menuItemNumber).getText();
         } else {
-            info = catInformationMessageService.findCatInformationMessageById(menuItemNumber).getText();
+            info = catInformationMessageService.findInformationMessageById(menuItemNumber).getText();
         }
         return setupSendMessage(chatId, info);
     }

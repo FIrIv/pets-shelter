@@ -108,4 +108,25 @@ public class DogUser {
                 ", dog=" + dog +
                 '}';
     }
+
+    public DogUser() {
+    }
+
+    public DogUser(Long id, Long chatId, String name, String phone) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+    }
+
+    public DogUser(Long id, Long chatId, String name, String phone, Boolean isAdopted, LocalDate startDate, LocalDate finishDate, Dog dog) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+        this.isAdopted = isAdopted;
+        this.startDate = startDate;
+        this.finishDate = finishDate;
+        this.dog = dog;
+    }
 }

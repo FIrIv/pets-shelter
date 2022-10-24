@@ -55,4 +55,13 @@ public class DogVolunteer {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    public DogVolunteer() {
+    }
+
+    public DogVolunteer(Long id, Long chatId, String name) {
+        this.id = id;
+        this.chatId = chatId;
+        this.name = name;
+    }
 }

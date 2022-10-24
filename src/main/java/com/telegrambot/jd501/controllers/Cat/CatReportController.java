@@ -3,7 +3,6 @@ package com.telegrambot.jd501.controllers.Cat;
 
 
 
-import com.telegrambot.jd501.model.cat.Cat;
 import com.telegrambot.jd501.model.cat.CatReport;
 import com.telegrambot.jd501.service.CatService.CatReportService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 /**
- * class for work with PetReport
+ * class for work with CatReports
  * have CRUD operation
  */
 @RestController
-@RequestMapping("/cat/Report")
+@RequestMapping("/cat/report")
 public class CatReportController {
     private final CatReportService catReportService;
 
@@ -30,8 +29,8 @@ public class CatReportController {
     }
 
     /**
-     * get All CatReport from DataBase
-     * Use method of service {@link CatReportService#getAllCatReport()}}
+     * get All CatReport-s from DataBase
+     * Use method of service {@link CatReportService#getAllPetReports()}}
      *
      * @return collection of CatReport
      */
@@ -47,13 +46,13 @@ public class CatReportController {
     })
 
     @GetMapping
-    public Collection<CatReport> getAllCatReport() {
-        return catReportService.getAllCatReport();
+    public Collection<CatReport> getAllReports() {
+        return catReportService.getAllPetReports();
     }
 
     /**
-     * get All CatReport By ChatId
-     * Use method of service {@link CatReportService#getAllCatReportByChatId(Long)}
+     * get All CatReport-s By ChatId
+     * Use method of service {@link CatReportService#getAllPetReportsByChatId(Long)}
      *
      * @return collection of CatReport With ChatId Ordered By Date
      */
@@ -67,14 +66,14 @@ public class CatReportController {
             )
     })
     @GetMapping("/pet_report/{chatId}")
-    public Collection<CatReport> getAllPetReportsByChatId(@PathVariable Long chatId) {
-        return catReportService.getAllReportsByChatId(chatId);
+    public Collection<CatReport> getAllReportsByChatId(@PathVariable Long chatId) {
+        return catReportService.getAllPetReportsByChatId(chatId);
     }
 
     /**
      * add new CatReport in DataBase
      *
-     * @param catReport Use method of Servise {@link CatReportService#createCatReport(CatReport)}
+     * @param catReport Use method of Servise {@link CatReportService#createPetReport(CatReport)}
      * @return CatReport
      */
     @ApiResponses({
@@ -88,13 +87,13 @@ public class CatReportController {
             )
     })
     @PostMapping
-    public ResponseEntity<CatReport> createPetReport(@RequestBody CatReport catReport) {
-        return ResponseEntity.ok(catReportService.createCatReport(catReport));
+    public ResponseEntity<CatReport> createReport(@RequestBody CatReport catReport) {
+        return ResponseEntity.ok(catReportService.createPetReport(catReport));
     }
 
     /**
      * change CatReport in DataBase
-     * Use method of Servise {@link CatReportService#updateCatReport(CatReport)}
+     * Use method of Servise {@link CatReportService#updatePetReport(CatReport)}
      *
      * @param catReport
      * @return CatReport
@@ -115,13 +114,13 @@ public class CatReportController {
             )
     })
     @PutMapping
-    public ResponseEntity<CatReport> updateCatReport(@RequestBody CatReport catReport) {
-        return ResponseEntity.ok(catReportService.updateCatReport(catReport));
+    public ResponseEntity<CatReport> updateReport(@RequestBody CatReport catReport) {
+        return ResponseEntity.ok(catReportService.updatePetReport(catReport));
     }
 
     /**
      * delete CatReport from DataBase by id
-     * Use method of Servise {@link CatReportService#deleteCatReport(Long id)}}
+     * Use method of Servise {@link CatReportService#deletePetReport(Long id)}}
      *
      * @param id
      * @return Deleted CatReport
@@ -141,8 +140,8 @@ public class CatReportController {
                     description = "CatReport not found"
             )
     })
-    @DeleteMapping("{id}")
-    ResponseEntity<CatReport> deleteCatReport(@PathVariable Long id) {
-        return ResponseEntity.ok(catReportService.deleteCatReport(id));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CatReport> deleteReport(@PathVariable Long id) {
+        return ResponseEntity.ok(catReportService.deletePetReport(id));
     }
 }
