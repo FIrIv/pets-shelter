@@ -165,7 +165,7 @@ public class DogUserController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<DogUser> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<DogUser> deleteUser(@PathVariable Long id) {
         return ResponseEntity.ok(dogUserService.deleteUser(id));
     }
 

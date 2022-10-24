@@ -140,7 +140,7 @@ public class DogReportController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<DogReport> deleteReport(@PathVariable Long id) {
+    public ResponseEntity<DogReport> deleteReport(@PathVariable Long id) {
         return ResponseEntity.ok(dogReportService.deletePetReport(id));
     }
 }

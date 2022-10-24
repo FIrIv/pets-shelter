@@ -43,7 +43,7 @@ public class DogUserService {
     public DogUser createUser(DogUser dogUser) {
         dogUser.setStartDate(null);
         dogUser.setFinishDate(null);
-        dogUser.setDog(null);
+        dogUser.setPet(null);
         dogUser.setAdopted(false);
         return dogUserRepository.save(dogUser);
     }
@@ -105,7 +105,7 @@ public class DogUserService {
         DogUser userTemp = dogUserRepository.findById(dogUserId).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         Dog petTemp = dogRepository.findById(dogId).orElseThrow(() -> new PetNotFoundException("Dog not found"));
         userTemp.setAdopted(true);
-        userTemp.setDog(petTemp);
+        userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
         return dogUserRepository.save(userTemp);

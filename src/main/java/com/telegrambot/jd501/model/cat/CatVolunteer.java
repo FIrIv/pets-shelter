@@ -37,7 +37,7 @@ public class CatVolunteer {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        //if (!super.equals(o)) return false;
         CatVolunteer that = (CatVolunteer) o;
         return Objects.equals(id, that.id);
     }

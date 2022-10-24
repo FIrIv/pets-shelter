@@ -43,7 +43,6 @@ public class DogReport {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!this.equals(o)) return false;
         DogReport that = (DogReport) o;
         return Objects.equals(id, that.id);
     }

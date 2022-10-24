@@ -24,7 +24,7 @@ public class DogInformationMessage  {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        //if (!super.equals(o)) return false;
         DogInformationMessage that = (DogInformationMessage) o;
         return Objects.equals(id, that.id);
     }

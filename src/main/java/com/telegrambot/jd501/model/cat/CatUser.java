@@ -21,7 +21,7 @@ public class CatUser  {
 
     @OneToOne
     @JoinColumn(name = "pet_id")
-    private Cat cat;
+    private Cat pet;
 
     public Long getId() {
         return id;
@@ -75,21 +75,21 @@ public class CatUser  {
         this.finishDate = finishDate;
     }
 
-    public Cat getCat() {
-        return cat;
+    public Cat getPet() {
+        return pet;
     }
 
-    public void setCat(Cat cat) {
-        this.cat = cat;
+    public void setPet(Cat cat) {
+        this.pet = cat;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        //if (!super.equals(o)) return false;
         CatUser catUser = (CatUser) o;
-        return Objects.equals(id, catUser.id);
+        return Objects.equals(id, catUser.getId());
     }
 
     @Override
@@ -107,7 +107,7 @@ public class CatUser  {
                 ", isAdopted=" + isAdopted +
                 ", startDate=" + startDate +
                 ", finishDate=" + finishDate +
-                ", pet=" + cat +
+                ", pet=" + pet +
                 '}';
     }
 
@@ -119,6 +119,10 @@ public class CatUser  {
         this.chatId = chatId;
         this.name = name;
         this.phone = phone;
+        this.isAdopted = false;
+        this.startDate = null;
+        this.finishDate = null;
+        this.pet = null;
     }
 
     public CatUser(Long id, Long chatId, String name, String phone, Boolean isAdopted, LocalDate startDate, LocalDate finishDate, Cat cat) {
@@ -129,6 +133,6 @@ public class CatUser  {
         this.isAdopted = isAdopted;
         this.startDate = startDate;
         this.finishDate = finishDate;
-        this.cat = cat;
+        this.pet = cat;
     }
 }

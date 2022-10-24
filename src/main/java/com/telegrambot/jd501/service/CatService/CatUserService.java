@@ -42,7 +42,7 @@ public class CatUserService {
     public CatUser createUser(CatUser catUser) {
         catUser.setStartDate(null);
         catUser.setFinishDate(null);
-        catUser.setCat(null);
+        catUser.setPet(null);
         catUser.setAdopted(false);
         return catUserRepository.save(catUser);
     }
@@ -104,7 +104,7 @@ public class CatUserService {
         CatUser userTemp = catUserRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Cat User not found"));
         Cat petTemp = catRepository.findById(catId).orElseThrow(() -> new PetNotFoundException("Cat not found"));
         userTemp.setAdopted(true);
-        userTemp.setCat(petTemp);
+        userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
         return catUserRepository.save(userTemp);

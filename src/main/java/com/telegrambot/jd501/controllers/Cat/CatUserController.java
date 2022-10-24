@@ -166,7 +166,7 @@ public class CatUserController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<CatUser> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<CatUser> deleteUser(@PathVariable Long id) {
         return ResponseEntity.ok(catUserService.deleteUser(id));
     }
 
