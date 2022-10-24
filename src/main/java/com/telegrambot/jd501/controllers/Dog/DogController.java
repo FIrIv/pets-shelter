@@ -1,7 +1,5 @@
 package com.telegrambot.jd501.controllers.Dog;
 
-
-
 import com.telegrambot.jd501.model.dog.Dog;
 import com.telegrambot.jd501.service.DogService.DogService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,15 +26,15 @@ public class DogController {
     }
 
     /**
-     * get All Dog from DataBase
-     * Use method of servise {@link DogService#getAllDog()} (Collection< Dog >)}
+     * get All Pets from DataBase
+     * Use method of service {@link DogService#getAllPets()} (Collection< Dog >)}
      *
      * @return collection of Dog
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Show all Dog",
+                    description = "Show all Dogs",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = Collection.class)
@@ -44,14 +42,14 @@ public class DogController {
             )
     })
     @GetMapping
-    public Collection<Dog> getAllDog() {
-        return dogService.getAllDog();
+    public Collection<Dog> getAllPets() {
+        return dogService.getAllPets();
     }
 
     /**
      * add new Dog in DataBase
      *
-     * @param dog Use method of Servise {@link DogService#createDog(Dog)}
+     * @param dog Use method of Service {@link DogService#createPet(Dog)}
      * @return Dog
      */
     @ApiResponses({
@@ -67,12 +65,12 @@ public class DogController {
 
     @PostMapping
     public ResponseEntity<Dog> createPet(@RequestBody Dog dog) {
-        return ResponseEntity.ok(dogService.createDog(dog));
+        return ResponseEntity.ok(dogService.createPet(dog));
     }
 
     /**
      * change Dog in DataBase
-     * Use method of Servise {@link DogService#updateDog(Dog)}
+     * Use method of Service {@link DogService#updatePet(Dog)}
      *
      * @param dog
      * @return Dog
@@ -94,12 +92,12 @@ public class DogController {
     })
     @PutMapping
     public ResponseEntity<Dog> updatePet(@RequestBody Dog dog) {
-        return ResponseEntity.ok(dogService.updateDog(dog));
+        return ResponseEntity.ok(dogService.updatePet(dog));
     }
 
     /**
      * delete Dog from DataBase by id
-     * Use method of Servise {@link DogService#deleteDog(Long id)}}
+     * Use method of Servise {@link DogService#deletePet(Long id)}}
      *
      * @param id
      * @return Deleted Dog
@@ -120,7 +118,7 @@ public class DogController {
             )
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<Dog> deleteDog(@PathVariable Long id) {
-        return ResponseEntity.ok(dogService.deleteDog(id));
+    public ResponseEntity<Dog> deletePet(@PathVariable Long id) {
+        return ResponseEntity.ok(dogService.deletePet(id));
     }
 }

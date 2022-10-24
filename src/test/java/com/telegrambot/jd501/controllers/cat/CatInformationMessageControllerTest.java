@@ -35,13 +35,13 @@ class CatInformationMessageControllerTest {
     @Test
     void getAllCatInformationMessage() throws Exception {
         CatInformationMessage infoMessage = new CatInformationMessage(-1L, "Тестовое info message.");
-        long id = catInformationMessageController.createCatInformationMessage(infoMessage).getBody().getId();
+        long id = catInformationMessageController.createInformationMessage(infoMessage).getBody().getId();
 
         Assertions
                 .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/cat/informationMessage", String.class))
                 .isNotNull();
 
-        catInformationMessageController.deleteCatInformationMessage(id);
+        catInformationMessageController.deleteInformationMessage(id);
     }
 
     @Test
@@ -54,13 +54,13 @@ class CatInformationMessageControllerTest {
         Assertions.assertThat(response.getBody().getText()).isEqualTo("Тестовое info message.");
         Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
 
-        catInformationMessageController.deleteCatInformationMessage(response.getBody().getId());
+        catInformationMessageController.deleteInformationMessage(response.getBody().getId());
     }
 
     @Test
     void updateInformationMessage() throws Exception {
         CatInformationMessage infoMessage = new CatInformationMessage(-1L, "Тестовое info message.");
-        long id = catInformationMessageController.createCatInformationMessage(infoMessage).getBody().getId();
+        long id = catInformationMessageController.createInformationMessage(infoMessage).getBody().getId();
 
         CatInformationMessage infoMessageUp = new CatInformationMessage(id, "Перезаписанное тестовое info message.");
 
@@ -73,13 +73,13 @@ class CatInformationMessageControllerTest {
         Assertions.assertThat(response.getBody().getText()).isEqualTo("Перезаписанное тестовое info message.");
         Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
 
-        catInformationMessageController.deleteCatInformationMessage(id);
+        catInformationMessageController.deleteInformationMessage(id);
     }
 
     @Test
     void deleteCatInformationMessage() throws Exception {
         CatInformationMessage infoMessage = new CatInformationMessage(-1L, "Тестовое info message.");
-        long id = catInformationMessageController.createCatInformationMessage(infoMessage).getBody().getId();
+        long id = catInformationMessageController.createInformationMessage(infoMessage).getBody().getId();
 
         ResponseEntity<CatInformationMessage> response = restTemplate.exchange("/cat/informationMessage/{id}", HttpMethod.DELETE, null,
                 CatInformationMessage.class, id);

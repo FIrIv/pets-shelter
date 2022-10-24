@@ -1,7 +1,6 @@
 package com.telegrambot.jd501.controllers.Dog;
 
 
-import com.telegrambot.jd501.model.dog.Dog;
 import com.telegrambot.jd501.model.dog.DogReport;
 import com.telegrambot.jd501.service.DogService.DogReportService;
 
@@ -16,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 /**
- * class for work with PetReport
+ * class for work with DogReports
  * have CRUD operation
  */
 @RestController
-@RequestMapping("/dog/dogReport")
+@RequestMapping("/dog/report")
 public class DogReportController {
     private final DogReportService dogReportService;
 
@@ -29,8 +28,8 @@ public class DogReportController {
     }
 
     /**
-     * get All DogReport from DataBase
-     * Use method of service {@link DogReportService#getAllDogReport()}}
+     * get All DogReport-s from DataBase
+     * Use method of service {@link DogReportService#getAllPetReports()}}
      *
      * @return collection of DogReport
      */
@@ -46,13 +45,13 @@ public class DogReportController {
     })
 
     @GetMapping
-    public Collection<DogReport> getAllDogReport() {
-        return dogReportService.getAllDogReport();
+    public Collection<DogReport> getAllReports() {
+        return dogReportService.getAllPetReports();
     }
 
     /**
-     * get All DogReport By ChatId
-     * Use method of service {@link DogReportService#getAllReportsByChatId(Long)}
+     * get All DogReport-s By ChatId
+     * Use method of service {@link DogReportService#getAllPetReportsByChatId(Long)}
      *
      * @return collection of DogReport With ChatId Ordered By Date
      */
@@ -66,14 +65,14 @@ public class DogReportController {
             )
     })
     @GetMapping("/pet_report/{chatId}")
-    public Collection<DogReport> getAllPetReportsByChatId(@PathVariable Long chatId) {
-        return dogReportService.getAllReportsByChatId(chatId);
+    public Collection<DogReport> getAllReportsByChatId(@PathVariable Long chatId) {
+        return dogReportService.getAllPetReportsByChatId(chatId);
     }
 
     /**
      * add new DogReport in DataBase
      *
-     * @param dogReport Use method of Servise {@link DogReportService#createDogReport(DogReport)}
+     * @param dogReport Use method of Service {@link DogReportService#createPetReport(DogReport)}
      * @return DogReport
      */
     @ApiResponses({
@@ -87,13 +86,13 @@ public class DogReportController {
             )
     })
     @PostMapping
-    public ResponseEntity<DogReport> createPetReport(@RequestBody DogReport dogReport) {
-        return ResponseEntity.ok(dogReportService.createDogReport(dogReport));
+    public ResponseEntity<DogReport> createReport(@RequestBody DogReport dogReport) {
+        return ResponseEntity.ok(dogReportService.createPetReport(dogReport));
     }
 
     /**
      * change DogReport in DataBase
-     * Use method of Servise {@link DogReportService#updateDogReport(DogReport)}
+     * Use method of Servise {@link DogReportService#updatePetReport(DogReport)}
      *
      * @param dogReport
      * @return DogReport
@@ -114,13 +113,13 @@ public class DogReportController {
             )
     })
     @PutMapping
-    public ResponseEntity<DogReport> updatePetReport(@RequestBody DogReport dogReport) {
-        return ResponseEntity.ok(dogReportService.updateDogReport(dogReport));
+    public ResponseEntity<DogReport> updateReport(@RequestBody DogReport dogReport) {
+        return ResponseEntity.ok(dogReportService.updatePetReport(dogReport));
     }
 
     /**
      * delete DogReport from DataBase by id
-     * Use method of Servise {@link DogReportService#deleteDogReport(Long id)}}
+     * Use method of Servise {@link DogReportService#deletePetReport(Long id)}}
      *
      * @param id
      * @return Deleted DogReport
@@ -141,7 +140,7 @@ public class DogReportController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<DogReport> deletePetReport(@PathVariable Long id) {
-        return ResponseEntity.ok(dogReportService.deleteDogReport(id));
+    ResponseEntity<DogReport> deleteReport(@PathVariable Long id) {
+        return ResponseEntity.ok(dogReportService.deletePetReport(id));
     }
 }

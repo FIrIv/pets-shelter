@@ -38,14 +38,14 @@ class DogUserServiceTest {
     void getAllDogUser()  {
         when(dogUserRepository.findAll()).thenReturn(DOG_USER_LIST);
 
-        assertEquals(out.getAllDogUser(), DOG_USER_LIST);
+        assertEquals(out.getAllUsers(), DOG_USER_LIST);
     }
 
     @Test
     void createDogUser() {
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_1);
 
-        assertEquals(out.createDogUser(DOG_USER_1), DOG_USER_1);
+        assertEquals(out.createUser(DOG_USER_1), DOG_USER_1);
     }
 
     @Test
@@ -53,14 +53,14 @@ class DogUserServiceTest {
         when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_1));
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_11);
 
-        assertEquals(out.updateDogUser(DOG_USER_11), DOG_USER_11);
+        assertEquals(out.updateUser(DOG_USER_11), DOG_USER_11);
     }
 
     @Test
     void deleteDogUser() {
         when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_1));
 
-        assertEquals(out.deleteDogUser(ID1), DOG_USER_1);
+        assertEquals(out.deleteUser(ID1), DOG_USER_1);
     }
 
     private static Stream<Arguments> parametersForProbationPeriodExtension() {
@@ -108,33 +108,33 @@ class DogUserServiceTest {
     void findDogUsersByAdoptedIsTrue() {
         when(dogUserRepository.findDogUsersByIsAdoptedIsTrue()).thenReturn(List.of(DOG_USER_3,DOG_USER_4));
 
-        assertEquals(out.findDogUsersByAdoptedIsTrue(), DOG_USER_ADOPTERS_LIST);
+        assertEquals(out.findUsersByAdoptedIsTrue(), DOG_USER_ADOPTERS_LIST);
     }
 
     @Test
     void isExistsDogUser() {
         when(dogUserRepository.existsByChatId(anyLong())).thenReturn(TRUE);
 
-        assertEquals(out.isExistsDogUser(CHAT_ID_1), TRUE);
+        assertEquals(out.isExistsUser(CHAT_ID_1), TRUE);
     }
 
     @Test
     void findDogUserByChatId() {
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_2);
 
-        assertEquals(out.findDogUserByChatId(CHAT_ID_2), DOG_USER_2);
+        assertEquals(out.findUserByChatId(CHAT_ID_2), DOG_USER_2);
     }
 
     @Test
     void userNotFoundExceptionTest1() {
         when(dogUserRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class,() ->out.deleteDogUser(ID2));
+        assertThrows(UserNotFoundException.class,() ->out.deleteUser(ID2));
     }
     @Test
     void userNotFoundExceptionTest2() {
         when(dogUserRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class,() ->out.updateDogUser(DOG_USER_2));
+        assertThrows(UserNotFoundException.class,() ->out.updateUser(DOG_USER_2));
     }
 }

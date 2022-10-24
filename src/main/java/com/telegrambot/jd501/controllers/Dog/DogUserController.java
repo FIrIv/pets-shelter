@@ -27,8 +27,8 @@ public class DogUserController {
     }
 
     /**
-     * get All DogUser from DataBase
-     * Use method of DogUser servise {@link DogUserService#getAllDogUser()} (Collection<DogUser>)}
+     * get All DogUser-s from DataBase
+     * Use method of DogUser servise {@link DogUserService#getAllUsers()} (Collection<DogUser>)}
      *
      * @return collection of DogUser
      */
@@ -43,14 +43,14 @@ public class DogUserController {
             )
     })
     @GetMapping
-    public Collection<DogUser> getAllDogUser() {
-        return dogUserService.getAllDogUser();
+    public Collection<DogUser> getAllUsers() {
+        return dogUserService.getAllUsers();
     }
 
     /**
      * add new DogUser in DataBase
      *
-     * @param dogUser Use method of Servise {@link DogUserService#createDogUser(DogUser)}
+     * @param dogUser Use method of Service {@link DogUserService#createUser(DogUser)}
      * @return DogUser
      */
     @ApiResponses({
@@ -65,12 +65,12 @@ public class DogUserController {
     })
     @PostMapping
     public ResponseEntity<DogUser> createUser(@RequestBody DogUser dogUser) {
-        return ResponseEntity.ok(dogUserService.createDogUser(dogUser));
+        return ResponseEntity.ok(dogUserService.createUser(dogUser));
     }
 
     /**
      * change DogUser in DataBase
-     * Use method of Servise {@link DogUserService#updateDogUser(DogUser)}
+     * Use method of Servise {@link DogUserService#updateUser(DogUser)}
      *
      * @param dogUser
      * @return DogUser
@@ -92,11 +92,11 @@ public class DogUserController {
     })
     @PutMapping
     public ResponseEntity<DogUser> updateUser(@RequestBody DogUser dogUser) {
-        return ResponseEntity.ok(dogUserService.updateDogUser(dogUser));
+        return ResponseEntity.ok(dogUserService.updateUser(dogUser));
     }
 
     /**
-     * find user by id and change  status of The Adopter,
+     * find DogUser by id and change  status of The Adopter,
      * add adopted Pet, Date of adoption, and set test day at 30 days
      * Use method User repository {@link }
      *
@@ -120,7 +120,7 @@ public class DogUserController {
     }
 
     /**
-     * find user by id and change amount of probation period
+     * find DogUser by id and change amount of probation period
      *
      * @param id   - user id,
      * @param days - number of days to increase the term of the transfer
@@ -166,7 +166,7 @@ public class DogUserController {
     })
     @DeleteMapping("{id}")
     ResponseEntity<DogUser> deleteUser(@PathVariable Long id) {
-        return ResponseEntity.ok(dogUserService.deleteDogUser(id));
+        return ResponseEntity.ok(dogUserService.deleteUser(id));
     }
 
 }

@@ -29,14 +29,14 @@ class DogVolunteerServiceTest {
     void getAllDogVolunteer() {
         when(dogVolunteerRepository.findAll()).thenReturn(DOG_VOLUNTEER_LIST);
 
-        assertEquals(out.getAllDogVolunteer(), DOG_VOLUNTEER_LIST);
+        assertEquals(out.getAllVolunteers(), DOG_VOLUNTEER_LIST);
     }
 
     @Test
     void createDogVolunteer() {
         when(dogVolunteerRepository.save(any(DogVolunteer.class))).thenReturn(DOG_VOLUNTEER_1);
 
-        assertEquals(out.createDogVolunteer(DOG_VOLUNTEER_1), DOG_VOLUNTEER_1);
+        assertEquals(out.createVolunteer(DOG_VOLUNTEER_1), DOG_VOLUNTEER_1);
     }
 
     @Test
@@ -44,33 +44,33 @@ class DogVolunteerServiceTest {
         when(dogVolunteerRepository.findById(ID1)).thenReturn(Optional.of(DOG_VOLUNTEER_1));
         when(dogVolunteerRepository.save(DOG_VOLUNTEER_11)).thenReturn(DOG_VOLUNTEER_11);
 
-        assertEquals(out.updateDogVolunteer(DOG_VOLUNTEER_11), DOG_VOLUNTEER_11);
+        assertEquals(out.updateVolunteer(DOG_VOLUNTEER_11), DOG_VOLUNTEER_11);
     }
 
     @Test
     void deleteDogVolunteer() {
         when(dogVolunteerRepository.findById(anyLong())).thenReturn(Optional.of(DOG_VOLUNTEER_1));
 
-        assertEquals(out.deleteDogVolunteer(ID1),DOG_VOLUNTEER_1);
+        assertEquals(out.deleteVolunteer(ID1),DOG_VOLUNTEER_1);
     }
 
     @Test
     void isExistsDogVolunteer() {
         when(dogVolunteerRepository.existsByChatId(anyLong())).thenReturn(TRUE);
 
-        assertEquals(out.isExistsDogVolunteer(CHAT_ID_1),TRUE);
+        assertEquals(out.isExistsVolunteer(CHAT_ID_1),TRUE);
     }
 
     @Test
     void volunteerNotFoundExceptionTest1() {
         when(dogVolunteerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(VolunteerNotFoundException.class,() ->out.deleteDogVolunteer(ID2));
+        assertThrows(VolunteerNotFoundException.class,() ->out.deleteVolunteer(ID2));
     }
     @Test
     void volunteerNotFoundExceptionTest2() {
         when(dogVolunteerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(VolunteerNotFoundException.class,() ->out.updateDogVolunteer(DOG_VOLUNTEER_2));
+        assertThrows(VolunteerNotFoundException.class,() ->out.updateVolunteer(DOG_VOLUNTEER_2));
     }
 }

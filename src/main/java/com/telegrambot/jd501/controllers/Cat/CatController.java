@@ -1,7 +1,5 @@
 package com.telegrambot.jd501.controllers.Cat;
 
-
-
 import com.telegrambot.jd501.model.cat.Cat;
 import com.telegrambot.jd501.service.CatService.CatService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,8 +26,8 @@ public class CatController {
     }
 
     /**
-     * get All Cat from DataBase
-     * Use method of servise {@link CatService#getAllCat()} (Collection< Cat >)}
+     * get All Cat-s from DataBase
+     * Use method of servise {@link CatService#getAllPets()} (Collection< Cat >)}
      *
      * @return collection of Cat
      */
@@ -44,14 +42,14 @@ public class CatController {
             )
     })
     @GetMapping
-    public Collection<Cat> getAllCat() {
-        return catService.getAllCat();
+    public Collection<Cat> getAllPets() {
+        return catService.getAllPets();
     }
 
     /**
      * add new Cat in DataBase
      *
-     * @param cat Use method of Servise {@link CatService#createCat(Cat)}
+     * @param cat Use method of Servise {@link CatService#createPet(Cat)}
      * @return Cat
      */
     @ApiResponses({
@@ -67,12 +65,12 @@ public class CatController {
 
     @PostMapping
     public ResponseEntity<Cat> createPet(@RequestBody Cat cat) {
-        return ResponseEntity.ok(catService.createCat(cat));
+        return ResponseEntity.ok(catService.createPet(cat));
     }
 
     /**
      * change Cat in DataBase
-     * Use method of Servise {@link CatService#updateCat(Cat)}
+     * Use method of Servise {@link CatService#updatePet(Cat)}
      *
      * @param cat
      * @return Cat
@@ -94,12 +92,12 @@ public class CatController {
     })
     @PutMapping
     public ResponseEntity<Cat> updatePet(@RequestBody Cat cat) {
-        return ResponseEntity.ok(catService.updateCat(cat));
+        return ResponseEntity.ok(catService.updatePet(cat));
     }
 
     /**
      * delete Cat from DataBase by id
-     * Use method of Servise {@link CatService#deleteCat(Long id)}}
+     * Use method of Servise {@link CatService#deletePet(Long id)}}
      *
      * @param id
      * @return Deleted Cat
@@ -120,7 +118,7 @@ public class CatController {
             )
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<Cat> deleteCat(@PathVariable Long id) {
-        return ResponseEntity.ok(catService.deleteCat(id));
+    public ResponseEntity<Cat> deletePet(@PathVariable Long id) {
+        return ResponseEntity.ok(catService.deletePet(id));
     }
 }

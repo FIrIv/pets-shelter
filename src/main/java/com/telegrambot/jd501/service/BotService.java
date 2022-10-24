@@ -15,10 +15,8 @@ import com.telegrambot.jd501.service.DogService.DogInformationMessageService;
 import com.telegrambot.jd501.service.DogService.DogReportService;
 import com.telegrambot.jd501.service.DogService.DogUserService;
 import com.telegrambot.jd501.service.DogService.DogVolunteerService;
-import org.checkerframework.checker.nullness.Opt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -213,9 +211,9 @@ public class BotService {
         // *** If it exists, return start greeting to volunteer.
         boolean isExistsVolunteer;
         if (isDog) {
-            isExistsVolunteer = dogVolunteerService.isExistsDogVolunteer(chatId);
+            isExistsVolunteer = dogVolunteerService.isExistsVolunteer(chatId);
         } else {
-            isExistsVolunteer = catVolunteerService.isExistsCatVolunteer(chatId);
+            isExistsVolunteer = catVolunteerService.isExistsVolunteer(chatId);
         }
         if (isExistsVolunteer) {
             messageToSend.setText(START_PHRASE_TO_VOLUNTEER);
@@ -447,13 +445,13 @@ public class BotService {
         boolean userIsAdopted;
         if (isDog) {
             // --- 1) exists? 2) adopted? ---
-            userIsExists = dogUserService.isExistsDogUser(userChatId);
-            userIsAdopted = dogUserService.findDogUserByChatId(userChatId).getAdopted();
+            userIsExists = dogUserService.isExistsUser(userChatId);
+            userIsAdopted = dogUserService.findUserByChatId(userChatId).getAdopted();
             message = goToTakingForReport(userChatId, userIsExists, userIsAdopted);
         } else {
             // --- 1) exists? 2) adopted? ---
-            userIsExists = catUserService.isExistsCatUser(userChatId);
-            userIsAdopted = catUserService.findCatUserByChatId(userChatId).getAdopted();
+            userIsExists = catUserService.isExistsUser(userChatId);
+            userIsAdopted = catUserService.findUserByChatId(userChatId).getAdopted();
             message = goToTakingForReport(userChatId, userIsExists, userIsAdopted);
         }
 //        message.setText(text);
@@ -489,15 +487,15 @@ public class BotService {
         // *** 1) check who is sending report: dogUser or catUser
         //     2) check saving report from this user today
         if (isDog) {
-            Collection<DogReport> reports = dogReportService.getAllReportsByChatId(chatId);
+            Collection<DogReport> reports = dogReportService.getAllPetReportsByChatId(chatId);
             if (reports.isEmpty()) {
                 // save into db new report
                 DogReport dogReport = new DogReport();
-                DogUser dogUser = dogUserService.findDogUserByChatId(chatId);
+                DogUser dogUser = dogUserService.findUserByChatId(chatId);
                 dogReport.setDateOfReport(today);
                 dogReport.setTextOfReport(reportText);
                 dogReport.setDogUser(dogUser);
-                dogReportService.createDogReport(dogReport);
+                dogReportService.createPetReport(dogReport);
                 answerText = "Спасибо. Ваш отчет записан";
                 logger.info("Text of report has saved into DB");
             } else {
@@ -519,15 +517,15 @@ public class BotService {
                 }
             }
         } else {
-            Collection<CatReport> reports = catReportService.getAllReportsByChatId(chatId);
+            Collection<CatReport> reports = catReportService.getAllPetReportsByChatId(chatId);
             if (reports.isEmpty()) {
                 // save into db new report
                 CatReport catReport = new CatReport();
-                CatUser catUser = catUserService.findCatUserByChatId(chatId);
+                CatUser catUser = catUserService.findUserByChatId(chatId);
                 catReport.setDateOfReport(today);
                 catReport.setTextOfReport(reportText);
                 catReport.setCatUser(catUser);
-                catReportService.createCatReport(catReport);
+                catReportService.createPetReport(catReport);
                 answerText = "Спасибо. Ваш отчет записан";
                 logger.info("Text of report has saved into DB");
             } else {
@@ -626,7 +624,7 @@ public class BotService {
         // --- work with data base ---
         if (isDog) {
             // ---- check contact in base -----
-            boolean userIsExists = dogUserService.isExistsDogUser(userChatId);
+            boolean userIsExists = dogUserService.isExistsUser(userChatId);
             if (!userIsExists) {
                 // *** save phone number into DB, if contact doesn't exist
                 DogUser newUser = new DogUser();
@@ -634,11 +632,11 @@ public class BotService {
                 newUser.setName(firstName);
                 newUser.setPhone(phoneNumber);
                 newUser.setAdopted(false);
-                dogUserService.createDogUser(newUser);
+                dogUserService.createUser(newUser);
             }
         } else {
             // ---- (2) check contact in base -----
-            boolean userIsExists = catUserService.isExistsCatUser(userChatId);
+            boolean userIsExists = catUserService.isExistsUser(userChatId);
             if (!userIsExists) {
                 // *** save phone number into DB, if contact doesn't exist
                 CatUser newUser = new CatUser();
@@ -646,7 +644,7 @@ public class BotService {
                 newUser.setName(firstName);
                 newUser.setPhone(phoneNumber);
                 newUser.setAdopted(false);
-                catUserService.createCatUser(newUser);
+                catUserService.createUser(newUser);
             }
         }
         return message;
@@ -670,7 +668,7 @@ public class BotService {
         message.setChatId(update.getMessage().getChatId());
         try {
             if (isDog) {
-                firstDogVolunteer = dogVolunteerService.getAllDogVolunteer()
+                firstDogVolunteer = dogVolunteerService.getAllVolunteers()
                         .stream()
                         .findFirst()
                         .orElseThrow();
@@ -679,7 +677,7 @@ public class BotService {
                 message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
                         "  https://t.me/" + userName);
             } else {
-                firstCatVolunteer = catVolunteerService.getAllCatVolunteer()
+                firstCatVolunteer = catVolunteerService.getAllVolunteers()
                         .stream()
                         .findFirst()
                         .orElseThrow();
@@ -704,9 +702,9 @@ public class BotService {
     private SendMessage getInfo(long chatId, long menuItemNumber) {
         String info;
         if (isDog) {
-            info = dogInformationMessageService.findDogInformationMessageById(menuItemNumber).getText();
+            info = dogInformationMessageService.findInformationMessageById(menuItemNumber).getText();
         } else {
-            info = catInformationMessageService.findCatInformationMessageById(menuItemNumber).getText();
+            info = catInformationMessageService.findInformationMessageById(menuItemNumber).getText();
         }
         return setupSendMessage(chatId, info);
     }

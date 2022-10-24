@@ -35,14 +35,14 @@ class DogReportServiceTest {
     void getAllDogReport() {
         when(dogReportRepository.findAll()).thenReturn(DOG_REPORT_LIST);
 
-        assertEquals(out.getAllDogReport(), DOG_REPORT_LIST);
+        assertEquals(out.getAllPetReports(), DOG_REPORT_LIST);
     }
 
     @Test
     void createDogReport() {
         when(dogReportRepository.save(any(DogReport.class))).thenReturn(DOG_REPORT_1);
 
-        assertEquals(out.createDogReport(DOG_REPORT_1), DOG_REPORT_1);
+        assertEquals(out.createPetReport(DOG_REPORT_1), DOG_REPORT_1);
     }
 
     @Test
@@ -50,21 +50,21 @@ class DogReportServiceTest {
         when(dogReportRepository.findById(anyLong())).thenReturn(Optional.of(DOG_REPORT_1));
         when(dogReportRepository.save(any(DogReport.class))).thenReturn(DOG_REPORT_11);
 
-        assertEquals(out.updateDogReport(DOG_REPORT_11), DOG_REPORT_11);
+        assertEquals(out.updatePetReport(DOG_REPORT_11), DOG_REPORT_11);
     }
 
     @Test
     void deleteDogReport()  {
         when(dogReportRepository.findById(anyLong())).thenReturn(Optional.of(DOG_REPORT_1));
 
-        assertEquals(out.deleteDogReport(ID1), DOG_REPORT_1);
+        assertEquals(out.deletePetReport(ID1), DOG_REPORT_1);
     }
 
     @Test
     void getDogReportByUserAndDateOfReport() {
         when(dogReportRepository.findDogReportByDogUserAndDateOfReport((any(DogUser.class)), any(LocalDate.class))).thenReturn(DOG_REPORT_1);
 
-        assertEquals(out.getDogReportByUserAndDateOfReport(DOG_USER_1,DATE_OF_REPORT_1),DOG_REPORT_1);
+        assertEquals(out.getPetReportByUserAndDateOfReport(DOG_USER_1,DATE_OF_REPORT_1),DOG_REPORT_1);
     }
 
     @Test
@@ -72,18 +72,18 @@ class DogReportServiceTest {
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_1);
         when(dogReportRepository.findAllByDogUser(any(DogUser.class))).thenReturn(List.of(DOG_REPORT_1));
 
-        assertEquals(out.getAllReportsByChatId(CHAT_ID_1), DOG_REPORT_LIST_BY_USER);
+        assertEquals(out.getAllPetReportsByChatId(CHAT_ID_1), DOG_REPORT_LIST_BY_USER);
     }
     @Test
     void petReportNotFoundExceptionTest1() {
         when(dogReportRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetReportNotFoundException.class,() ->out.deleteDogReport(ID2));
+        assertThrows(PetReportNotFoundException.class,() ->out.deletePetReport(ID2));
     }
     @Test
     void petReportNotFoundExceptionTest2() {
         when(dogReportRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetReportNotFoundException.class,() ->out.updateDogReport(DOG_REPORT_2));
+        assertThrows(PetReportNotFoundException.class,() ->out.updatePetReport(DOG_REPORT_2));
     }
 }

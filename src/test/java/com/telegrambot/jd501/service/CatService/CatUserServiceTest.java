@@ -38,14 +38,14 @@ class CatUserServiceTest {
     void getAllCatUser() {
         when(catUserRepository.findAll()).thenReturn(CAT_USER_LIST);
 
-        assertEquals(out.getAllCatUser(), CAT_USER_LIST);
+        assertEquals(out.getAllUsers(), CAT_USER_LIST);
     }
 
     @Test
     void createCatUser() {
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_1);
 
-        assertEquals(out.createCatUser(CAT_USER_1), CAT_USER_1);
+        assertEquals(out.createUser(CAT_USER_1), CAT_USER_1);
     }
 
     @Test
@@ -53,14 +53,14 @@ class CatUserServiceTest {
         when(catUserRepository.findById(anyLong())).thenReturn(Optional.of(CAT_USER_1));
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_11);
 
-        assertEquals(out.updateCatUser(CAT_USER_11), CAT_USER_11);
+        assertEquals(out.updateUser(CAT_USER_11), CAT_USER_11);
     }
 
     @Test
     void deleteCatUser() {
         when(catUserRepository.findById(anyLong())).thenReturn(Optional.of(CAT_USER_1));
 
-        assertEquals(out.deleteCatUser(ID1), CAT_USER_1);
+        assertEquals(out.deleteUser(ID1), CAT_USER_1);
     }
     private static Stream<Arguments> parametersForProbationPeriodExtension() {
         return Stream.of(
@@ -107,33 +107,33 @@ class CatUserServiceTest {
     void findCatUsersByAdoptedIsTrue() {
         when(catUserRepository.findCatUsersByIsAdoptedIsTrue()).thenReturn(List.of(CAT_USER_3,CAT_USER_4));
 
-        assertEquals(out.findCatUsersByAdoptedIsTrue(), CAT_USER_ADOPTERS_LIST);
+        assertEquals(out.findUsersByAdoptedIsTrue(), CAT_USER_ADOPTERS_LIST);
     }
 
     @Test
     void isExistsCatUser() {
         when(catUserRepository.existsByChatId(anyLong())).thenReturn(TRUE);
 
-        assertEquals(out.isExistsCatUser(CHAT_ID_1), TRUE);
+        assertEquals(out.isExistsUser(CHAT_ID_1), TRUE);
     }
 
     @Test
     void findCatUserByChatId() {
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_2);
 
-        assertEquals(out.findCatUserByChatId(CHAT_ID_2), CAT_USER_2);
+        assertEquals(out.findUserByChatId(CHAT_ID_2), CAT_USER_2);
     }
 
     @Test
     void userNotFoundExceptionTest1() {
         when(catUserRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class,() ->out.deleteCatUser(ID2));
+        assertThrows(UserNotFoundException.class,() ->out.deleteUser(ID2));
     }
     @Test
     void userNotFoundExceptionTest2() {
         when(catUserRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class,() ->out.updateCatUser(CAT_USER_2));
+        assertThrows(UserNotFoundException.class,() ->out.updateUser(CAT_USER_2));
     }
 }
