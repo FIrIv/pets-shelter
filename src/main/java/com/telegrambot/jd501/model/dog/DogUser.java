@@ -20,14 +20,14 @@ public class DogUser {
     private LocalDate finishDate;
     @OneToOne
     @JoinColumn(name = "pet_id")
-    private Dog dog;
+    private Dog pet;
 
-    public Dog getDog() {
-        return dog;
+    public Dog getPet() {
+        return pet;
     }
 
-    public void setDog(Dog dog) {
-        this.dog = dog;
+    public void setPet(Dog dog) {
+        this.pet = dog;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class DogUser {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DogUser dogUser = (DogUser) o;
-        return Objects.equals(id, dogUser.id);
+        return Objects.equals(id, dogUser.getId());
     }
 
     @Override
@@ -105,7 +105,7 @@ public class DogUser {
                 ", isAdopted=" + isAdopted +
                 ", startDate=" + startDate +
                 ", finishDate=" + finishDate +
-                ", dog=" + dog +
+                ", dog=" + pet +
                 '}';
     }
 
@@ -127,6 +127,6 @@ public class DogUser {
         this.isAdopted = isAdopted;
         this.startDate = startDate;
         this.finishDate = finishDate;
-        this.dog = dog;
+        this.pet = dog;
     }
 }

@@ -36,7 +36,7 @@ public class CatInformationMessage {
                 '}';
     }
 
-    @Override
+    /*@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -48,6 +48,19 @@ public class CatInformationMessage {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }*/
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CatInformationMessage that = (CatInformationMessage) o;
+        return Objects.equals(id, that.id) && Objects.equals(text, that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, text);
     }
 
     public CatInformationMessage() {
