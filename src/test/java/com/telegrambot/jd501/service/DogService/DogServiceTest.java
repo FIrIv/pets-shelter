@@ -29,14 +29,14 @@ class DogServiceTest {
     void getAllDog() {
         when(dogRepository.findAll()).thenReturn(DOG_LIST);
 
-        assertEquals(out.getAllDog(), DOG_LIST);
+        assertEquals(out.getAllPets(), DOG_LIST);
     }
 
     @Test
     void createDog() {
         when(dogRepository.save(any(Dog.class))).thenReturn(DOG_1);
 
-        assertEquals(out.createDog(DOG_1), DOG_1);
+        assertEquals(out.createPet(DOG_1), DOG_1);
     }
 
     @Test
@@ -44,26 +44,26 @@ class DogServiceTest {
         when(dogRepository.findById(anyLong())).thenReturn(Optional.of(DOG_1));
         when(dogRepository.save(any(Dog.class))).thenReturn(DOG_11);
 
-        assertEquals(out.updateDog(DOG_11), DOG_11);
+        assertEquals(out.updatePet(DOG_11), DOG_11);
     }
 
     @Test
     void deleteDog() {
         when(dogRepository.findById(anyLong())).thenReturn(Optional.of(DOG_1));
 
-        assertEquals(out.deleteDog(ID1), DOG_1);
+        assertEquals(out.deletePet(ID1), DOG_1);
     }
     @Test
     void petNotFoundExceptionTest1() {
         when(dogRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetNotFoundException.class,() ->out.deleteDog(ID2));
+        assertThrows(PetNotFoundException.class,() ->out.deletePet(ID2));
     }
 
     @Test
     void petNotFoundExceptionTest2() {
         when(dogRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetNotFoundException.class,() ->out.updateDog(DOG_2));
+        assertThrows(PetNotFoundException.class,() ->out.updatePet(DOG_2));
     }
 }

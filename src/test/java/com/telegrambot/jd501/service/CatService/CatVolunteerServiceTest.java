@@ -28,14 +28,14 @@ class CatVolunteerServiceTest {
     void getAllCatVolunteer() {
         when(catVolunteerRepository.findAll()).thenReturn(CAT_VOLUNTEER_LIST);
 
-        assertEquals(out.getAllCatVolunteer(), CAT_VOLUNTEER_LIST);
+        assertEquals(out.getAllVolunteers(), CAT_VOLUNTEER_LIST);
     }
 
     @Test
     void createCatVolunteer() {
         when(catVolunteerRepository.save(any(CatVolunteer.class))).thenReturn(CAT_VOLUNTEER_1);
 
-        assertEquals(out.createCatVolunteer(CAT_VOLUNTEER_1), CAT_VOLUNTEER_1);
+        assertEquals(out.createVolunteer(CAT_VOLUNTEER_1), CAT_VOLUNTEER_1);
     }
 
     @Test
@@ -43,33 +43,33 @@ class CatVolunteerServiceTest {
         when(catVolunteerRepository.findById(ID1)).thenReturn(Optional.of(CAT_VOLUNTEER_1));
         when(catVolunteerRepository.save(CAT_VOLUNTEER_11)).thenReturn(CAT_VOLUNTEER_11);
 
-        assertEquals(out.updateCatVolunteer(CAT_VOLUNTEER_11), CAT_VOLUNTEER_11);
+        assertEquals(out.updateVolunteer(CAT_VOLUNTEER_11), CAT_VOLUNTEER_11);
     }
 
     @Test
     void deleteCatVolunteer() {
         when(catVolunteerRepository.findById(anyLong())).thenReturn(Optional.of(CAT_VOLUNTEER_1));
 
-        assertEquals(out.deleteCatVolunteer(ID1),CAT_VOLUNTEER_1);
+        assertEquals(out.deleteVolunteer(ID1),CAT_VOLUNTEER_1);
     }
 
     @Test
     void isExistsCatVolunteer() {
         when(catVolunteerRepository.existsByChatId(anyLong())).thenReturn(TRUE);
 
-        assertEquals(out.isExistsCatVolunteer(CHAT_ID_1),TRUE);
+        assertEquals(out.isExistsVolunteer(CHAT_ID_1),TRUE);
     }
 
     @Test
     void volunteerNotFoundExceptionTest1() {
         when(catVolunteerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(VolunteerNotFoundException.class,() ->out.deleteCatVolunteer(ID2));
+        assertThrows(VolunteerNotFoundException.class,() ->out.deleteVolunteer(ID2));
     }
     @Test
     void volunteerNotFoundExceptionTest2() {
         when(catVolunteerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(VolunteerNotFoundException.class,() ->out.updateCatVolunteer(CAT_VOLUNTEER_2));
+        assertThrows(VolunteerNotFoundException.class,() ->out.updateVolunteer(CAT_VOLUNTEER_2));
     }
 }

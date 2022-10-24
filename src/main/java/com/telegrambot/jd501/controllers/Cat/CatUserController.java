@@ -28,8 +28,8 @@ public class CatUserController {
     }
 
     /**
-     * get All CatUser from DataBase
-     * Use method of CatUser servise {@link CatUserService#getAllCatUser()} (Collection<CatUser>)}
+     * get All CatUser-s from DataBase
+     * Use method of CatUser servise {@link CatUserService#getAllUsers()} (Collection<CatUser>)}
      *
      * @return collection of CatUser
      */
@@ -44,14 +44,14 @@ public class CatUserController {
             )
     })
     @GetMapping
-    public Collection<CatUser> getAllCatUser() {
-        return catUserService.getAllCatUser();
+    public Collection<CatUser> getAllUsers() {
+        return catUserService.getAllUsers();
     }
 
     /**
      * add new CatUser in DataBase
      *
-     * @param catUser Use method of Servise {@link CatUserService#createCatUser(CatUser)}
+     * @param catUser Use method of Servise {@link CatUserService#createUser(CatUser)}
      * @return CatUser
      */
     @ApiResponses({
@@ -66,12 +66,12 @@ public class CatUserController {
     })
     @PostMapping
     public ResponseEntity<CatUser> createUser(@RequestBody CatUser catUser) {
-        return ResponseEntity.ok(catUserService.createCatUser(catUser));
+        return ResponseEntity.ok(catUserService.createUser(catUser));
     }
 
     /**
      * change CatUser in DataBase
-     * Use method of Servise {@link CatUserService#updateCatUser(CatUser)}
+     * Use method of Servise {@link CatUserService#updateUser(CatUser)}
      *
      * @param catUser
      * @return CatUser
@@ -93,16 +93,16 @@ public class CatUserController {
     })
     @PutMapping
     public ResponseEntity<CatUser> updateUser(@RequestBody CatUser catUser) {
-        return ResponseEntity.ok(catUserService.updateCatUser(catUser));
+        return ResponseEntity.ok(catUserService.updateUser(catUser));
     }
 
     /**
-     * find user by id and change  status of The Adopter,
+     * find CatUser by id and change  status of The Adopter,
      * add adopted Cat, Date of adoption, and set test day at 30 days
      * Use method User repository {@link }
      *
-     * @param catUserId - catUser id for fing catUser in repository,
-     * @param catId  - pet id for fing user in repository,
+     * @param userId - catUser id for fing catUser in repository,
+     * @param petId  - pet id for fing user in repository,
      * @return Changed User
      */
     @ApiResponses({
@@ -121,7 +121,7 @@ public class CatUserController {
     }
 
     /**
-     * find user by id and change amount of probation period
+     * find CatUser by id and change amount of probation period
      *
      * @param id   - user id,
      * @param days - number of days to increase the term of the transfer
@@ -145,7 +145,7 @@ public class CatUserController {
 
     /**
      * delete CatUser from DataBase by id
-     * Use method of Servise {@link CatUserService#deleteCatUser(Long)}
+     * Use method of Servise {@link CatUserService#deleteUser(Long)}
      *
      * @param id
      * @return Deleted CatUser
@@ -166,8 +166,8 @@ public class CatUserController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<CatUser> deleteCatUser(@PathVariable Long id) {
-        return ResponseEntity.ok(catUserService.deleteCatUser(id));
+    ResponseEntity<CatUser> deleteUser(@PathVariable Long id) {
+        return ResponseEntity.ok(catUserService.deleteUser(id));
     }
 
 }

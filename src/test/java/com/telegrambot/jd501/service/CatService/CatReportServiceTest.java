@@ -34,14 +34,14 @@ class CatReportServiceTest {
     void getAllCatReport() {
         when(catReportRepository.findAll()).thenReturn(CAT_REPORT_LIST);
 
-        assertEquals(out.getAllCatReport(), CAT_REPORT_LIST);
+        assertEquals(out.getAllPetReports(), CAT_REPORT_LIST);
     }
 
     @Test
     void createCatReport() {
         when(catReportRepository.save(any(CatReport.class))).thenReturn(CAT_REPORT_1);
 
-        assertEquals(out.createCatReport(CAT_REPORT_1), CAT_REPORT_1);
+        assertEquals(out.createPetReport(CAT_REPORT_1), CAT_REPORT_1);
     }
 
     @Test
@@ -49,28 +49,28 @@ class CatReportServiceTest {
         when(catReportRepository.findById(anyLong())).thenReturn(Optional.of(CAT_REPORT_1));
         when(catReportRepository.save(any(CatReport.class))).thenReturn(CAT_REPORT_11);
 
-        assertEquals(out.updateCatReport(CAT_REPORT_11), CAT_REPORT_11);
+        assertEquals(out.updatePetReport(CAT_REPORT_11), CAT_REPORT_11);
     }
 
     @Test
     void deleteCatReport() {
         when(catReportRepository.findById(anyLong())).thenReturn(Optional.of(CAT_REPORT_1));
 
-        assertEquals(out.deleteCatReport(ID1), CAT_REPORT_1);
+        assertEquals(out.deletePetReport(ID1), CAT_REPORT_1);
     }
 
     @Test
     void getAllCatReportByCatUser() {
         when(catReportRepository.findCatReportsByCatUserOrderByDateOfReport(any(CatUser.class))).thenReturn(List.of(CAT_REPORT_1));
 
-        assertEquals(out.getAllCatReportByCatUser(CAT_USER_3), CAT_REPORT_LIST_BY_USER);
+        assertEquals(out.getAllPetReportsByUser(CAT_USER_3), CAT_REPORT_LIST_BY_USER);
     }
 
     @Test
     void getCatReportByCatUserAndDateOfReport() {
         when(catReportRepository.findCatReportByCatUserAndDateOfReport(any(CatUser.class), any(LocalDate.class))).thenReturn(CAT_REPORT_1);
 
-        assertEquals(out.getCatReportByCatUserAndDateOfReport(CAT_USER_1,DATE_OF_REPORT_1),CAT_REPORT_1);
+        assertEquals(out.getPetReportByUserAndDateOfReport(CAT_USER_1,DATE_OF_REPORT_1),CAT_REPORT_1);
     }
 
     @Test
@@ -78,18 +78,18 @@ class CatReportServiceTest {
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_1);
         when(catReportRepository.findAllByCatUser(any(CatUser.class))).thenReturn(List.of(CAT_REPORT_1));
 
-        assertEquals(out.getAllReportsByChatId(CHAT_ID_1), CAT_REPORT_LIST_BY_USER);
+        assertEquals(out.getAllPetReportsByChatId(CHAT_ID_1), CAT_REPORT_LIST_BY_USER);
     }
     @Test
     void petReportNotFoundExceptionTest1() {
         when(catReportRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetReportNotFoundException.class,() ->out.deleteCatReport(ID2));
+        assertThrows(PetReportNotFoundException.class,() ->out.deletePetReport(ID2));
     }
     @Test
     void petReportNotFoundExceptionTest2() {
         when(catReportRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetReportNotFoundException.class,() ->out.updateCatReport(CAT_REPORT_2));
+        assertThrows(PetReportNotFoundException.class,() ->out.updatePetReport(CAT_REPORT_2));
     }
 }

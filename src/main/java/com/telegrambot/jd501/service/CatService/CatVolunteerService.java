@@ -22,7 +22,7 @@ public class CatVolunteerService {
      *
      * @return collection of CatVolunteer
      */
-    public Collection<CatVolunteer> getAllCatVolunteer() {
+    public Collection<CatVolunteer> getAllVolunteers() {
         return catVolunteerRepository.findAll();
     }
 
@@ -33,7 +33,7 @@ public class CatVolunteerService {
      * Use  method CatVolunteer repository {@link CatVolunteerRepository#save(Object)} (CatVolunteer)}
      * @return CatVolunteer
      */
-    public CatVolunteer createCatVolunteer(CatVolunteer catVolunteer) {
+    public CatVolunteer createVolunteer(CatVolunteer catVolunteer) {
         return catVolunteerRepository.save(catVolunteer);
     }
 
@@ -43,9 +43,9 @@ public class CatVolunteerService {
      *
      * @param catVolunteer
      * @return CatVolunteer
-     * @throws VolunteerNotFoundException if CatVolunteer with id not found
+     * @throws com.telegrambot.jd501.Exceptions.VolunteerNotFoundException if CatVolunteer with id not found
      */
-    public CatVolunteer updateCatVolunteer(CatVolunteer catVolunteer) {
+    public CatVolunteer updateVolunteer(CatVolunteer catVolunteer) {
         catVolunteerRepository.findById(catVolunteer.getId()).orElseThrow(() -> new VolunteerNotFoundException("CatVolunteer not found"));
         return catVolunteerRepository.save(catVolunteer);
     }
@@ -55,9 +55,9 @@ public class CatVolunteerService {
      *
      * @param id
      * @return Deleted CatVolunteer
-     * @throws VolunteerNotFoundException if CatVolunteer with id not found
+     * @throws com.telegrambot.jd501.Exceptions.VolunteerNotFoundException if CatVolunteer with id not found
      */
-    public CatVolunteer deleteCatVolunteer(Long id) {
+    public CatVolunteer deleteVolunteer(Long id) {
         CatVolunteer temp = catVolunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("CatVolunteer not found"));
         catVolunteerRepository.deleteById(id);
         return temp;
@@ -69,7 +69,8 @@ public class CatVolunteerService {
      *
      * @return boolean
      */
-    public boolean isExistsCatVolunteer(long userChatId) {
+    public boolean isExistsVolunteer(long userChatId) {
         return catVolunteerRepository.existsByChatId(userChatId);
     }
+
 }

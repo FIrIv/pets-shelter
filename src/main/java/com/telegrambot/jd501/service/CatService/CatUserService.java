@@ -29,7 +29,7 @@ public class CatUserService {
      *
      * @return collection of CatUser
      */
-    public Collection <CatUser> getAllCatUser() {
+    public Collection <CatUser> getAllUsers() {
         return catUserRepository.findAll();
     }
 
@@ -39,7 +39,7 @@ public class CatUserService {
      * @param catUser Use  method InformationMessage repository {@link CatUserRepository#save(Object)} (User)}
      * @return InformationMessage
      */
-    public CatUser createCatUser(CatUser catUser) {
+    public CatUser createUser(CatUser catUser) {
         catUser.setStartDate(null);
         catUser.setFinishDate(null);
         catUser.setCat(null);
@@ -55,7 +55,7 @@ public class CatUserService {
      * @return CatUser
      * @throws UserNotFoundException if CatUser with id not found
      */
-    public CatUser updateCatUser(CatUser catUser) {
+    public CatUser updateUser(CatUser catUser) {
         catUserRepository.findById(catUser.getId()).orElseThrow(() -> new UserNotFoundException("CatUser not found"));
         return catUserRepository.save(catUser);
     }
@@ -68,7 +68,7 @@ public class CatUserService {
      * @return Deleted CatUser
      * @throws UserNotFoundException if CatUser with id not found
      */
-    public CatUser deleteCatUser(Long id) {
+    public CatUser deleteUser(Long id) {
         CatUser temp = catUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("CatUser not found"));
         catUserRepository.deleteById(id);
         return temp;
@@ -116,7 +116,7 @@ public class CatUserService {
      *
      * @return List<CatUser>
      */
-    public List<CatUser> findCatUsersByAdoptedIsTrue() {
+    public List<CatUser> findUsersByAdoptedIsTrue() {
         return catUserRepository.findCatUsersByIsAdoptedIsTrue();
     }
 
@@ -126,7 +126,7 @@ public class CatUserService {
      *
      * @return boolean
      */
-    public boolean isExistsCatUser(long catUserChatId) {
+    public boolean isExistsUser(long catUserChatId) {
         return catUserRepository.existsByChatId(catUserChatId);
     }
 
@@ -136,7 +136,7 @@ public class CatUserService {
      *
      * @return CatUser
      */
-    public CatUser findCatUserByChatId(long userChatId) {
+    public CatUser findUserByChatId(long userChatId) {
         return catUserRepository.findCatUserByChatId(userChatId);
     }
 

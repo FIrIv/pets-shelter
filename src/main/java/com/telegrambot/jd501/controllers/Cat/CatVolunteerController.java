@@ -2,6 +2,7 @@ package com.telegrambot.jd501.controllers.Cat;
 
 import com.telegrambot.jd501.model.cat.CatVolunteer;
 import com.telegrambot.jd501.service.CatService.CatVolunteerService;
+
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,14 +27,14 @@ public class CatVolunteerController {
     }
 
     /**
-     * get All CatVolunteer from DataBase
-     * Use method of servise {@link CatVolunteerService#getAllCatVolunteer()} (Collection< CatVolunteer >)}
+     * get All CatVolunteer-s from DataBase
+     * Use method of servise {@link CatVolunteerService#getAllVolunteers()} (Collection< CatVolunteer >)}
      *
      * @return collection of CatVolunteer
      */
     @ApiResponses({
             @ApiResponse(
-             responseCode = "200",
+                    responseCode = "200",
                     description = "Show all CatVolunteer",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -42,14 +43,14 @@ public class CatVolunteerController {
             )
     })
     @GetMapping
-    public Collection <CatVolunteer> getAllCatVolunteer() {
-        return catVolunteerService.getAllCatVolunteer();
+    public Collection <CatVolunteer> getAllVolunteers() {
+        return catVolunteerService.getAllVolunteers();
     }
 
     /**
      * add new CatVolunteer in DataBase
      *
-     * @param catVolunteer Use method of Servise {@link CatVolunteerService#createCatVolunteer(CatVolunteer)}}
+     * @param catVolunteer Use method of Servise {@link CatVolunteerService#createVolunteer(CatVolunteer)}}
      * @return CatVolunteer
      */
     @ApiResponses({
@@ -64,12 +65,12 @@ public class CatVolunteerController {
     })
     @PostMapping
     public ResponseEntity<CatVolunteer> createVolunteer(@RequestBody CatVolunteer catVolunteer) {
-        return ResponseEntity.ok(catVolunteerService.createCatVolunteer(catVolunteer));
+        return ResponseEntity.ok(catVolunteerService.createVolunteer(catVolunteer));
     }
 
     /**
      * change CatVolunteer in DataBase
-     * Use method of Servise {@link CatVolunteerService#updateCatVolunteer(CatVolunteer)}
+     * Use method of Servise {@link CatVolunteerService#updateVolunteer(CatVolunteer)}
      *
      * @param catVolunteer
      * @return CatVolunteer
@@ -91,12 +92,12 @@ public class CatVolunteerController {
     })
     @PutMapping
     public ResponseEntity<CatVolunteer> updateVolunteer(@RequestBody CatVolunteer catVolunteer) {
-        return ResponseEntity.ok(catVolunteerService.updateCatVolunteer(catVolunteer));
+        return ResponseEntity.ok(catVolunteerService.updateVolunteer(catVolunteer));
     }
 
     /**
-     * delete CatVolunteer from DataBase by id
-     * Use method of Servise {@link CatVolunteerService#deleteCatVolunteer(Long id)}
+     * delete Volunteer from DataBase by id
+     * Use method of Servise {@link CatVolunteerService#deleteVolunteer(Long id)}
      *
      * @param id
      * @return Deleted CatVolunteer
@@ -117,7 +118,7 @@ public class CatVolunteerController {
             )
     })
     @DeleteMapping("{id}")
-    ResponseEntity<CatVolunteer> deleteCatVolunteer(@PathVariable Long id) {
-        return ResponseEntity.ok(catVolunteerService.deleteCatVolunteer(id));
+    public ResponseEntity<CatVolunteer> deleteVolunteer(@PathVariable Long id) {
+        return ResponseEntity.ok(catVolunteerService.deleteVolunteer(id));
     }
 }

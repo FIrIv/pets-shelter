@@ -12,13 +12,6 @@ public class DogInformationMessage  {
     private Long id;
     private String text;
 
-    public DogInformationMessage() {
-    }
-
-    public DogInformationMessage(Long id, String text) {
-        this.id = id;
-        this.text = text;
-    }
     @Override
     public String toString() {
         return "DogInformationMessage{" +

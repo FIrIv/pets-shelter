@@ -35,13 +35,13 @@ class DogInformationMessageControllerTest {
     @Test
     void getAllDogInformationMessage() {
         DogInformationMessage infoMessage = new DogInformationMessage(-1L, "Тестовое info message.");
-        long id = dogInformationMessageController.createDogInformationMessage(infoMessage).getBody().getId();
+        long id = dogInformationMessageController.createInformationMessage(infoMessage).getBody().getId();
 
         Assertions
                 .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/dog/informationMessage", String.class))
                 .isNotNull();
 
-        dogInformationMessageController.deleteDogInformationMessage(id);
+        dogInformationMessageController.deleteInformationMessage(id);
     }
 
     @Test
@@ -54,13 +54,13 @@ class DogInformationMessageControllerTest {
         Assertions.assertThat(response.getBody().getText()).isEqualTo("Тестовое info message.");
         Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
 
-        dogInformationMessageController.deleteDogInformationMessage(response.getBody().getId());
+        dogInformationMessageController.deleteInformationMessage(response.getBody().getId());
     }
 
     @Test
     void updateInformationMessage() {
         DogInformationMessage infoMessage = new DogInformationMessage(-1L, "Тестовое info message.");
-        long id = dogInformationMessageController.createDogInformationMessage(infoMessage).getBody().getId();
+        long id = dogInformationMessageController.createInformationMessage(infoMessage).getBody().getId();
 
         DogInformationMessage infoMessageUp = new DogInformationMessage(id, "Перезаписанное тестовое info message.");
 
@@ -73,13 +73,13 @@ class DogInformationMessageControllerTest {
         Assertions.assertThat(response.getBody().getText()).isEqualTo("Перезаписанное тестовое info message.");
         Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
 
-        dogInformationMessageController.deleteDogInformationMessage(id);
+        dogInformationMessageController.deleteInformationMessage(id);
     }
 
     @Test
     void deleteInformationMessage() {
         DogInformationMessage infoMessage = new DogInformationMessage(-1L, "Тестовое info message.");
-        long id = dogInformationMessageController.createDogInformationMessage(infoMessage).getBody().getId();
+        long id = dogInformationMessageController.createInformationMessage(infoMessage).getBody().getId();
 
         ResponseEntity<DogInformationMessage> response = restTemplate.exchange("/dog/informationMessage/{id}", HttpMethod.DELETE, null,
                 DogInformationMessage.class, id);

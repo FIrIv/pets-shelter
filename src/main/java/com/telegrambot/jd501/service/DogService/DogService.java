@@ -23,7 +23,7 @@ public class DogService {
      *
      * @return collection of Dog
      */
-    public Collection<Dog> getAllDog() {
+    public Collection<Dog> getAllPets() {
         return dogRepository.findAll();
     }
     /**
@@ -33,7 +33,7 @@ public class DogService {
      * Use  method Dog repository {@link DogRepository#save(Object)} (Dog)}
      * @return Dog
      */
-    public Dog createDog(Dog dog) {
+    public Dog createPet(Dog dog) {
         return dogRepository.save(dog);
     }
     /**
@@ -44,7 +44,7 @@ public class DogService {
      * @return Dog
      * @throws com.telegrambot.jd501.Exceptions.PetNotFoundException if Dog with id not found
      */
-    public Dog updateDog(Dog dog) {
+    public Dog updatePet(Dog dog) {
         dogRepository.findById(dog.getId()).orElseThrow(() -> new PetNotFoundException("Dog Not Found"));
         return dogRepository.save(dog);
     }
@@ -56,7 +56,7 @@ public class DogService {
      * @return Deleted Dog
      * @throws com.telegrambot.jd501.Exceptions.PetNotFoundException if Dog with id not found
      */
-    public Dog deleteDog(Long id) {
+    public Dog deletePet(Long id) {
         Dog temp = dogRepository.findById(id).orElseThrow(() -> new PetNotFoundException("Dog not found"));
         dogRepository.deleteById(id);
         return temp;

@@ -18,12 +18,12 @@ public class CatService {
     }
 
     /**
-     * get All Cat from DataBase
+     * get All Cat-s from DataBase
      * Use method of Cat repository {@link CatRepository#findAll()} ()} (Collection < Cat >)}
      *
      * @return collection of Cat
      */
-    public Collection<Cat> getAllCat() {
+    public Collection<Cat> getAllPets() {
         return catRepository.findAll();
     }
     /**
@@ -33,7 +33,7 @@ public class CatService {
      * Use  method Cat repository {@link CatRepository#save(Object)} (Cat)}
      * @return Cat
      */
-    public Cat createCat(Cat cat) {
+    public Cat createPet(Cat cat) {
         return catRepository.save(cat);
     }
     /**
@@ -44,7 +44,7 @@ public class CatService {
      * @return Cat
      * @throws PetNotFoundException if Cat with id not found
      */
-    public Cat updateCat(Cat cat) {
+    public Cat updatePet(Cat cat) {
         catRepository.findById(cat.getId()).orElseThrow(() -> new PetNotFoundException("Cat Not Found"));
         return catRepository.save(cat);
     }
@@ -56,7 +56,7 @@ public class CatService {
      * @return Deleted cat
      * @throws PetNotFoundException if Cat with id not found
      */
-    public Cat deleteCat(Long id) {
+    public Cat deletePet(Long id) {
         Cat temp = catRepository.findById(id).orElseThrow(() -> new PetNotFoundException("Cat not found"));
         catRepository.deleteById(id);
         return temp;

@@ -28,7 +28,7 @@ public class DogReportService {
      *
      * @return collection of DogReport
      */
-    public Collection<DogReport> getAllDogReport() {
+    public Collection<DogReport> getAllPetReports() {
         return dogReportRepository.findAll();
     }
 
@@ -38,7 +38,7 @@ public class DogReportService {
      * @param dogReport Use  method DogReport repository {@link DogReportRepository#save(Object)} (DogReport)}
      * @return DogReport
      */
-    public DogReport createDogReport(DogReport dogReport) {
+    public DogReport createPetReport(DogReport dogReport) {
         return dogReportRepository.save(dogReport);
     }
 
@@ -50,7 +50,7 @@ public class DogReportService {
      * @return DogReport
      * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException if DogReport with id not found
      */
-    public DogReport updateDogReport(DogReport dogReport) {
+    public DogReport updatePetReport(DogReport dogReport) {
         dogReportRepository.findById(dogReport.getId()).orElseThrow(() -> new PetReportNotFoundException("DogReport not found"));
         return dogReportRepository.save(dogReport);
     }
@@ -63,7 +63,7 @@ public class DogReportService {
      * @return Deleted DogReport
      * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException if PetReport with id not found
      */
-    public DogReport deleteDogReport(Long id) {
+    public DogReport deletePetReport(Long id) {
         DogReport temp = dogReportRepository.findById(id).orElseThrow(() -> new PetReportNotFoundException("DogReport not found"));
         dogReportRepository.deleteById(id);
         return temp;
@@ -77,19 +77,9 @@ public class DogReportService {
      * @param dateOfReport
      * @return DogReport With chatId And dateOfReportogUser
      */
-    public DogReport getDogReportByUserAndDateOfReport(DogUser user, LocalDate dateOfReport) {
+    public DogReport getPetReportByUserAndDateOfReport(DogUser user, LocalDate dateOfReport) {
         return dogReportRepository.findDogReportByDogUserAndDateOfReport(user, dateOfReport);
     }
-
- /**
-     * get All DogReport from DataBase by Dog
-     * Use method of DogReport repository {@link DogReportRepository#findDogReportsByDogOrderByDateOfReport(Dog)} ()} (List<DogReport>)}
-     *
-     * @return collection of DogReport With Pet
-     */
-//    public Collection<DogReport> getAllDogReportByChatId(long chatId) {
-//        return dogReportRepository.findDogReportsByDogOrderByDateOfReport(dog);
-//    }
 
     /**
      * Find all DogReport By Chat Id
@@ -98,7 +88,7 @@ public class DogReportService {
      * @param chatId
      * @return Collection <DogReport>
      */
-    public List <DogReport> getAllReportsByChatId(Long chatId) {
+    public List <DogReport> getAllPetReportsByChatId(Long chatId) {
         DogUser tempDogUser = dogUserRepository.findDogUserByChatId(chatId);
         return dogReportRepository.findAllByDogUser(tempDogUser);
     }

@@ -2,7 +2,6 @@ package com.telegrambot.jd501.service.CatService;
 
 import com.telegrambot.jd501.Exceptions.InformationMessageNotFoundException;
 import com.telegrambot.jd501.model.cat.CatInformationMessage;
-import com.telegrambot.jd501.model.dog.DogInformationMessage;
 import com.telegrambot.jd501.repository.Cat.CatInformationMessageRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class CatInformationMessageService {
      *
      * @return collection of CatInformationMessage
      */
-    public List<CatInformationMessage> getAllCatInformationMessage() {
+    public List<CatInformationMessage> getAllInformationMessages() {
         return catInformationMessageRepository.findAll();
     }
     /**
@@ -31,7 +30,7 @@ public class CatInformationMessageService {
      * Use  method CatInformationMessage repository {@link CatInformationMessageRepository#save(Object)} (CatInformationMessage)}
      * @return CatInformationMessage
      */
-    public CatInformationMessage createCatInformationMessage (CatInformationMessage catInformationMessage) {
+    public CatInformationMessage createInformationMessage(CatInformationMessage catInformationMessage) {
         return catInformationMessageRepository.save(catInformationMessage);
     }
     /**
@@ -42,7 +41,7 @@ public class CatInformationMessageService {
      * @return CatInformationMessage
      * @throws InformationMessageNotFoundException if CatInformationMessage with id not found
      */
-    public CatInformationMessage updateCatInformationMessage(CatInformationMessage catinformationMessage) {
+    public CatInformationMessage updateInformationMessage(CatInformationMessage catinformationMessage) {
         catInformationMessageRepository.findById(catinformationMessage.getId()).orElseThrow(() -> new InformationMessageNotFoundException("CatInformationMessage not found"));
         return catInformationMessageRepository.save(catinformationMessage);
     }
@@ -54,13 +53,13 @@ public class CatInformationMessageService {
      * @return Deleted CatInformationMessage
      * @throws InformationMessageNotFoundException if CatInformationMessage with id not found
      */
-    public CatInformationMessage deleteCatInformationMessage(Long id) {
+    public CatInformationMessage deleteInformationMessage(Long id) {
         CatInformationMessage temp = catInformationMessageRepository.findById(id).orElseThrow(() -> new InformationMessageNotFoundException("CatInformationMessage not found"));
         catInformationMessageRepository.deleteById(id);
         return temp;
     }
 
-    public CatInformationMessage findCatInformationMessageById(Long id) {
+    public CatInformationMessage findInformationMessageById(Long id) {
         return catInformationMessageRepository.findById(id).orElseThrow(() ->new InformationMessageNotFoundException("CatInformationMessage not found"));
     }
 }

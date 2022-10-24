@@ -28,14 +28,14 @@ class CatServiceTest {
     void getAllCat() {
         when(catRepository.findAll()).thenReturn(CAT_LIST);
 
-        assertEquals(out.getAllCat(), CAT_LIST);
+        assertEquals(out.getAllPets(), CAT_LIST);
     }
 
     @Test
     void createCat() {
         when(catRepository.save(any(Cat.class))).thenReturn(CAT_1);
 
-        assertEquals(out.createCat(CAT_1), CAT_1);
+        assertEquals(out.createPet(CAT_1), CAT_1);
     }
 
     @Test
@@ -43,26 +43,26 @@ class CatServiceTest {
         when(catRepository.findById(anyLong())).thenReturn(Optional.of(CAT_1));
         when(catRepository.save(any(Cat.class))).thenReturn(CAT_11);
 
-        assertEquals(out.updateCat(CAT_11), CAT_11);
+        assertEquals(out.updatePet(CAT_11), CAT_11);
     }
 
     @Test
     void deleteCat() {
         when(catRepository.findById(anyLong())).thenReturn(Optional.of(CAT_1));
 
-        assertEquals(out.deleteCat(ID1), CAT_1);
+        assertEquals(out.deletePet(ID1), CAT_1);
     }
     @Test
     void petNotFoundExceptionTest1() {
         when(catRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetNotFoundException.class,() ->out.deleteCat(ID2));
+        assertThrows(PetNotFoundException.class,() ->out.deletePet(ID2));
     }
 
     @Test
     void petNotFoundExceptionTest2() {
         when(catRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetNotFoundException.class,() ->out.updateCat(CAT_2));
+        assertThrows(PetNotFoundException.class,() ->out.updatePet(CAT_2));
     }
 }
