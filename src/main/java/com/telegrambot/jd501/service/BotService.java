@@ -142,8 +142,8 @@ public class BotService {
                                   int startIndexButton, int numberOfButtons) {
         logger.info("Setting of keyboard... First button - " + namesOfButtons.get(startIndexButton));
 
-        // long chatId = update.getMessage().getChatId();
-        SendMessage sendMessage = setupSendMessage(chatId, "");
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId);
 
         // Create keyboard
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -211,9 +211,9 @@ public class BotService {
         // *** If it exists, return start greeting to volunteer.
         boolean isExistsVolunteer;
         if (isDog) {
-            isExistsVolunteer = dogVolunteerService.isExistsDogVolunteer(chatId);
+            isExistsVolunteer = dogVolunteerService.isExistsVolunteer(chatId);
         } else {
-            isExistsVolunteer = catVolunteerService.isExistsCatVolunteer(chatId);
+            isExistsVolunteer = catVolunteerService.isExistsVolunteer(chatId);
         }
         if (isExistsVolunteer) {
             messageToSend.setText(START_PHRASE_TO_VOLUNTEER);
@@ -438,32 +438,32 @@ public class BotService {
     private SendMessage waitForReport(long userChatId) {
         logger.info("Wait for report......");
         SendMessage message = new SendMessage();
+        String text = "Вы не являетесь опекуном. Пожалуйста, обратитесь к волонтеру!";
+        message.setText(text);
         message.setChatId(userChatId);
         // --- check User:
         boolean userIsExists = false;
         boolean userIsAdopted = false;
         if (isDog) {
             // --- 1) exists? 2) adopted? ---
-            userIsExists = dogUserService.isExistsDogUser(userChatId);
+            userIsExists = dogUserService.isExistsUser(userChatId);
             if (userIsExists) {
-                userIsAdopted = dogUserService.findDogUserByChatId(userChatId).getAdopted();
+                userIsAdopted = dogUserService.findUserByChatId(userChatId).getAdopted();
             }
-            message = goToTakingForReport(userChatId, userIsExists, userIsAdopted);
+            message = goToTakingForReport(message, userIsExists, userIsAdopted);
         } else {
             // --- 1) exists? 2) adopted? ---
-            userIsExists = catUserService.isExistsCatUser(userChatId);
+            userIsExists = catUserService.isExistsUser(userChatId);
             if (userIsExists) {
-                userIsAdopted = catUserService.findCatUserByChatId(userChatId).getAdopted();
+                userIsAdopted = catUserService.findUserByChatId(userChatId).getAdopted();
             }
-            message = goToTakingForReport(userChatId, userIsExists, userIsAdopted);
+            message = goToTakingForReport(message, userIsExists, userIsAdopted);
         }
-//        message.setText(text);
         return message;
     }
 
-    private SendMessage goToTakingForReport(long chatId, boolean isExists, boolean isAdopted) {
-        String text = "Вы не являетесь опекуном. Пожалуйста, обратитесь к волонтеру!";
-        SendMessage message = setupSendMessage(chatId, text);
+    private SendMessage goToTakingForReport(SendMessage message, boolean isExists, boolean isAdopted) {
+        long chatId = Long.parseLong(message.getChatId());
         logger.info(String.format("chatId-%s, isExists-%s, isAdopted-%s", chatId, isExists, isAdopted));
         if (isExists && isAdopted) {
             logger.info("User is exists and adopted. Take report ");
@@ -486,12 +486,12 @@ public class BotService {
         boolean weCanSaveReport = true;
         long chatId = update.getMessage().getChatId();
         String reportText = update.getMessage().getText();
-        String answerText = "";
+        String answerText = " ";
         // |||||||||  DOGS |||||||||
         // *** Check who is sending report: dogUser or catUser.
         //     Check saving report from this user today
         if (isDog) {
-            Collection<DogReport> reports = dogReportService.getAllReportsByChatId(chatId);
+            Collection<DogReport> reports = dogReportService.getAllPetReportsByChatId(chatId);
             // ---  if reports are filled in
             if (!reports.isEmpty()) {
                 logger.info("check for existing reports...");
@@ -519,7 +519,7 @@ public class BotService {
             // |||||||||  CATS |||||||||
             // *** Check who is sending report: dogUser or catUser.
             //     Check saving report from this user today
-            Collection<CatReport> reports = catReportService.getAllReportsByChatId(chatId);
+            Collection<CatReport> reports = catReportService.getAllPetReportsByChatId(chatId);
             // ---  if reports are filled in
             if (!reports.isEmpty()) {
                 logger.info("check for existing reports...");
@@ -550,26 +550,25 @@ public class BotService {
         return setupSendMessage(chatId, answerText);
     }
 
-
     private void saveReportToDB(long chatId, String reportText) {
         logger.info("Report for today doesn't exist. Saving text of report into DB...");
         if (isDog) {
             // save into db Dog new report ==================================================
             DogReport dogReport = new DogReport();
-            DogUser dogUser = dogUserService.findDogUserByChatId(chatId);
+            DogUser dogUser = dogUserService.findUserByChatId(chatId);
             dogReport.setDateOfReport(LocalDate.now());
             dogReport.setTextOfReport(reportText);
             dogReport.setDogUser(dogUser);
-            dogReportService.createDogReport(dogReport);
+            dogReportService.createPetReport(dogReport);
             // =========================================================================
         } else {
             // save into db Cat new report ==================================================
             CatReport catReport = new CatReport();
-            CatUser catUser = catUserService.findCatUserByChatId(chatId);
+            CatUser catUser = catUserService.findUserByChatId(chatId);
             catReport.setDateOfReport(LocalDate.now());
             catReport.setTextOfReport(reportText);
             catReport.setCatUser(catUser);
-            catReportService.createCatReport(catReport);
+            catReportService.createPetReport(catReport);
             // =========================================================================
         }
     }
@@ -652,7 +651,7 @@ public class BotService {
         // --- work with data base ---
         if (isDog) {
             // ---- check contact in base -----
-            boolean userIsExists = dogUserService.isExistsDogUser(userChatId);
+            boolean userIsExists = dogUserService.isExistsUser(userChatId);
             if (!userIsExists) {
                 // *** save phone number into DB, if contact doesn't exist
                 DogUser newUser = new DogUser();
@@ -660,7 +659,7 @@ public class BotService {
                 newUser.setName(firstName);
                 newUser.setPhone(phoneNumber);
                 newUser.setAdopted(false);
-                dogUserService.createDogUser(newUser);
+                dogUserService.createUser(newUser);
             }
         } else {
             // ---- (2) check contact in base -----
