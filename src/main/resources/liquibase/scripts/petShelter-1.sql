@@ -20,3 +20,17 @@ ADD CONSTRAINT cat_user_chat_id_unique UNIQUE (chat_id);
 
 ALTER TABLE dog_user
     ADD CONSTRAINT dog_user_chat_id_unique UNIQUE (chat_id);
+
+
+-- changeset i.filonova:5
+ALTER TABLE cat_pet_report
+    DROP COLUMN photo_link;
+
+ALTER TABLE cat_pet_report
+    ADD COLUMN photo BYTEA;
+
+ALTER TABLE dog_pet_report
+    DROP COLUMN photo_link;
+
+ALTER TABLE dog_pet_report
+    ADD COLUMN photo BYTEA;

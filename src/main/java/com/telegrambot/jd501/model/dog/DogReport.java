@@ -71,7 +71,7 @@ public class DogReport {
         return photo;
     }
 
-    public void setPhotoLink(byte[] photo) {
+    public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
 

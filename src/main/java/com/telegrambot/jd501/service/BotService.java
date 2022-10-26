@@ -132,7 +132,7 @@ public class BotService {
     /**
      * Make buttons in Telegram's chat
      *
-     * @param update           list of incoming updates, must be not Null
+     * @param chatId           Id of chat, must be not Null
      * @param namesOfButtons   list of button's names, must be not Null
      * @param startIndexButton start index of button
      * @param numberOfButtons  number of used buttons
@@ -361,7 +361,7 @@ public class BotService {
      * Greetings to user on start.
      * We say about our shelter and offer to take a choice of menu item .
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId           Id of chat, must be not Null
      * @return message to reply
      */
     private SendMessage startCommandReceived(long chatId) {
@@ -376,7 +376,7 @@ public class BotService {
     /**
      * Information menu about shelter
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId           Id of chat, must be not Null
      * @return message to reply
      */
     private SendMessage informAboutShelter(long chatId) {
@@ -397,7 +397,7 @@ public class BotService {
     /**
      * Menu of new user consulting
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId           Id of chat, must be not Null
      * @return message to reply
      */
     private SendMessage consultNewUser(long chatId) {
@@ -411,7 +411,7 @@ public class BotService {
     /**
      * Information menu for Potential Adopter
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId           Id of chat, must be not Null
      * @return message to reply
      */
     private SendMessage informToPotentialAdopter(long chatId) {
@@ -432,7 +432,7 @@ public class BotService {
     /**
      * Pet's report menu
      *
-     * @param update list of incoming updates, must be not Null
+     * @param userChatId           Id of chat, must be not Null
      * @return message to reply
      */
     private SendMessage waitForReport(long userChatId) {
@@ -506,7 +506,7 @@ public class BotService {
                             answerText = "Вы уже сегодня направляли отчет. Для его корректировки, обратитесь к волонтеру.";
                         }
                         // === check for existing photo in report ==
-                        if (existReport.getPhotoLink() == null) {
+                        if (existReport.getPhoto() == null) {
                             logger.warn("# Report doesn't have photo! #");
                             answerText += "\n* Не забудьте приложить фотографию питомца! *";
                         }
@@ -534,7 +534,7 @@ public class BotService {
                             answerText = "Вы уже сегодня направляли отчет. Для его корректировки, обратитесь к волонтеру.";
                         }
                         // === check for existing photo in report ==
-                        if (existReport.getPhotoLink() == null) {
+                        if (existReport.getPhoto() == null) {
                             logger.warn("# Report doesn't have photo! #");
                             answerText += "\n* Не забудьте приложить фотографию питомца! *";
                         }
@@ -763,12 +763,12 @@ public class BotService {
 //                напоминаем: "Добрый день, мы не получили отчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет и информациюю о питомце".*/
 //                break;
 //            }
-//            if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhotoLink() != null) {
+//            if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
 //                /* если пользователь не присылал вчера текст,
 //                напоминаем: "Добрый день, мы не получили рассказ о питомце за вчерашний день, пожалуйста, пришлите сегодня информацию о питомце". */
 //                break;
 //            }
-//            if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhotoLink() == null) {
+//            if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
 //                /* если пользователь не присылал вчера фотоотчет,
 //                напоминаем: "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет о питомце". */
 //                break;

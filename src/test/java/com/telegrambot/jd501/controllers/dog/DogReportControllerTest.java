@@ -68,8 +68,8 @@ class DogReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         // pet 2
         Dog pet2 = new Dog(-2L, "Песик для второго отчета");
@@ -90,8 +90,8 @@ class DogReportControllerTest {
         Long id2 = -2L;
         LocalDate dateOfReport2 = LocalDate.now();
         String textOfReport2 = "Текст второго отчета";
-        String photoLink2 = "Ссылка на фото2";
-        DogReport expected2 = new DogReport(id2, dateOfReport2, textOfReport2, photoLink2, expectedUser2);
+        byte[] photo2 = {2};
+        DogReport expected2 = new DogReport(id2, dateOfReport2, textOfReport2, photo2, expectedUser2);
 
         // create reports 1 & 2 in DB
         expected1 = dogReportController.createReport(expected1).getBody();
@@ -138,8 +138,8 @@ class DogReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         // pet 2
         Dog pet2 = new Dog(-2L, "тестБакс2234567890");
@@ -160,15 +160,15 @@ class DogReportControllerTest {
         Long id2 = -2L;
         LocalDate dateOfReport2 = LocalDate.now();
         String textOfReport2 = "Текст первого отчета";
-        String photoLink2 = "Ссылка на фото2";
-        DogReport expected2 = new DogReport(id2, dateOfReport2, textOfReport2, photoLink2, expectedUser2);
+        byte[] photo2 = {2};
+        DogReport expected2 = new DogReport(id2, dateOfReport2, textOfReport2, photo2, expectedUser2);
 
         // report 3
         Long id3 = -3L;
         LocalDate dateOfReport3 = LocalDate.now();
         String textOfReport3 = "Текст третьего отчета";
-        String photoLink3 = "Ссылка на фото3";
-        DogReport expected3 = new DogReport(id3, dateOfReport3, textOfReport3, photoLink3, expectedUser1);
+        byte[] photo3 = {3};
+        DogReport expected3 = new DogReport(id3, dateOfReport3, textOfReport3, photo3, expectedUser1);
 
         // create reports 1 & 2 & 3 in DB
         expected1 = dogReportController.createReport(expected1).getBody();
@@ -218,8 +218,8 @@ class DogReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         expected1 = dogReportController.createReport(expected1).getBody();
         id1 = expected1.getId();
@@ -231,7 +231,7 @@ class DogReportControllerTest {
         Assertions.assertThat(response.getBody().getDogUser().getId()).isEqualTo(expectedUser1.getId());
         Assertions.assertThat(response.getBody().getTextOfReport()).isEqualTo(textOfReport1);
         Assertions.assertThat(response.getBody().getDateOfReport()).isEqualTo(dateOfReport1.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        Assertions.assertThat(response.getBody().getPhotoLink()).isEqualTo(photoLink1);
+        Assertions.assertThat(response.getBody().getPhoto()).isEqualTo(photo1);
 
         dogReportController.deleteReport(id1);
         dogUserController.deleteUser(userId1);
@@ -258,8 +258,8 @@ class DogReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         // report to change
         DogReport reportToChange  = dogReportController.createReport(expected1).getBody();
@@ -299,8 +299,8 @@ class DogReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         Long id = dogReportController.createReport(expected1).getBody().getId();
 
