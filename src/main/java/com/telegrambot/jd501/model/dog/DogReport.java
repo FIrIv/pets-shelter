@@ -14,7 +14,7 @@ public class DogReport {
     private Long id;
     private LocalDate dateOfReport;
     private String textOfReport;
-    private String photoLink;
+    private byte[] photo;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -34,7 +34,7 @@ public class DogReport {
                 "id=" + id +
                 ", dateOfReport=" + dateOfReport +
                 ", textOfReport='" + textOfReport + '\'' +
-                ", photoLink='" + photoLink + '\'' +
+                ", photo='" + photo + '\'' +
                 ", dogUser=" + dogUser +
                 '}';
     }
@@ -68,12 +68,12 @@ public class DogReport {
         this.textOfReport = textOfReport;
     }
 
-    public String getPhotoLink() {
-        return photoLink;
+    public byte[] getPhoto() {
+        return photo;
     }
 
-    public void setPhotoLink(String photoLink) {
-        this.photoLink = photoLink;
+    public void setPhotoLink(byte[] photo) {
+        this.photo = photo;
     }
 
     @Override
@@ -84,11 +84,11 @@ public class DogReport {
     public DogReport() {
     }
 
-    public DogReport(Long id, LocalDate dateOfReport, String textOfReport, String photoLink, DogUser dogUser) {
+    public DogReport(Long id, LocalDate dateOfReport, String textOfReport, byte[] photo, DogUser dogUser) {
         this.id = id;
         this.dateOfReport = dateOfReport;
         this.textOfReport = textOfReport;
-        this.photoLink = photoLink;
+        this.photo = photo;
         this.dogUser = dogUser;
     }
 }

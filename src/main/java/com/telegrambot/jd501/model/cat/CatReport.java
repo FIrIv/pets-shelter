@@ -13,7 +13,7 @@ public class CatReport  {
     private Long id;
     private LocalDate dateOfReport;
     private String textOfReport;
-    private String photoLink;
+    private byte[] photo;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -25,7 +25,7 @@ public class CatReport  {
                 "id=" + id +
                 ", dateOfReport=" + dateOfReport +
                 ", textOfReport='" + textOfReport + '\'' +
-                ", photoLink='" + photoLink + '\'' +
+                ", photo='" + photo + '\'' +
                 ", catUser=" + catUser +
                 '}';
     }
@@ -63,12 +63,12 @@ public class CatReport  {
         this.textOfReport = textOfReport;
     }
 
-    public String getPhotoLink() {
-        return photoLink;
+    public byte[] getPhoto() {
+        return photo;
     }
 
-    public void setPhotoLink(String photoLink) {
-        this.photoLink = photoLink;
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 
     public CatUser getCatUser() {
@@ -82,11 +82,11 @@ public class CatReport  {
     public CatReport() {
     }
 
-    public CatReport(Long id, LocalDate dateOfReport, String textOfReport, String photoLink, CatUser catUser) {
+    public CatReport(Long id, LocalDate dateOfReport, String textOfReport, byte[] photo, CatUser catUser) {
         this.id = id;
         this.dateOfReport = dateOfReport;
         this.textOfReport = textOfReport;
-        this.photoLink = photoLink;
+        this.photo = photo;
         this.catUser = catUser;
     }
 }
