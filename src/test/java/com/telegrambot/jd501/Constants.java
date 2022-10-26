@@ -28,8 +28,8 @@ public class Constants {
     public static final String TEXT_OF_REPORT_1 = "TEST_REPORT_1";
     public static final String TEXT_OF_REPORT_2 = "TEST_REPORT_2";
 
-    public static final String PHOTO_LINK_1 = "PHOTO_LINK_1";
-    public static final String PHOTO_LINK_2 = "PHOTO_LINK_2";
+    public static final byte[] PHOTO_1 = {1};
+    public static final byte[] PHOTO_2 = {2};
     public static final LocalDate START_DATE = LocalDate.of(2022,10,1);
     public static final LocalDate FINISH_DATE = LocalDate.of(2022,10,30);
     public static final LocalDate DATE_OF_REPORT_1 = LocalDate.of(2022,10,15);
@@ -70,12 +70,12 @@ public class Constants {
     public static final DogVolunteer DOG_VOLUNTEER_11 = new DogVolunteer(ID1, CHAT_ID_1, NAME_2);
     public static final DogVolunteer DOG_VOLUNTEER_2 = new DogVolunteer(ID2, CHAT_ID_2, NAME_2);
 
-    public static final CatReport CAT_REPORT_1 = new CatReport(ID1, DATE_OF_REPORT_1, TEXT_OF_REPORT_1, PHOTO_LINK_1, CAT_USER_1);
-    public static final CatReport CAT_REPORT_11 = new CatReport(ID1, DATE_OF_REPORT_2, TEXT_OF_REPORT_1, PHOTO_LINK_1,CAT_USER_1);
-    public static final CatReport CAT_REPORT_2 = new CatReport(ID2, DATE_OF_REPORT_2, TEXT_OF_REPORT_2, PHOTO_LINK_2,CAT_USER_2);
-    public static final DogReport DOG_REPORT_1 = new DogReport(ID1, DATE_OF_REPORT_1, TEXT_OF_REPORT_1, PHOTO_LINK_1, DOG_USER_1);
-    public static final DogReport DOG_REPORT_11 = new DogReport(ID1, DATE_OF_REPORT_2, TEXT_OF_REPORT_1, PHOTO_LINK_1,DOG_USER_1);
-    public static final DogReport DOG_REPORT_2 = new DogReport(ID2, DATE_OF_REPORT_2, TEXT_OF_REPORT_2, PHOTO_LINK_2,DOG_USER_2);
+    public static final CatReport CAT_REPORT_1 = new CatReport(ID1, DATE_OF_REPORT_1, TEXT_OF_REPORT_1, PHOTO_1, CAT_USER_1);
+    public static final CatReport CAT_REPORT_11 = new CatReport(ID1, DATE_OF_REPORT_2, TEXT_OF_REPORT_1, PHOTO_1,CAT_USER_1);
+    public static final CatReport CAT_REPORT_2 = new CatReport(ID2, DATE_OF_REPORT_2, TEXT_OF_REPORT_2, PHOTO_2,CAT_USER_2);
+    public static final DogReport DOG_REPORT_1 = new DogReport(ID1, DATE_OF_REPORT_1, TEXT_OF_REPORT_1, PHOTO_1, DOG_USER_1);
+    public static final DogReport DOG_REPORT_11 = new DogReport(ID1, DATE_OF_REPORT_2, TEXT_OF_REPORT_1, PHOTO_1,DOG_USER_1);
+    public static final DogReport DOG_REPORT_2 = new DogReport(ID2, DATE_OF_REPORT_2, TEXT_OF_REPORT_2, PHOTO_2,DOG_USER_2);
     
     public static final List<CatInformationMessage> CAT_INFORMATION_MESSAGE_LIST = new ArrayList<>(List.of(CAT_INFORMATION_MESSAGE_1, CAT_INFORMATION_MESSAGE_2));
     public static final List<DogInformationMessage> DOG_INFORMATION_MESSAGE_LIST = new ArrayList<>(List.of(DOG_INFORMATION_MESSAGE_1, DOG_INFORMATION_MESSAGE_2));

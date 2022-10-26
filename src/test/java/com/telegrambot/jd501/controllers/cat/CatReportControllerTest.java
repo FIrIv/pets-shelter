@@ -68,8 +68,8 @@ class CatReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         // pet 2
         Cat pet2 = new Cat(-2L, "тестБакс2234567890");
@@ -90,8 +90,8 @@ class CatReportControllerTest {
         Long id2 = -2L;
         LocalDate dateOfReport2 = LocalDate.now();
         String textOfReport2 = "Текст первого отчета";
-        String photoLink2 = "Ссылка на фото2";
-        CatReport expected2 = new CatReport(id2, dateOfReport2, textOfReport2, photoLink2, expectedUser2);
+        byte[] photo2 = {2};
+        CatReport expected2 = new CatReport(id2, dateOfReport2, textOfReport2, photo2, expectedUser2);
 
         // create reports 1 & 2 in DB
         expected1 = catReportController.createReport(expected1).getBody();
@@ -138,8 +138,8 @@ class CatReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         // pet 2
         Cat pet2 = new Cat(-2L, "тестБакс2234567890");
@@ -160,15 +160,15 @@ class CatReportControllerTest {
         Long id2 = -2L;
         LocalDate dateOfReport2 = LocalDate.now();
         String textOfReport2 = "Текст первого отчета";
-        String photoLink2 = "Ссылка на фото2";
-        CatReport expected2 = new CatReport(id2, dateOfReport2, textOfReport2, photoLink2, expectedUser2);
+        byte[] photo2 = {2};
+        CatReport expected2 = new CatReport(id2, dateOfReport2, textOfReport2, photo2, expectedUser2);
 
         // report 3
         Long id3 = -3L;
         LocalDate dateOfReport3 = LocalDate.now();
         String textOfReport3 = "Текст третьего отчета";
-        String photoLink3 = "Ссылка на фото3";
-        CatReport expected3 = new CatReport(id3, dateOfReport3, textOfReport3, photoLink3, expectedUser1);
+        byte[] photo3 = {3};
+        CatReport expected3 = new CatReport(id3, dateOfReport3, textOfReport3, photo3, expectedUser1);
 
         // create reports 1 & 2 & 3 in DB
         expected1 = catReportController.createReport(expected1).getBody();
@@ -218,8 +218,8 @@ class CatReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         expected1 = catReportController.createReport(expected1).getBody();
         id1 = expected1.getId();
@@ -231,7 +231,7 @@ class CatReportControllerTest {
         Assertions.assertThat(response.getBody().getCatUser().getId()).isEqualTo(expectedUser1.getId());
         Assertions.assertThat(response.getBody().getTextOfReport()).isEqualTo(textOfReport1);
         Assertions.assertThat(response.getBody().getDateOfReport()).isEqualTo(dateOfReport1.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        Assertions.assertThat(response.getBody().getPhotoLink()).isEqualTo(photoLink1);
+        Assertions.assertThat(response.getBody().getPhoto()).isEqualTo(photo1);
 
         catReportController.deleteReport(id1);
         catUserController.deleteUser(userId1);
@@ -258,8 +258,8 @@ class CatReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         // report to change
         CatReport reportToChange  = catReportController.createReport(expected1).getBody();
@@ -299,8 +299,8 @@ class CatReportControllerTest {
         Long id1 = -1L;
         LocalDate dateOfReport1 = LocalDate.now();
         String textOfReport1 = "Текст первого отчета";
-        String photoLink1 = "Ссылка на фото1";
-        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photoLink1, expectedUser1);
+        byte[] photo1 = {1};
+        CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         Long id = catReportController.createReport(expected1).getBody().getId();
 
