@@ -5,8 +5,12 @@ import com.telegrambot.jd501.Exceptions.UserNotFoundException;
 import com.telegrambot.jd501.model.dog.Dog;
 import com.telegrambot.jd501.model.dog.DogUser;
 
+
 import com.telegrambot.jd501.repository.Dog.DogRepository;
 import com.telegrambot.jd501.repository.Dog.DogUserRepository;
+import com.telegrambot.jd501.service.TelegramBot;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,6 +22,9 @@ import java.util.List;
 public class DogUserService {
     private final DogUserRepository dogUserRepository;
     private final DogRepository dogRepository;
+    @Autowired
+    @Lazy
+    private TelegramBot telegramBot;
 
     public DogUserService(DogUserRepository dogUserRepository, DogRepository dogRepository) {
         this.dogUserRepository = dogUserRepository;
@@ -76,27 +83,33 @@ public class DogUserService {
     }
 
     /**
-     * find DogUser by id and change amount of probation period
+     * find DogUser by id and change amount of probation period, and sent message to user about change probation period
      * Use method DogUser repository {@link DogUserRepository#findById(Object)}
      * Use  method DogUser repository {@link DogUserRepository#save(Object)} }
      *
      * @param id   - DogUser id for fing DogUser in repository,
      * @param days - number of days to increase the term of the transfer
-     * @return notification that probationary period has been extended (String)
+     * @return DogUser
      */
     public DogUser probationPeriodExtension(Long id, Integer days) {
         DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         dogUserRepository.save(temp);
+        sendMessageToUserWithChatId(temp.getChatId(),
+                "Ваш испытательный срок был увеличен на: " + days + " дней," +
+                        " не забывайте как и раньше вовремя направлять нам отчеты " +
+                        " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
         return temp;
     }
 
     /**
      * find user by id and change  status of The Adopter, add adopted Pet, Date of adoption, and set test day by 30
-     * Use method User repository {@link DogUserRepository#findById(Object)}
-     * Use  method User repository {@link DogUserRepository#save(Object)} }
-     * Use  method Pet repository {@link DogRepository#findById(Object)} }
+     * and sent message to user about change him status.
      *
+     * Use method dogRepository {@link DogRepository#findById(Object)}
+     * Use method dogUser repository {@link DogUserRepository#findById(Object)}
+     * Use  method dogUser repository {@link DogUserRepository#save(Object)} }
+     * Use method DogUserService {@link DogUserService#sendMessageToUserWithChatId(Long, String)}
      * @param dogUserId - user id for fing user in repository,
      * @param dogId  - pet id for fing user in repository,
      * @return Changed User
@@ -108,6 +121,10 @@ public class DogUserService {
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
+        sendMessageToUserWithChatId(userTemp.getChatId(),
+                "Поздравляю! Вы стали усыновителем." +
+                        " Не забывайте вовремя отправлять отчеты." +
+                        " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
         return dogUserRepository.save(userTemp);
     }
 
@@ -140,6 +157,73 @@ public class DogUserService {
     public DogUser findUserByChatId(long userChatId) {
         return dogUserRepository.findDogUserByChatId(userChatId);
     }
+    /**
+     * Use TelegramBot to Sent custom message to Dog User with chat ID.
+     *
+     * Use method DogUserService {@link DogUserService#findUserByChatId(long)}
+     * Use method TelegramBot {@link TelegramBot#sendMessageToUserByChatId(long, String)}
+     * @param chatId
+     * @param message
+     * @return String that a message has been sent to the user
+     * @throws UserNotFoundException when user with chat id not found
+     */
+    public String sendMessageToUserWithChatId(Long chatId, String message) {
+        DogUser temp = findUserByChatId(chatId);
+        if (temp == null) {
+            throw new UserNotFoundException("User with chatId " + chatId + " not found");
+        }
+        telegramBot.sendMessageToUserByChatId(chatId, message);
+        return "Message: "+ message + "sent to User with chat Id: " + chatId;
+    }
 
+    /**
+     *
+     * finds a user by chat id. changes him status. and sends him a message stating that he has passed the trial period
+     *
+     * Use method DogUserService {@link DogUserService#findUserByChatId(long)}
+     * Use method DogUserRepository {@link DogUserRepository#save(Object)}
+     * @param chatId
+     * @return DogUser
+     * @throws UserNotFoundException when usen with chatId not found
+     */
+    public DogUser changeStatusUserPassedProbationPeriod(Long chatId){
+        DogUser temp = findUserByChatId(chatId);
+        if (temp == null){
+            throw new UserNotFoundException("User with chat Id not found");
+        }
+        temp.setFinishDate(null);
+        temp.setAdopted(false);
+        temp.setPet(null);
+        temp.setStartDate(null);
+        sendMessageToUserWithChatId(temp.getChatId(), "Поздравляем!" +
+                " вы успешно прошли испытательный срок" +
+                " вам больше не нужно отправлять отчеты" +
+                " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+        return dogUserRepository.save(temp);
+    }
+    /**
+
+     *finds a user by chat id. changes him status. and sends him a message stating that he has not passed the trial period
+     *
+     * Use method DogUserService {@link DogUserService#findUserByChatId(long)}
+     * Use method DogUserRepository {@link DogUserRepository#save(Object)}
+     * @param chatId
+     * @return DogUser
+     * @throws UserNotFoundException when usen with chatId not found
+     */
+    public DogUser changeStatusUserNotPassedProbationPeriod(Long chatId){
+        DogUser temp = findUserByChatId(chatId);
+        if (temp == null){
+            throw new UserNotFoundException("User with chat Id not found");
+        }
+        temp.setFinishDate(null);
+        temp.setAdopted(false);
+        temp.setPet(null);
+        temp.setStartDate(null);
+        sendMessageToUserWithChatId(temp.getChatId(), "К сожалению вы не прошли испытательный срок." +
+                " Мы не сможем оставить вам питомца." +
+                " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+        return dogUserRepository.save(temp);
+    }
 
 }

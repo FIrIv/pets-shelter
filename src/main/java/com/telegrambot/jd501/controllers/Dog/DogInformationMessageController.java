@@ -27,7 +27,7 @@ public class DogInformationMessageController {
     }
 
     /**
-     * get All CatInformationMessage from DataBase
+     * get All DogInformationMessage from DataBase
      * Use method of DogInformationMessage servise {@link DogInformationMessageService#getAllInformationMessages()} ()} (Collection< DogInformationMessage >)}
      *
      * @return collection of DogInformationMessage
@@ -48,7 +48,7 @@ public class DogInformationMessageController {
     }
 
     /**
-     * add new CatInformationMessage in DataBase
+     * add new DogInformationMessage in DataBase
      *
      * @param dogInformationMessage Use method of DogInformationMessageServise {@link DogInformationMessageService#createInformationMessage(DogInformationMessage)}
      * @return DogInformationMessage
@@ -69,7 +69,7 @@ public class DogInformationMessageController {
     }
 
     /**
-     * change CatInformationMessage in DataBase
+     * change DogInformationMessage in DataBase
      * Use method of Servise {@link DogInformationMessageService#updateInformationMessage(DogInformationMessage)}
      *
      * @param dogInformationMessage
@@ -96,7 +96,7 @@ public class DogInformationMessageController {
     }
 
     /**
-     * delete CatInformationMessage from DataBase by id
+     * delete DogInformationMessage from DataBase by id
      * Use method of Servise {@link DogInformationMessageService#deleteInformationMessage(Long id)}
      *
      * @param id

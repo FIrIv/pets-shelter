@@ -57,4 +57,6 @@ public class DogInformationMessage  {
         this.id = id;
         this.text = text;
     }
+
+
 }

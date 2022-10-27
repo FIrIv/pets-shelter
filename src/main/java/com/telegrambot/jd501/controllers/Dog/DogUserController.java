@@ -1,6 +1,7 @@
 package com.telegrambot.jd501.controllers.Dog;
 
 
+import com.telegrambot.jd501.Exceptions.UserNotFoundException;
 import com.telegrambot.jd501.model.dog.DogUser;
 import com.telegrambot.jd501.service.DogService.DogUserService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -168,5 +169,85 @@ public class DogUserController {
     public ResponseEntity<DogUser> deleteUser(@PathVariable Long id) {
         return ResponseEntity.ok(dogUserService.deleteUser(id));
     }
-
+    /**
+     * Use dogUserService to Sent custom message to Dog User with chat Id.
+     *
+     * Use method DogUserService {@link DogUserService#sendMessageToUserWithChatId(Long, String)}
+     * @param chatId
+     * @param message
+     * @return String that a message has been sent to the user
+     * @throws UserNotFoundException when user with chat id not found
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Sent message to dog user",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DogUser.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @PutMapping("sent_message_to_dogUser/{chatId}/{message}")
+    public String sendMessageToUserWithChatId(@PathVariable Long chatId, @PathVariable String message){
+        return dogUserService.sendMessageToUserWithChatId(chatId, message);
+    }
+    /**
+     *
+     * finds a user by chat id. changes him status. and sends him a message that he has passed the trial period
+     *
+     * Use method DogUserService {@link DogUserService#changeStatusUserPassedProbationPeriod(Long)}
+     * @param chatId
+     * @return DogUser
+     * @throws UserNotFoundException when user with chatId not found
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "user passed the trial period",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DogUser.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @PutMapping("user_passed_probation_period/{chatId}")
+    public DogUser changeStatusUserPassedProbationPeriod(@PathVariable Long chatId){
+        return dogUserService.changeStatusUserPassedProbationPeriod(chatId);
+    }
+    /**
+     *
+     * finds a user by chat id. changes him status. and sends him a message that he has not passed the trial period
+     *
+     * Use method DogUserService {@link DogUserService#changeStatusUserNotPassedProbationPeriod(Long)}
+     * @param chatId
+     * @return DogUser
+     * @throws UserNotFoundException when user with chatId not found
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = " user not passed probation period",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = DogUser.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @PutMapping("user_not_passed_probation_period/{chatId}")
+    public DogUser changeStatusUserNotPassedProbationPeriod(@PathVariable Long chatId){
+        return dogUserService.changeStatusUserPassedProbationPeriod(chatId);
+    }
 }
