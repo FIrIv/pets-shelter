@@ -91,14 +91,5 @@ public class DogReport {
         this.dogUser = dogUser;
     }
 
-    public PetReport() {
-    }
 
-    public PetReport(Long id, Pet pet, LocalDate dateOfReport, String textOfReport, String photoLink) {
-        this.id = id;
-        this.pet = pet;
-        this.dateOfReport = dateOfReport;
-        this.textOfReport = textOfReport;
-        this.photoLink = photoLink;
-    }
 }

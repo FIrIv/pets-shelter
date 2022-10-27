@@ -58,11 +58,5 @@ public class DogInformationMessage  {
         this.text = text;
     }
 
-    public InformationMessage() {
-    }
 
-    public InformationMessage(Long id, String text) {
-        this.id = id;
-        this.text = text;
-    }
 }

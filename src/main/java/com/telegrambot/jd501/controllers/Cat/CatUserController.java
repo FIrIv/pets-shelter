@@ -2,8 +2,11 @@ package com.telegrambot.jd501.controllers.Cat;
 
 
 
+import com.telegrambot.jd501.Exceptions.UserNotFoundException;
 import com.telegrambot.jd501.model.cat.CatUser;
+import com.telegrambot.jd501.repository.Cat.CatUserRepository;
 import com.telegrambot.jd501.service.CatService.CatUserService;
+import com.telegrambot.jd501.service.TelegramBot;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.PUT;
 import java.util.Collection;
 
 /**
@@ -143,6 +147,7 @@ public class CatUserController {
         return catUserService.probationPeriodExtension(id, days);
     }
 
+
     /**
      * delete CatUser from DataBase by id
      * Use method of Servise {@link CatUserService#deleteUser(Long)}
@@ -169,5 +174,85 @@ public class CatUserController {
     public ResponseEntity<CatUser> deleteUser(@PathVariable Long id) {
         return ResponseEntity.ok(catUserService.deleteUser(id));
     }
-
+    /**
+     * Use catUserService to Sent custom message to Cat User with chat Id.
+     *
+     * Use method CatUserService {@link CatUserService#sendMessageToUserWithChatId(Long, String)}
+     * @param chatId
+     * @param message
+     * @return String that a message has been sent to the user
+     * @throws UserNotFoundException when user with chat id not found
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Sent message to cat user",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = CatUser.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @PutMapping("sent_message_to_catUser/{chatId}/{message}")
+    public String sendMessageToUserWithChatId(@PathVariable Long chatId, @PathVariable String message){
+        return catUserService.sendMessageToUserWithChatId(chatId, message);
+    }
+    /**
+     *
+     * finds a user by chat id. changes him status. and sends him a message that he has passed the trial period
+     *
+     * Use method CatUserService {@link CatUserService#changeStatusUserPassedProbationPeriod(Long)}
+     * @param chatId
+     * @return CatUser
+     * @throws UserNotFoundException when user with chatId not found
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "user passed the trial period",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = CatUser.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @PutMapping("user_passed_probation_period/{chatId}")
+    public CatUser changeStatusUserPassedProbationPeriod(@PathVariable Long chatId){
+       return catUserService.changeStatusUserPassedProbationPeriod(chatId);
+    }
+    /**
+     *
+     * finds a user by chat id. changes him status. and sends him a message that he has not passed the trial period
+     *
+     * Use method CatUserService {@link CatUserService#changeStatusUserNotPassedProbationPeriod(Long)}
+     * @param chatId
+     * @return CatUser
+     * @throws UserNotFoundException when user with chatId not found
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = " user not passed probation period",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = CatUser.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @PutMapping("user_not_passed_probation_period/{chatId}")
+    public CatUser changeStatusUserNotPassedProbationPeriod(@PathVariable Long chatId){
+        return catUserService.changeStatusUserPassedProbationPeriod(chatId);
+    }
 }
