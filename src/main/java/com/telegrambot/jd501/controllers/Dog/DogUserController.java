@@ -192,7 +192,7 @@ public class DogUserController {
                     description = "User not found"
             )
     })
-    @PutMapping("sent_message_to_dogUser/{chatId}/{message}")
+    @PutMapping("/send_message_to_dogUser/{chatId}/{message}")
     public String sendMessageToUserWithChatId(@PathVariable Long chatId, @PathVariable String message){
         return dogUserService.sendMessageToUserWithChatId(chatId, message);
     }
@@ -219,7 +219,7 @@ public class DogUserController {
                     description = "User not found"
             )
     })
-    @PutMapping("user_passed_probation_period/{chatId}")
+    @PutMapping("/user_passed_probation_period/{chatId}")
     public DogUser changeStatusUserPassedProbationPeriod(@PathVariable Long chatId){
         return dogUserService.changeStatusUserPassedProbationPeriod(chatId);
     }
@@ -246,8 +246,8 @@ public class DogUserController {
                     description = "User not found"
             )
     })
-    @PutMapping("user_not_passed_probation_period/{chatId}")
+    @PutMapping("/user_not_passed_probation_period/{chatId}")
     public DogUser changeStatusUserNotPassedProbationPeriod(@PathVariable Long chatId){
-        return dogUserService.changeStatusUserPassedProbationPeriod(chatId);
+        return dogUserService.changeStatusUserNotPassedProbationPeriod(chatId);
     }
 }

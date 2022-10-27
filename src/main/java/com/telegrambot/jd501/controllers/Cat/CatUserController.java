@@ -197,7 +197,7 @@ public class CatUserController {
                     description = "User not found"
             )
     })
-    @PutMapping("sent_message_to_catUser/{chatId}/{message}")
+    @PutMapping("/send_message_to_catUser/{chatId}/{message}")
     public String sendMessageToUserWithChatId(@PathVariable Long chatId, @PathVariable String message){
         return catUserService.sendMessageToUserWithChatId(chatId, message);
     }
@@ -224,7 +224,7 @@ public class CatUserController {
                     description = "User not found"
             )
     })
-    @PutMapping("user_passed_probation_period/{chatId}")
+    @PutMapping("/user_passed_probation_period/{chatId}")
     public CatUser changeStatusUserPassedProbationPeriod(@PathVariable Long chatId){
        return catUserService.changeStatusUserPassedProbationPeriod(chatId);
     }
@@ -251,8 +251,8 @@ public class CatUserController {
                     description = "User not found"
             )
     })
-    @PutMapping("user_not_passed_probation_period/{chatId}")
+    @PutMapping("/user_not_passed_probation_period/{chatId}")
     public CatUser changeStatusUserNotPassedProbationPeriod(@PathVariable Long chatId){
-        return catUserService.changeStatusUserPassedProbationPeriod(chatId);
+        return catUserService.changeStatusUserNotPassedProbationPeriod(chatId);
     }
 }
