@@ -4,16 +4,14 @@ package com.telegrambot.jd501.service;
 import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.CreateChatInviteLink;
-import org.telegram.telegrambots.meta.api.methods.groupadministration.ExportChatInviteLink;
-import org.telegram.telegrambots.meta.api.methods.send.SendContact;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-@Service
+@Component
 public class TelegramBot extends TelegramLongPollingBot {
     final TelegramBotConfiguration config;
     private final BotService botService;
@@ -67,6 +65,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendMessageToUser(sendMessage);
                 // --- (2) Send user's phone number to volunteer
                 sendMessage = botService.sendUserPhoneToVolunteer(update);
+                sendMessageToUser(sendMessage);
+            }
+            else if (update.getMessage() != null && update.getMessage().hasDocument()) {
+                // --- if pressed key get contact call method getContact() -----
+                // --- (1) Reply to user that his phone is saved
+                SendMessage sendMessage = botService.getPicture(update);
                 sendMessageToUser(sendMessage);
             }
         } catch (Exception e) {
