@@ -17,6 +17,7 @@ import com.telegrambot.jd501.service.DogService.DogUserService;
 import com.telegrambot.jd501.service.DogService.DogVolunteerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -26,6 +27,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -68,10 +75,13 @@ public class BotService {
     private final String TEXT_ABOUT_REPORT = "Расскажите, как чувствует себя питомец. Какой сегодняшний рацион, " +
             "общее самочувствие, и как он привыкает к новому месту. " +
             "Меняется ли поведение: отказ от старых привычек, приобретение новых и т.д.\n" +
-            "<>Также просим приложить фотографию (нажав на 'скрепочку').";
+            "Также просим приложить фотографию (нажав на 'скрепочку').";
 
     private boolean isDog;
     private boolean isReportButtonPressed = false;
+
+    private byte[] data;
+    private boolean isPhoto;
 
     /**
      * ArrayList with button's names
@@ -132,7 +142,7 @@ public class BotService {
     /**
      * Make buttons in Telegram's chat
      *
-     * @param chatId           Id of chat, must be not Null
+     * @param update           list of incoming updates, must be not Null
      * @param namesOfButtons   list of button's names, must be not Null
      * @param startIndexButton start index of button
      * @param numberOfButtons  number of used buttons
@@ -256,7 +266,7 @@ public class BotService {
                 break;
             // ---- "Прислать отчет" button is pressed (4)---
             case 4:
-                messageToSend = waitForReport(chatId);
+                messageToSend = checkUserForPossibilityGetReport(chatId);
                 break;
 //            // -- - "Оставить данные для связи" button is pressed (5)---
 //            case 5:
@@ -267,7 +277,7 @@ public class BotService {
             case 6:
             case 13:
             case 23:
-                messageToSend = callToVolunteer(update);
+                messageToSend = callToVolunteer(chatId, "contact", update.getMessage().getChat().getUserName());
                 break;
             // --- "Выбрать приют (собаки/кошки)" (8) button is pressed ---
             case 7:
@@ -342,8 +352,9 @@ public class BotService {
 
             // -------- any other command / string -----
             default:
-                if (isReportButtonPressed) {
-                    messageToSend = checkSavingReportToDB(update);
+                if (isReportButtonPressed && !messageText.equals(START_FIRST_COMMAND)) {
+                    isPhoto = false;
+                    messageToSend = saveReportToDB(chatId, isPhoto, messageText);
                 } else {
                     messageToSend = setupSendMessage(chatId, CHOOSE_MENU_ITEM_STRING);
                 }
@@ -361,7 +372,7 @@ public class BotService {
      * Greetings to user on start.
      * We say about our shelter and offer to take a choice of menu item .
      *
-     * @param chatId           Id of chat, must be not Null
+     * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
     private SendMessage startCommandReceived(long chatId) {
@@ -376,7 +387,7 @@ public class BotService {
     /**
      * Information menu about shelter
      *
-     * @param chatId           Id of chat, must be not Null
+     * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
     private SendMessage informAboutShelter(long chatId) {
@@ -397,7 +408,7 @@ public class BotService {
     /**
      * Menu of new user consulting
      *
-     * @param chatId           Id of chat, must be not Null
+     * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
     private SendMessage consultNewUser(long chatId) {
@@ -411,7 +422,7 @@ public class BotService {
     /**
      * Information menu for Potential Adopter
      *
-     * @param chatId           Id of chat, must be not Null
+     * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
     private SendMessage informToPotentialAdopter(long chatId) {
@@ -432,11 +443,10 @@ public class BotService {
     /**
      * Pet's report menu
      *
-     * @param userChatId           Id of chat, must be not Null
+     * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
-    private SendMessage waitForReport(long userChatId) {
-        logger.info("Wait for report......");
+    private SendMessage checkUserForPossibilityGetReport(long userChatId) {
         SendMessage message = new SendMessage();
         String text = "Вы не являетесь опекуном. Пожалуйста, обратитесь к волонтеру!";
         message.setText(text);
@@ -450,19 +460,20 @@ public class BotService {
             if (userIsExists) {
                 userIsAdopted = dogUserService.findUserByChatId(userChatId).getAdopted();
             }
-            message = goToTakingForReport(message, userIsExists, userIsAdopted);
+            message = setButtonsForReport(message, userIsExists, userIsAdopted);
         } else {
             // --- 1) exists? 2) adopted? ---
             userIsExists = catUserService.isExistsUser(userChatId);
             if (userIsExists) {
                 userIsAdopted = catUserService.findUserByChatId(userChatId).getAdopted();
             }
-            message = goToTakingForReport(message, userIsExists, userIsAdopted);
+            message = setButtonsForReport(message, userIsExists, userIsAdopted);
         }
+        logger.info("userIsExists-" + userIsExists + ", userIsAdopted-" + userIsAdopted);
         return message;
     }
 
-    private SendMessage goToTakingForReport(SendMessage message, boolean isExists, boolean isAdopted) {
+    private SendMessage setButtonsForReport(SendMessage message, boolean isExists, boolean isAdopted) {
         long chatId = Long.parseLong(message.getChatId());
         logger.info(String.format("chatId-%s, isExists-%s, isAdopted-%s", chatId, isExists, isAdopted));
         if (isExists && isAdopted) {
@@ -481,96 +492,104 @@ public class BotService {
      * @param update list of incoming updates, must be not Null
      * @return message to reply
      */
-    private SendMessage checkSavingReportToDB(Update update) {
-        logger.info("checkSavingReportToDB method is running...");
-        boolean weCanSaveReport = true;
-        long chatId = update.getMessage().getChatId();
-        String reportText = update.getMessage().getText();
-        String answerText = " ";
-        // |||||||||  DOGS |||||||||
-        // *** Check who is sending report: dogUser or catUser.
-        //     Check saving report from this user today
-        if (isDog) {
-            Collection<DogReport> reports = dogReportService.getAllPetReportsByChatId(chatId);
-            // ---  if reports are filled in
-            if (!reports.isEmpty()) {
-                logger.info("check for existing reports...");
-                for (DogReport existReport : reports) {
-                    // if the reports contain entries for today
-                    if (existReport.getDateOfReport().isEqual(LocalDate.now())) {
-                        weCanSaveReport = false;
-                        logger.info("... today report is it:  " + existReport);
-                        // === check for existing text report ==
-                        if (!existReport.getTextOfReport().contains("textOfReport='null'")) {
-                            logger.warn("* Today report already was saved! *");
-                            answerText = "Вы уже сегодня направляли отчет. Для его корректировки, обратитесь к волонтеру.";
-                        }
-                        // === check for existing photo in report ==
-                        if (existReport.getPhoto() == null) {
-                            logger.warn("# Report doesn't have photo! #");
-                            answerText += "\n* Не забудьте приложить фотографию питомца! *";
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        if (!isDog) {
-            // |||||||||  CATS |||||||||
-            // *** Check who is sending report: dogUser or catUser.
-            //     Check saving report from this user today
-            Collection<CatReport> reports = catReportService.getAllPetReportsByChatId(chatId);
-            // ---  if reports are filled in
-            if (!reports.isEmpty()) {
-                logger.info("check for existing reports...");
-                for (CatReport existReport : reports) {
-                    // if the reports contain entries for today
-                    if (existReport.getDateOfReport().isEqual(LocalDate.now())) {
-                        weCanSaveReport = false;
-                        logger.info("... today report is it:  " + existReport);
-                        // === check for existing text report ==
-                        if (!existReport.getTextOfReport().contains("textOfReport='null'")) {
-                            logger.warn("* Today report already was saved! *");
-                            answerText = "Вы уже сегодня направляли отчет. Для его корректировки, обратитесь к волонтеру.";
-                        }
-                        // === check for existing photo in report ==
-                        if (existReport.getPhoto() == null) {
-                            logger.warn("# Report doesn't have photo! #");
-                            answerText += "\n* Не забудьте приложить фотографию питомца! *";
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-         if (weCanSaveReport){
-             saveReportToDB(chatId, reportText);
-             answerText = "Спасибо. Ваш отчет записан";
-         }
-        return setupSendMessage(chatId, answerText);
-    }
 
-    private void saveReportToDB(long chatId, String reportText) {
-        logger.info("Report for today doesn't exist. Saving text of report into DB...");
+    private SendMessage saveReportToDB(long chatId, boolean isPhoto, String text) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        String textOfReport = "Произошла ошибка! Обратитесь к волонтеру";
+
+        // |||||||||  DOGS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         if (isDog) {
-            // save into db Dog new report ==================================================
-            DogReport dogReport = new DogReport();
             DogUser dogUser = dogUserService.findUserByChatId(chatId);
-            dogReport.setDateOfReport(LocalDate.now());
-            dogReport.setTextOfReport(reportText);
-            dogReport.setDogUser(dogUser);
-            dogReportService.createPetReport(dogReport);
-            // =========================================================================
-        } else {
-            // save into db Cat new report ==================================================
-            CatReport catReport = new CatReport();
-            CatUser catUser = catUserService.findUserByChatId(chatId);
-            catReport.setDateOfReport(LocalDate.now());
-            catReport.setTextOfReport(reportText);
-            catReport.setCatUser(catUser);
-            catReportService.createPetReport(catReport);
-            // =========================================================================
+            DogReport dogReport = dogReportService
+                    .getPetReportByUserAndDateOfReport(dogUser, LocalDate.now());
+            // ************ if report exists ******
+            if (dogReport != null) {
+                logger.info("dogReport: " + dogReport.toString());
+                if (isPhoto) {
+                    dogReport.setPhoto(data);
+                } else {
+                    dogReport.setTextOfReport(text);
+                }
+                dogReportService.updatePetReport(dogReport);
+                // --- check for saving report
+                dogReport = dogReportService.getPetReportByUserAndDateOfReport(dogUser, LocalDate.now());
+                if (isPhoto && dogReport.getPhoto() != null) {
+                    textOfReport = "Спасибо! Фотография загружена в отчет.";
+                }
+                if (!isPhoto && dogReport.getTextOfReport() != null) {
+                    textOfReport = "Спасибо! Текст отчета загружен.";
+                }
+            }
+            // ************ if report doesn't exist ******
+            if (dogReport == null) {
+                // save into db Dog new report ==================================================
+                dogReport = new DogReport();
+                dogReport.setDateOfReport(LocalDate.now());
+                if (isPhoto) {
+                    dogReport.setPhoto(data);
+                } else {
+                    dogReport.setTextOfReport(text);
+                }
+                dogReport.setDogUser(dogUser);
+                dogReportService.createPetReport(dogReport);
+                // --- check for saving report
+                dogReport = dogReportService.getPetReportByUserAndDateOfReport(dogUser, LocalDate.now());
+                if (isPhoto && dogReport.getPhoto() != null) {
+                    textOfReport = "Спасибо! Фотография загружена в отчет.";
+                }
+                if (!isPhoto && dogReport.getTextOfReport() != null) {
+                    textOfReport = "Спасибо! Текст отчета загружен.";
+                }
+            }
         }
+        // |||||||||  CATS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        if (!isDog) {
+            CatUser catUser = catUserService.findUserByChatId(chatId);
+            CatReport catReport = catReportService
+                    .getPetReportByUserAndDateOfReport(catUser, LocalDate.now());
+            // ************ if report exists ******
+            if (catReport != null) {
+                logger.info("catReport: " + catReport.toString());
+                if (isPhoto) {
+                    catReport.setPhoto(data);
+                } else {
+                    catReport.setTextOfReport(text);
+                }
+                catReportService.updatePetReport(catReport);
+                // --- check for saving report
+                catReport = catReportService.getPetReportByUserAndDateOfReport(catUser, LocalDate.now());
+                if (isPhoto && catReport.getPhoto() != null) {
+                    textOfReport = "Спасибо! Фотография загружена в отчет.";
+                }
+                if (!isPhoto && catReport.getTextOfReport() != null) {
+                    textOfReport = "Спасибо! Текст отчета загружен.";
+                }
+            }
+            // ************ if report doesn't exist ******
+            if (catReport == null) {
+                // save into db Dog new report ==================================================
+                catReport = new CatReport();
+                catReport.setDateOfReport(LocalDate.now());
+                if (isPhoto) {
+                    catReport.setPhoto(data);
+                } else {
+                    catReport.setTextOfReport(text);
+                }
+                catReport.setCatUser(catUser);
+                catReportService.createPetReport(catReport);
+                // --- check for saving report
+                catReport = catReportService.getPetReportByUserAndDateOfReport(catUser, LocalDate.now());
+                if (isPhoto && catReport.getPhoto() != null) {
+                    textOfReport = "Спасибо! Фотография загружена в отчет.";
+                }
+                if (!isPhoto && catReport.getTextOfReport() != null) {
+                    textOfReport = "Спасибо! Текст отчета загружен.";
+                }
+            }
+        }
+        message.setText(textOfReport);
+        return message;
     }
 
     /**
@@ -608,7 +627,7 @@ public class BotService {
         return gettingContact;
     }
 
-    SendMessage getPicture(Update update) {
+    SendMessage getPicture(Update update) throws IOException {
         long chatId = update.getMessage().getChatId();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -617,13 +636,20 @@ public class BotService {
             message.setText(CHOOSE_MENU_ITEM_STRING);
             return message;
         }
+        // ---- get photo as document -------
         Document getFile = update.getMessage().getDocument();
-        String fileName = getFile.getFileName();
-        String fileType = getFile.getMimeType();
-        //   String fileTemp = getFile.getFileUniqueId();
-        String text = String.format("Получен файл %s, fileType: %s", fileName, fileType);
-        message.setText(text);
-        return message;
+        // ---- Converse document to byte array -----
+        logger.info("The conversion of the received image into a byte array...");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(getFile);
+        oos.flush();
+        data = bos.toByteArray();
+        logger.info("... has been performed");
+
+        // update or save photo into data base ******
+        isPhoto = true;
+        return saveReportToDB(chatId, isPhoto, "");
     }
 
     /**
@@ -634,7 +660,7 @@ public class BotService {
      */
     SendMessage sendUserPhoneToVolunteer(Update update) {
         // --- Make message for sending contact to volunteer ---
-        SendMessage message = callToVolunteer(update);
+        SendMessage message = callToVolunteer(update.getMessage().getChatId(), "", update.getMessage().getChat().getUserName());
         String textToVolunter = message.getText();
         // --- extract from contact's data: chatId, first name and phone number
         Contact contact = getContact(update);
@@ -682,17 +708,25 @@ public class BotService {
      *
      * @param update identificator of chat
      */
-    private SendMessage callToVolunteer(Update update) {
+    private SendMessage callToVolunteer(long chatId, String isButton, String userName) {
         SendMessage message = new SendMessage();
-        String firstName = update.getMessage().getChat().getFirstName();
-        String userName = update.getMessage().getChat().getUserName();
+//        String firstName = update.getMessage().getChat().getFirstName();
+//        String userName = update.getMessage().getChat().getUserName();
+        String firstName;
+        if (isDog) {
+            firstName = dogUserService.findUserByChatId(chatId).getName();
+        } else {
+            firstName = catUserService.findUserByChatId(chatId).getName();
+        }
         DogVolunteer firstDogVolunteer;
         CatVolunteer firstCatVolunteer;
+        String tempText = "Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
+                "  https://t.me/" + userName;
         // --- Make message for sending contact to volunteer ---
         // *** get first volunteer ***
         message.setText("\n*** Извините, произошла ошибка! *** \n Мы уже работаем над ее устранением. \n" +
                 "Просьба повторить запрос позднее.");
-        message.setChatId(update.getMessage().getChatId());
+        message.setChatId(chatId);
         try {
             if (isDog) {
                 firstDogVolunteer = dogVolunteerService.getAllVolunteers()
@@ -701,17 +735,25 @@ public class BotService {
                         .orElseThrow();
                 logger.info(firstDogVolunteer.toString());
                 message.setChatId(firstDogVolunteer.getChatId());
-                message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
-                        "  https://t.me/" + userName);
-            } else {
+                if (isButton.equals("contact")) {
+                    message.setText(tempText);
+                } else {
+                    message.setText(isButton + tempText);
+                }
+            }
+            if (!isDog) {
                 firstCatVolunteer = catVolunteerService.getAllVolunteers()
                         .stream()
                         .findFirst()
                         .orElseThrow();
                 logger.info(firstCatVolunteer.toString());
                 message.setChatId(firstCatVolunteer.getChatId());
-                message.setText("Уважаемый волонтер! Просьба связаться с пользователем: " + firstName +
-                        "  https://t.me/" + userName);
+
+                if (isButton.equals("contact")) {
+                    message.setText(tempText);
+                } else {
+                    message.setText(isButton + tempText);
+                }
             }
         } catch (NoSuchElementException e) {
             logger.error("Volunteer doesn't exist in DB ### " + e.getMessage());
@@ -740,41 +782,53 @@ public class BotService {
     // =========================================================================
 
     /**
-     * Every day test DB in 20:00 to check all yesterday reports are present in DB.
-     * Photo and text about pet should be there.
+     *
      */
-//    @Scheduled(cron = "0 20 * * * *")
-//    public void runTestForReports() {
-//        // get all users with trial period
-//        List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
-//
-//        // test, if users have sent reports yesterday and two days ago
-//        for (User petsMaster : toTestWithTrialPeriod) {
-//            CatReport petReportYesterday = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(1L));
-//            CatReport petReportTwoDaysAgo = petReportService.getPetReportByPetAndDateOfReport(petsMaster.getPet(), LocalDate.now().minusDays(2L));
-//            if (petReportYesterday == null && petReportTwoDaysAgo == null) {
-//                /* позвать волонтера!!!
-//                 * если пользователь не присылал 2 дня никакой информации (текст или фото), отправлять запрос волонтеру на связь с усыновителем.
-//                 * Текст: "Усыновитель petsMaster не отправляет информацию уже 2 дня".*/
-//                break;
-//            }
-//            if (petReportYesterday == null) {
-//                /* если пользователь не присылал вчера информацию (текст и фото),
-//                напоминаем: "Добрый день, мы не получили отчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет и информациюю о питомце".*/
-//                break;
-//            }
-//            if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
-//                /* если пользователь не присылал вчера текст,
-//                напоминаем: "Добрый день, мы не получили рассказ о питомце за вчерашний день, пожалуйста, пришлите сегодня информацию о питомце". */
-//                break;
-//            }
-//            if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
-//                /* если пользователь не присылал вчера фотоотчет,
-//                напоминаем: "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, пожалуйста, пришлите сегодня фотоотчет о питомце". */
-//                break;
-//            }
-//        }
-//    }
+    public SendMessage checkReportsOfTwoLastDays() {
+        SendMessage sendMessage = new SendMessage();
+        String textToSend;
+        // get all users with trial period
+        List<CatUser> toTestWithTrialPeriod = catUserService.findUsersByAdoptedIsTrue();
+        logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);
+        // Check, if users have sent reports yesterday and two days ago
+        for (CatUser petsMaster : toTestWithTrialPeriod) {
+            CatReport petReportYesterday = catReportService.getPetReportByUserAndDateOfReport(petsMaster, LocalDate.now().minusDays(1L));
+            CatReport petReportTwoDaysAgo = catReportService.getPetReportByUserAndDateOfReport(petsMaster, LocalDate.now().minusDays(2L));
+            if (petReportYesterday == null && petReportTwoDaysAgo == null) {
+                /* позвать волонтера!!!
+                 * если пользователь не присылал 2 дня никакой информации (текст или фото), отправлять запрос волонтеру на связь с усыновителем.
+                 * */
+                textToSend = "Усыновитель не отправляет информацию уже 2 дня!\n";
+                sendMessage = callToVolunteer(petsMaster.getChatId(), textToSend, "");
+                return sendMessage;
+            }
+            if (petReportYesterday == null) {
+                // if user hasn't sent report yesterday (text & photo), remind to him
+                textToSend = "Добрый день, мы не получили отчет о питомце за вчерашний день, пожалуйста, " +
+                        "пришлите сегодня фотоотчет и информацию о питомце";
+                sendMessage.setChatId(petsMaster.getChatId());
+                sendMessage.setText(textToSend);
+                return sendMessage;
+            }
+            if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
+                // if user hasn't sent text of report yesterday, remind to him
+                textToSend = "Добрый день, мы не получили рассказ о питомце за вчерашний день, " +
+                        "пожалуйста, пришлите сегодня информацию о питомце";
+                sendMessage.setChatId(petsMaster.getChatId());
+                sendMessage.setText(textToSend);
+                return sendMessage;
+            }
+            if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
+                //  if user hasn't sent photo yesterday, remind to him
+                textToSend = "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, " +
+                        "пожалуйста, пришлите сегодня фотоотчет о питомце";
+                sendMessage.setChatId(petsMaster.getChatId());
+                sendMessage.setText(textToSend);
+                return sendMessage;
+            }
+        }
+        return sendMessage;
+    }
 
     // =========================================================================
 

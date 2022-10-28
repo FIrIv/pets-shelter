@@ -5,7 +5,6 @@ import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -106,6 +105,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         mes.setChatId(chatId);
         mes.setText(textMessage);
         sendMessageToUser(mes);
+    }
+
+    /**
+     * Every day test DB in 20:00 to check all yesterday reports are present in DB.
+     * Photo and text about pet should be there.
+     */
+    //  @Scheduled(cron = "0 20 * * * *")
+    public void sendToVolunteerIfSomethingWrongWithReports() {
+        SendMessage message = botService.checkReportsOfTwoLastDays();
+        sendMessageToUser(message);
     }
 
 }
