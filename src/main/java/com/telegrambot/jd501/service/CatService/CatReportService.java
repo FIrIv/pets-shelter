@@ -4,8 +4,10 @@ import com.telegrambot.jd501.Exceptions.PetReportNotFoundException;
 
 import com.telegrambot.jd501.model.cat.CatReport;
 import com.telegrambot.jd501.model.cat.CatUser;
+import com.telegrambot.jd501.model.dog.DogReport;
 import com.telegrambot.jd501.repository.Cat.CatReportRepository;
 import com.telegrambot.jd501.repository.Cat.CatUserRepository;
+import com.telegrambot.jd501.repository.Dog.DogReportRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -102,5 +104,18 @@ public class CatReportService {
     public List<CatReport> getAllPetReportsByChatId(Long chatId){
         CatUser tempCatUser = catUserRepository.findCatUserByChatId(chatId);
         return catReportRepository.findAllByCatUser(tempCatUser);
+    }
+
+    /**
+     * Find CatReport by ID and get byte[] Photo from Report
+     *
+     * Use method of catReportRepository {@link CatReportRepository#findById(Object)}
+     * @param id
+     * @return byte[]
+     * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException when CatReport not found
+     */
+    public byte[] getPhotoById(Long id) {
+        CatReport temp = catReportRepository.findById(id).orElseThrow(() -> new PetReportNotFoundException("CatReport not found"));
+        return temp.getPhoto();
     }
 }

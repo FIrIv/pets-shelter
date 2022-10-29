@@ -5,15 +5,21 @@ package com.telegrambot.jd501.controllers.Cat;
 
 import com.telegrambot.jd501.model.cat.CatReport;
 import com.telegrambot.jd501.service.CatService.CatReportService;
+import com.telegrambot.jd501.service.DogService.DogReportService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+
+import static org.springframework.http.MediaType.IMAGE_JPEG;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 /**
  * class for work with CatReports
@@ -143,5 +149,36 @@ public class CatReportController {
     @DeleteMapping("/{id}")
     public ResponseEntity<CatReport> deleteReport(@PathVariable Long id) {
         return ResponseEntity.ok(catReportService.deletePetReport(id));
+    }
+
+    /**
+     * Find CatReport by ID and get byte[] Photo from Report
+     *
+     * Use method of catReportService {@link CatReportService#getPhotoById(Long)}
+     * @param id
+     * @return byte[]
+     * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException when CatReport not found
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Get byte Array photo of CatReport by CatReport Id",
+                    content = @Content(
+                            mediaType = IMAGE_JPEG_VALUE,
+                            schema = @Schema(implementation = byte[].class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "CatReport not found"
+            )
+    })
+    @GetMapping ("/photo/{id}")
+    public ResponseEntity <byte []> getPhotoById (@PathVariable Long id){
+        byte [] temp = catReportService.getPhotoById(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(IMAGE_JPEG);
+        headers.setContentLength(temp.length);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(temp);
     }
 }

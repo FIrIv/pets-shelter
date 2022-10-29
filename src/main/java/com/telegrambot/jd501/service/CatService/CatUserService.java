@@ -11,9 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 
 @Service
@@ -23,11 +26,12 @@ public class CatUserService {
     @Lazy
     @Autowired
     private TelegramBot telegramBot;
+    private Properties properties;
 
     public CatUserService(CatUserRepository catUserRepository, CatRepository catRepository) {
         this.catUserRepository = catUserRepository;
         this.catRepository = catRepository;
-
+        this.properties = new Properties();
     }
 
     /**
@@ -36,7 +40,7 @@ public class CatUserService {
      *
      * @return collection of CatUser
      */
-    public Collection <CatUser> getAllUsers() {
+    public Collection<CatUser> getAllUsers() {
         return catUserRepository.findAll();
     }
 
@@ -95,20 +99,19 @@ public class CatUserService {
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         catUserRepository.save(temp);
         sendMessageToUserWithChatId(temp.getChatId(),
-                "Ваш испытательный срок был увеличен на: " + days + " дней," +
-        " не забывайте как и раньше вовремя направлять нам отчеты " +
-        " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+                properties.getProperty("probation.period.extension.one") + days + properties.getProperty("probation.period.extension.two"));
         return temp;
     }
 
     /**
      * find user by id and change  status of The Adopter, add adopted Pet, Date of adoption, set test day by 30,
      * and sent message to user about change him status.
-     *
+     * <p>
      * Use method CatUser repository {@link CatUserRepository#findById(Object)}
      * Use  method CatUser repository {@link CatUserRepository#save(Object)} }
      * Use  method CatUser repository {@link CatRepository#findById(Object)} }
      * Use method CatUserService {@link CatUserService#sendMessageToUserWithChatId(Long, String)}
+     *
      * @param userId - user id for fing user in repository,
      * @param catId  - pet id for fing user in repository,
      * @return Changed User
@@ -120,10 +123,7 @@ public class CatUserService {
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
-        sendMessageToUserWithChatId(userTemp.getChatId(),
-                "Поздравляю! Вы стали усыновителем." +
-                        " Не забывайте вовремя отправлять отчеты." +
-                        " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+        sendMessageToUserWithChatId(userTemp.getChatId(), properties.getProperty("congrat.u.are.new.adopter"));
         return catUserRepository.save(userTemp);
     }
 
@@ -159,9 +159,10 @@ public class CatUserService {
 
     /**
      * Use TelegramBot to Sent custom message to Cat User with chat ID.
-     *
+     * <p>
      * Use method CatUserService {@link CatUserService#findUserByChatId(long)}
      * Use method TelegramBot {@link TelegramBot#sendMessageToUserByChatId(long, String)}
+     *
      * @param chatId
      * @param message
      * @return String that a message has been sent to the user
@@ -173,56 +174,64 @@ public class CatUserService {
             throw new UserNotFoundException("User with chatId " + chatId + " not found");
         }
         telegramBot.sendMessageToUserByChatId(chatId, message);
-        return "Message: "+ message + "sent to User with chat Id: " + chatId;
+        return "Message: " + message + "sent to User with chat Id: " + chatId;
     }
 
     /**
-     *
      * finds a user by chat id. changes him status. and sends him a message stating that he has passed the trial period
-     *
+     * <p>
      * Use method CatUserService {@link CatUserService#findUserByChatId(long)}
      * Use method CatUserRepository {@link CatUserRepository#save(Object)}
+     *
      * @param chatId
      * @return CatUser
      * @throws UserNotFoundException when usen with chatId not found
      */
-    public CatUser changeStatusUserPassedProbationPeriod(Long chatId){
+    public CatUser changeStatusUserPassedProbationPeriod(Long chatId) {
         CatUser temp = findUserByChatId(chatId);
-        if (temp == null){
+        if (temp == null) {
             throw new UserNotFoundException("User with chat Id not found");
         }
         temp.setFinishDate(null);
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-        sendMessageToUserWithChatId(temp.getChatId(), "Поздравляем!" +
-                " вы успешно прошли испытательный срок" +
-                " вам больше не нужно отправлять отчеты" +
-                " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("passed.probation.period"));
         return catUserRepository.save(temp);
     }
-    /**
 
-     *finds a user by chat id. changes him status. and sends him a message stating that he has not passed the trial period
-     *
+    /**
+     * finds a user by chat id. changes him status. and sends him a message stating that he has not passed the trial period
+     * <p>
      * Use method CatUserService {@link CatUserService#findUserByChatId(long)}
      * Use method CatUserRepository {@link CatUserRepository#save(Object)}
+     *
      * @param chatId
      * @return CatUser
      * @throws UserNotFoundException when usen with chatId not found
      */
-    public CatUser changeStatusUserNotPassedProbationPeriod(Long chatId){
-       CatUser temp = findUserByChatId(chatId);
-       if (temp == null){
-           throw new UserNotFoundException("User with chat Id not found");
-       }
-       temp.setFinishDate(null);
-       temp.setAdopted(false);
-       temp.setPet(null);
-       temp.setStartDate(null);
-       sendMessageToUserWithChatId(temp.getChatId(), "К сожалению вы не прошли испытательный срок." +
-               " Мы не сможем оставить вам питомца." +
-               " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
-      return catUserRepository.save(temp);
+    public CatUser changeStatusUserNotPassedProbationPeriod(Long chatId) {
+        CatUser temp = findUserByChatId(chatId);
+        if (temp == null) {
+            throw new UserNotFoundException("User with chat Id not found");
+        }
+        temp.setFinishDate(null);
+        temp.setAdopted(false);
+        temp.setPet(null);
+        temp.setStartDate(null);
+        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("not.passed.probation.period"));
+        return catUserRepository.save(temp);
+    }
+
+    /**
+     * Service method for loud text from text.properties file
+     */
+    private void loadTextProperty() {
+        try {
+            FileInputStream fis = new FileInputStream("src/main/resources/text.properties");
+            properties.load(fis);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
