@@ -13,9 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
+
 
 
 @Service
@@ -26,10 +31,18 @@ public class DogUserService {
     @Lazy
     private TelegramBot telegramBot;
 
+    private final Properties properties;
+
+
+
     public DogUserService(DogUserRepository dogUserRepository, DogRepository dogRepository) {
         this.dogUserRepository = dogUserRepository;
         this.dogRepository = dogRepository;
+        this.properties = new Properties();
     }
+
+
+
 
     /**
      * get All DogUser from DataBase
@@ -37,7 +50,7 @@ public class DogUserService {
      *
      * @return collection of DogUser
      */
-    public Collection <DogUser> getAllUsers() {
+    public Collection<DogUser> getAllUsers() {
         return dogUserRepository.findAll();
     }
 
@@ -95,23 +108,25 @@ public class DogUserService {
         DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         dogUserRepository.save(temp);
+        loadTextProperty();
         sendMessageToUserWithChatId(temp.getChatId(),
-                "Ваш испытательный срок был увеличен на: " + days + " дней," +
-                        " не забывайте как и раньше вовремя направлять нам отчеты " +
-                        " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+        properties.getProperty("probation.period.extension.one") + days + properties.getProperty("probation.period.extension.two"));
         return temp;
     }
+
+
 
     /**
      * find user by id and change  status of The Adopter, add adopted Pet, Date of adoption, and set test day by 30
      * and sent message to user about change him status.
-     *
+     * <p>
      * Use method dogRepository {@link DogRepository#findById(Object)}
      * Use method dogUser repository {@link DogUserRepository#findById(Object)}
      * Use  method dogUser repository {@link DogUserRepository#save(Object)} }
      * Use method DogUserService {@link DogUserService#sendMessageToUserWithChatId(Long, String)}
+     *
      * @param dogUserId - user id for fing user in repository,
-     * @param dogId  - pet id for fing user in repository,
+     * @param dogId     - pet id for fing user in repository,
      * @return Changed User
      */
     public DogUser changeStatusOfTheAdopter(Long dogUserId, Long dogId) {
@@ -121,10 +136,8 @@ public class DogUserService {
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
-        sendMessageToUserWithChatId(userTemp.getChatId(),
-                "Поздравляю! Вы стали усыновителем." +
-                        " Не забывайте вовремя отправлять отчеты." +
-                        " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+        loadTextProperty();
+        sendMessageToUserWithChatId(userTemp.getChatId(), properties.getProperty("congrat.u.are.new.adopter"));
         return dogUserRepository.save(userTemp);
     }
 
@@ -157,11 +170,13 @@ public class DogUserService {
     public DogUser findUserByChatId(long userChatId) {
         return dogUserRepository.findDogUserByChatId(userChatId);
     }
+
     /**
      * Use TelegramBot to Sent custom message to Dog User with chat ID.
-     *
+     * <p>
      * Use method DogUserService {@link DogUserService#findUserByChatId(long)}
      * Use method TelegramBot {@link TelegramBot#sendMessageToUserByChatId(long, String)}
+     *
      * @param chatId
      * @param message
      * @return String that a message has been sent to the user
@@ -173,57 +188,66 @@ public class DogUserService {
             throw new UserNotFoundException("User with chatId " + chatId + " not found");
         }
         telegramBot.sendMessageToUserByChatId(chatId, message);
-        return "Message: "+ message + "sent to User with chat Id: " + chatId;
+        return "Message: " + message + "sent to User with chat Id: " + chatId;
     }
 
     /**
-     *
      * finds a user by chat id. changes him status. and sends him a message stating that he has passed the trial period
-     *
+     * <p>
      * Use method DogUserService {@link DogUserService#findUserByChatId(long)}
      * Use method DogUserRepository {@link DogUserRepository#save(Object)}
+     *
      * @param chatId
      * @return DogUser
      * @throws UserNotFoundException when usen with chatId not found
      */
-    public DogUser changeStatusUserPassedProbationPeriod(Long chatId){
+    public DogUser changeStatusUserPassedProbationPeriod(Long chatId) {
         DogUser temp = findUserByChatId(chatId);
-        if (temp == null){
+        if (temp == null) {
             throw new UserNotFoundException("User with chat Id not found");
         }
         temp.setFinishDate(null);
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-        sendMessageToUserWithChatId(temp.getChatId(), "Поздравляем!" +
-                " вы успешно прошли испытательный срок" +
-                " вам больше не нужно отправлять отчеты" +
-                " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+        loadTextProperty();
+        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("passed.probation.period"));
         return dogUserRepository.save(temp);
     }
+
     /**
-
-     *finds a user by chat id. changes him status. and sends him a message stating that he has not passed the trial period
-     *
+     * finds a user by chat id. changes him status. and sends him a message stating that he has not passed the trial period
+     * <p>
      * Use method DogUserService {@link DogUserService#findUserByChatId(long)}
      * Use method DogUserRepository {@link DogUserRepository#save(Object)}
+     *
      * @param chatId
      * @return DogUser
      * @throws UserNotFoundException when usen with chatId not found
      */
-    public DogUser changeStatusUserNotPassedProbationPeriod(Long chatId){
+    public DogUser changeStatusUserNotPassedProbationPeriod(Long chatId) {
         DogUser temp = findUserByChatId(chatId);
-        if (temp == null){
+        if (temp == null) {
             throw new UserNotFoundException("User with chat Id not found");
         }
         temp.setFinishDate(null);
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-        sendMessageToUserWithChatId(temp.getChatId(), "К сожалению вы не прошли испытательный срок." +
-                " Мы не сможем оставить вам питомца." +
-                " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте");
+        loadTextProperty();
+        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("not.passed.probation.period"));
         return dogUserRepository.save(temp);
     }
 
+    /**
+     * Service method for loud text from text.properties file
+     */
+    private void loadTextProperty() {
+        try {
+            FileInputStream fis = new FileInputStream("src/main/resources/text.properties");
+            properties.load(fis);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

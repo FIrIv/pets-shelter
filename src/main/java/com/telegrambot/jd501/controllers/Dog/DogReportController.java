@@ -8,11 +8,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import static org.springframework.http.MediaType.IMAGE_JPEG;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 /**
  * class for work with DogReports
@@ -45,8 +53,8 @@ public class DogReportController {
     })
 
     @GetMapping
-    public Collection<DogReport> getAllReports() {
-        return dogReportService.getAllPetReports();
+    public Collection <DogReport> getAllReports() {
+  return dogReportService.getAllPetReports();
     }
 
     /**
@@ -142,5 +150,36 @@ public class DogReportController {
     @DeleteMapping("{id}")
     public ResponseEntity<DogReport> deleteReport(@PathVariable Long id) {
         return ResponseEntity.ok(dogReportService.deletePetReport(id));
+    }
+
+    /**
+     * Find DogReport by ID and get byte[] Photo from Report
+     *
+     * Use method of dogReportService {@link DogReportService#getPhotoById(Long)}
+     * @param id
+     * @return byte[]
+     * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException when DogReport not found
+     */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Get byte Array photo of DogReport by DogReport Id",
+                    content = @Content(
+                            mediaType = IMAGE_JPEG_VALUE,
+                            schema = @Schema(implementation = byte[].class)
+                                                )
+            ),
+            @ApiResponse(
+              responseCode = "404",
+              description = "DogReport not found"
+            )
+    })
+    @GetMapping ("/photo/{id}")
+    public ResponseEntity <byte []> getPhotoById (@PathVariable Long id){
+        byte [] temp = dogReportService.getPhotoById(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(IMAGE_JPEG);
+        headers.setContentLength(temp.length);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(temp);
     }
 }

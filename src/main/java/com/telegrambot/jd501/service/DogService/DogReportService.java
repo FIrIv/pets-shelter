@@ -92,4 +92,16 @@ public class DogReportService {
         DogUser tempDogUser = dogUserRepository.findDogUserByChatId(chatId);
         return dogReportRepository.findAllByDogUser(tempDogUser);
     }
+    /**
+     * Find DogReport by ID and get byte[] Photo from Report
+     *
+     * Use method of dogReportRepository {@link DogReportRepository#findById(Object)}
+     * @param id
+     * @return byte[]
+     * @throws com.telegrambot.jd501.Exceptions.PetReportNotFoundException when DogReport not found
+     */
+    public byte[] getPhotoById(Long id) {
+        DogReport temp = dogReportRepository.findById(id).orElseThrow(() -> new PetReportNotFoundException("DogReport not found"));
+        return temp.getPhoto();
+    }
 }
