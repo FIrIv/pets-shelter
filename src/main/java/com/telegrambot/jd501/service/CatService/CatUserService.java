@@ -26,7 +26,7 @@ public class CatUserService {
     @Lazy
     @Autowired
     private TelegramBot telegramBot;
-    private Properties properties;
+    private final Properties properties;
 
     public CatUserService(CatUserRepository catUserRepository, CatRepository catRepository) {
         this.catUserRepository = catUserRepository;
@@ -98,8 +98,9 @@ public class CatUserService {
         CatUser temp = catUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("CatUser not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         catUserRepository.save(temp);
+        loadTextProperty();
         sendMessageToUserWithChatId(temp.getChatId(),
-                properties.getProperty("probation.period.extension.one") + days + properties.getProperty("probation.period.extension.two"));
+                properties.getProperty("probation.period.extension.one")  + days + properties.getProperty("probation.period.extension.two"));
         return temp;
     }
 
@@ -123,6 +124,7 @@ public class CatUserService {
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
+        loadTextProperty();
         sendMessageToUserWithChatId(userTemp.getChatId(), properties.getProperty("congrat.u.are.new.adopter"));
         return catUserRepository.save(userTemp);
     }
@@ -196,6 +198,7 @@ public class CatUserService {
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
+        loadTextProperty();
         sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("passed.probation.period"));
         return catUserRepository.save(temp);
     }
@@ -219,7 +222,8 @@ public class CatUserService {
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("not.passed.probation.period"));
+        loadTextProperty();
+        sendMessageToUserWithChatId(temp.getChatId(),properties.getProperty("not.passed.probation.period"));
         return catUserRepository.save(temp);
     }
 

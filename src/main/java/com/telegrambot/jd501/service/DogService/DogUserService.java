@@ -110,7 +110,7 @@ public class DogUserService {
         dogUserRepository.save(temp);
         loadTextProperty();
         sendMessageToUserWithChatId(temp.getChatId(),
-        properties.getProperty("probation.period.extension.one") + days + properties.getProperty("probation.period.extension.two"));
+                properties.getProperty("probation.period.extension.one")  + days + properties.getProperty("probation.period.extension.two"));
         return temp;
     }
 
