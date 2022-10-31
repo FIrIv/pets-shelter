@@ -31,14 +31,14 @@ public class DogUserService {
     @Lazy
     private TelegramBot telegramBot;
 
-//    private final Properties properties;
+    private final Properties properties;
 
 
 
     public DogUserService(DogUserRepository dogUserRepository, DogRepository dogRepository) {
         this.dogUserRepository = dogUserRepository;
         this.dogRepository = dogRepository;
-//        this.properties = new Properties();
+        this.properties = new Properties();
     }
 
 
@@ -108,10 +108,9 @@ public class DogUserService {
         DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         dogUserRepository.save(temp);
-//        loadTextProperty();
+        loadTextProperty();
         sendMessageToUserWithChatId(temp.getChatId(),
-                "Ваш испытательный срок увеличен на:"  + days + "дней. Просим вас и дальше регулярно отправлять отчеты." +
-                        " Если у вас остались вопросы, мы с удовольствием ответим на них в нашем телеграмм боте.");
+                properties.getProperty("probation.period.extension.one")  + days + properties.getProperty("probation.period.extension.two"));
         return temp;
     }
 
@@ -137,9 +136,8 @@ public class DogUserService {
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
-//        loadTextProperty();
-        sendMessageToUserWithChatId(userTemp.getChatId(), "Поздравляем! Вы стали усыновителем. Вам установлен испытательный срок 30 дней." +
-                " Не забывайте регулярно отправлять отчеты. Если у вас остались вопросы, мы с удовольствием ответим на них в нашем телеграмм боте.");
+        loadTextProperty();
+        sendMessageToUserWithChatId(userTemp.getChatId(), properties.getProperty("congrat.u.are.new.adopter"));
         return dogUserRepository.save(userTemp);
     }
 
@@ -212,9 +210,8 @@ public class DogUserService {
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-//        loadTextProperty();
-        sendMessageToUserWithChatId(temp.getChatId(), "Поздравляем! Вы успешно прошли испытательный срок. Вам больше не нужно отправлять нам отчеты." +
-                " Если у вас остались вопросы, мы с удовольствием ответим на них в нашем телеграмм боте.");
+        loadTextProperty();
+        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("passed.probation.period"));
         return dogUserRepository.save(temp);
     }
 
@@ -237,21 +234,20 @@ public class DogUserService {
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-//        loadTextProperty();
-        sendMessageToUserWithChatId(temp.getChatId(), "К сожалению вы не прошли испытательный срок. Вы должны вернуть нам питомца в кротчайшие сроки." +
-                " Если у вас остались вопросы, мы с удовольствием ответим на них в нашем телеграмм боте.");
+        loadTextProperty();
+        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("not.passed.probation.period"));
         return dogUserRepository.save(temp);
     }
 
     /**
      * Service method for loud text from text.properties file
      */
-//    private void loadTextProperty() {
-//        try {
-//            FileInputStream fis = new FileInputStream("src/main/resources/text.properties");
-//            properties.load(fis);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    private void loadTextProperty() {
+        try {
+            FileInputStream fis = new FileInputStream("src/main/resources/text.properties");
+            properties.load(fis);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
