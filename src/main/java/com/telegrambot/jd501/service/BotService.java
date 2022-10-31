@@ -1,6 +1,5 @@
 package com.telegrambot.jd501.service;
 
-
 import com.telegrambot.jd501.model.cat.CatReport;
 import com.telegrambot.jd501.model.cat.CatUser;
 import com.telegrambot.jd501.model.cat.CatVolunteer;
@@ -17,7 +16,6 @@ import com.telegrambot.jd501.service.DogService.DogUserService;
 import com.telegrambot.jd501.service.DogService.DogVolunteerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -127,7 +125,7 @@ public class BotService {
     /**
      * Setup sending message
      *
-     * @param chatId      identificator of chat
+     * @param chatId      identification of chat
      * @param messageText sending text
      * @return message to reply
      */
@@ -142,7 +140,7 @@ public class BotService {
     /**
      * Make buttons in Telegram's chat
      *
-     * @param update           list of incoming updates, must be not Null
+     * @param chatId           identification of chat
      * @param namesOfButtons   list of button's names, must be not Null
      * @param startIndexButton start index of button
      * @param numberOfButtons  number of used buttons
@@ -246,32 +244,36 @@ public class BotService {
                 isDog = false;
                 messageToSend = informAboutShelter(chatId);
                 break;
+
             // --- "Приют для собак" button is pressed  (1)---
             case 1:
                 isDog = true;
                 messageToSend = informAboutShelter(chatId);
                 break;
+
             // --- "Информация о приюте" button is pressed  (2)---
             case 2:
                 messageToSend = consultNewUser(chatId);
                 break;
+
             // --- "в Главное меню" button is pressed  (14, 22)---
             case 14:
             case 22:
                 messageToSend = informAboutShelter(chatId);
                 break;
+
             // --- "Как приютить питомца?" button is pressed (3)---
             case 3:
                 messageToSend = informToPotentialAdopter(chatId);
                 break;
+
             // ---- "Прислать отчет" button is pressed (4)---
             case 4:
                 messageToSend = checkUserForPossibilityGetReport(chatId);
                 break;
-//            // -- - "Оставить данные для связи" button is pressed (5)---
-//            case 5:
-//                //   messageToSend = getContact(update);
-//                break;
+
+            // -- - "Оставить данные для связи" button is pressed (5)---
+            // ----  Checked in TelegramBot (onUpdateReceived method)
 
             // --- "Позвать волонтера" (6) button is pressed ---
             case 6:
@@ -279,6 +281,7 @@ public class BotService {
             case 23:
                 messageToSend = callToVolunteer(chatId, "contact", update.getMessage().getChat().getUserName());
                 break;
+
             // --- "Выбрать приют (собаки/кошки)" (8) button is pressed ---
             case 7:
                 messageToSend = startCommandReceived(chatId);
@@ -372,7 +375,7 @@ public class BotService {
      * Greetings to user on start.
      * We say about our shelter and offer to take a choice of menu item .
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId identification of chat
      * @return message to reply
      */
     private SendMessage startCommandReceived(long chatId) {
@@ -387,7 +390,7 @@ public class BotService {
     /**
      * Information menu about shelter
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId identification of chat
      * @return message to reply
      */
     private SendMessage informAboutShelter(long chatId) {
@@ -408,21 +411,20 @@ public class BotService {
     /**
      * Menu of new user consulting
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId identification of chat
      * @return message to reply
      */
     private SendMessage consultNewUser(long chatId) {
         logger.info("Change keyboard to menu consultNewUser, isDog = " + isDog);
-        String chooseItem = CHOOSE_MENU_ITEM_STRING;
         SendMessage message = setButtons(chatId, BUTTONS_NAMES, 8, 7);
-        message.setText(chooseItem);
+        message.setText(CHOOSE_MENU_ITEM_STRING);
         return message;
     }
 
     /**
      * Information menu for Potential Adopter
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId identification of chat
      * @return message to reply
      */
     private SendMessage informToPotentialAdopter(long chatId) {
@@ -443,7 +445,7 @@ public class BotService {
     /**
      * Pet's report menu
      *
-     * @param update list of incoming updates, must be not Null
+     * @param userChatId identification of chat
      * @return message to reply
      */
     private SendMessage checkUserForPossibilityGetReport(long userChatId) {
@@ -473,6 +475,14 @@ public class BotService {
         return message;
     }
 
+    /**
+     * Setup button "в Главное меню"
+     *
+     * @param message   incoming message from other method
+     * @param isExists  sign of existing of user
+     * @param isAdopted sign of this user is adopter
+     * @return message to reply
+     */
     private SendMessage setButtonsForReport(SendMessage message, boolean isExists, boolean isAdopted) {
         long chatId = Long.parseLong(message.getChatId());
         logger.info(String.format("chatId-%s, isExists-%s, isAdopted-%s", chatId, isExists, isAdopted));
@@ -489,7 +499,9 @@ public class BotService {
     /**
      * Save report to data base
      *
-     * @param update list of incoming updates, must be not Null
+     * @param chatId  identification of chat
+     * @param isPhoto sign of incoming data (photo or text)
+     * @param text    user's text of report
      * @return message to reply
      */
 
@@ -617,6 +629,7 @@ public class BotService {
      * Extract contact from User data
      *
      * @param update list of incoming updates, must be not Null
+     * @return contact of user
      */
     private Contact getContact(Update update) {
         logger.info("getContact processing...");
@@ -627,6 +640,14 @@ public class BotService {
         return gettingContact;
     }
 
+    /**
+     * Extract photo in report from User data as document.
+     * And then converse document into byte array
+     *
+     * @param update list of incoming updates, must be not Null
+     * @return message to reply (with calling method {@link #saveReportToDB(long, boolean, String)})
+     * @throws IOException if document hasn't gotten
+     */
     SendMessage getPicture(Update update) throws IOException {
         long chatId = update.getMessage().getChatId();
         SendMessage message = new SendMessage();
@@ -638,7 +659,7 @@ public class BotService {
         }
         // ---- get photo as document -------
         Document getFile = update.getMessage().getDocument();
-        // ---- Converse document to byte array -----
+        // ---- Converse document into byte array -----
         logger.info("The conversion of the received image into a byte array...");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -704,14 +725,28 @@ public class BotService {
     }
 
     /**
-     * Menu of volunteer's calling
+     * Setup message to sending to volunteer
      *
-     * @param update identificator of chat
+     * @param chatId   identification of chat
+     * @param isButton sign of pressing of Contact button
+     * @param userName user name in telegram chat or sign of type of DB (cats/dogs),
+     *                 if this method is called from methods: {@link #checkCatsAdoptersForTrialPeriodHasExpired(),
+     * @return message to reply
+     * @link #checkDogsAdoptersForTrialPeriodHasExpired(),
+     * @link #checkReportsOfTwoLastDaysCats(),
+     * @link #checkReportsOfTwoLastDaysDogs()}
      */
     private SendMessage callToVolunteer(long chatId, String isButton, String userName) {
         SendMessage message = new SendMessage();
-//        String firstName = update.getMessage().getChat().getFirstName();
-//        String userName = update.getMessage().getChat().getUserName();
+        boolean tempIsDog = isDog;
+        if (userName.equals("#caTs*+-")) {
+            isDog = false;
+            userName = "";
+        }
+        if (userName.equals("--+3DoGs?+*^")) {
+            isDog = true;
+            userName = "";
+        }
         String firstName;
         if (isDog) {
             firstName = dogUserService.findUserByChatId(chatId).getName();
@@ -759,13 +794,14 @@ public class BotService {
             logger.error("Volunteer doesn't exist in DB ### " + e.getMessage());
         }
         logger.info("Contact of volunteer is ::::::::::::::: " + message.toString());
+        isDog = tempIsDog;
         return message;
     }
 
     /**
      * Method of getting information from Dog or Cat service of general information about shelter
      *
-     * @param chatId         identificator of chat
+     * @param chatId         identification of chat
      * @param menuItemNumber id number of menu item
      */
     private SendMessage getInfo(long chatId, long menuItemNumber) {
@@ -777,16 +813,21 @@ public class BotService {
         }
         return setupSendMessage(chatId, info);
     }
-
-
     // =========================================================================
 
     /**
+     * See all reports in cats DB and check last reports for two days.
+     * If something's wrong (photo or text of report or both are absent),
+     * tell to user or to volunteer about that.
      *
+     * @return List of SendMessage
      */
-    public SendMessage checkReportsOfTwoLastDays() {
-        SendMessage sendMessage = new SendMessage();
-        String textToSend;
+    public List<SendMessage> checkReportsOfTwoLastDaysCats() {
+        List<SendMessage> sendMessage = new ArrayList<>();
+        String textToSend = "";
+        SendMessage sm = new SendMessage();
+        sm.setText(textToSend);
+        sendMessage.add(sm);
         // get all users with trial period
         List<CatUser> toTestWithTrialPeriod = catUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);
@@ -795,66 +836,170 @@ public class BotService {
             CatReport petReportYesterday = catReportService.getPetReportByUserAndDateOfReport(petsMaster, LocalDate.now().minusDays(1L));
             CatReport petReportTwoDaysAgo = catReportService.getPetReportByUserAndDateOfReport(petsMaster, LocalDate.now().minusDays(2L));
             if (petReportYesterday == null && petReportTwoDaysAgo == null) {
-                /* позвать волонтера!!!
-                 * если пользователь не присылал 2 дня никакой информации (текст или фото), отправлять запрос волонтеру на связь с усыновителем.
-                 * */
+//                 if we haven't any information about pet (text or photo)
+//                 more than 2 days, we must send request to volunteer to call to adopter.
                 textToSend = "Усыновитель не отправляет информацию уже 2 дня!\n";
-                sendMessage = callToVolunteer(petsMaster.getChatId(), textToSend, "");
-                return sendMessage;
+                sendMessage.add(callToVolunteer(petsMaster.getChatId(), textToSend, "#caTs*+-"));
             }
             if (petReportYesterday == null) {
                 // if user hasn't sent report yesterday (text & photo), remind to him
                 textToSend = "Добрый день, мы не получили отчет о питомце за вчерашний день, пожалуйста, " +
                         "пришлите сегодня фотоотчет и информацию о питомце";
-                sendMessage.setChatId(petsMaster.getChatId());
-                sendMessage.setText(textToSend);
-                return sendMessage;
+                sm.setChatId(petsMaster.getChatId());
+                sm.setText(textToSend);
+                sendMessage.add(sm);
             }
             if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
                 // if user hasn't sent text of report yesterday, remind to him
                 textToSend = "Добрый день, мы не получили рассказ о питомце за вчерашний день, " +
-                        "пожалуйста, пришлите сегодня информацию о питомце";
-                sendMessage.setChatId(petsMaster.getChatId());
-                sendMessage.setText(textToSend);
-                return sendMessage;
+                        "пожалуйста, пришлите его сегодня.";
+                sm.setChatId(petsMaster.getChatId());
+                sm.setText(textToSend);
+                sendMessage.add(sm);
             }
             if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
                 //  if user hasn't sent photo yesterday, remind to him
                 textToSend = "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, " +
-                        "пожалуйста, пришлите сегодня фотоотчет о питомце";
-                sendMessage.setChatId(petsMaster.getChatId());
-                sendMessage.setText(textToSend);
-                return sendMessage;
+                        "пожалуйста, пришлите его сегодня.";
+                sm.setChatId(petsMaster.getChatId());
+                sm.setText(textToSend);
+                sendMessage.add(sm);
             }
         }
         return sendMessage;
     }
 
-    // =========================================================================
+    /**
+     * See all reports in dogs DB and check last reports for two days.
+     * If something's wrong (photo or text of report or both are absent),
+     * tell to user or to volunteer about that.
+     *
+     * @return List of SendMessage
+     */
+    public List<SendMessage> checkReportsOfTwoLastDaysDogs() {
+        List<SendMessage> sendMessage = new ArrayList<>();
+        String textToSend = "";
+        SendMessage sm = new SendMessage();
+        sm.setText(textToSend);
+        sendMessage.add(sm);
+        // get all users with trial period
+        List<DogUser> toTestWithTrialPeriod2 = dogUserService.findUsersByAdoptedIsTrue();
+        logger.info("====  List toTestWithTrialPeriod2: " + toTestWithTrialPeriod2);
+        // Check, if users have sent reports yesterday and two days ago
+        for (DogUser petsMaster : toTestWithTrialPeriod2) {
+            DogReport petReportYesterday = dogReportService.getPetReportByUserAndDateOfReport(petsMaster, LocalDate.now().minusDays(1L));
+            DogReport petReportTwoDaysAgo = dogReportService.getPetReportByUserAndDateOfReport(petsMaster, LocalDate.now().minusDays(2L));
+            if (petReportYesterday == null && petReportTwoDaysAgo == null) {
+//                 if we haven't any information about pet (text or photo)
+//                 more than 2 days, we must send request to volunteer to call to adopter.
+                textToSend = "Усыновитель не отправляет информацию уже 2 дня!\n";
+                sendMessage.add(callToVolunteer(petsMaster.getChatId(), textToSend, "--+3DoGs?+*^"));
+            }
+            if (petReportYesterday == null) {
+                // if user hasn't sent report yesterday (text & photo), remind to him
+                textToSend = "Добрый день, мы не получили отчет о питомце за вчерашний день, пожалуйста, " +
+                        "пришлите сегодня фотоотчет и информацию о питомце";
+                sm.setChatId(petsMaster.getChatId());
+                sm.setText(textToSend);
+                sendMessage.add(sm);
+            }
+            if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
+                // if user hasn't sent text of report yesterday, remind to him
+                textToSend = "Добрый день, мы не получили рассказ о питомце за вчерашний день, " +
+                        "пожалуйста, пришлите его сегодня.";
+                sm.setChatId(petsMaster.getChatId());
+                sm.setText(textToSend);
+                sendMessage.add(sm);
+            }
+            if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
+                //  if user hasn't sent photo yesterday, remind to him
+                textToSend = "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, " +
+                        "пожалуйста, пришлите его сегодня.";
+                sm.setChatId(petsMaster.getChatId());
+                sm.setText(textToSend);
+                sendMessage.add(sm);
+            }
+        }
+        return sendMessage;
+    }
 
     /**
-     * Every day test DB in 12:00 to check trial period has expired.
-     * Photo and text about pet should be there.
+     * See all reports in dogs DB and check for trial period - is expired?
+     *
+     * @return SendMessage
      */
-//    @Scheduled(cron = "00 12 * * * *")
-//    public void runTestTrialPeriodHasExpired() {
-//        // get all users with trial period
-//        List<User> toTestWithTrialPeriod = userService.findUsersByAdoptedIsTrue();
-//
-//        // test, users have the last day of trial period
-//        for (User petsMaster : toTestWithTrialPeriod) {
-//            if (petsMaster.getFinishDate().isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
-//                /* если день>N и усыновитель в статусе "на проверке", бот отправляет запрос волонтеру.
-//                Текст: "N-ый день уже прошел! Срочно примите решение об успешном/неуспешном прохождении усыновителем испытательного срока или продлите испытательный срок".
-//                 */
-//                break;
-//            }
-//            if (petsMaster.getFinishDate().equals(LocalDate.now()) && petsMaster.getAdopted()) {
-//                /* если день=N и хозяин еще на испытательном сроке, бот отправляет запрос волонтеру.
-//                Текст: "Сегодня истекает N-ый день. Примите решение об успешном/неуспешном прохождении усыновителем испытательного срока или продлите испытательный срок". */
-//                break;
-//            }
-//        }
-//    }
+    public List<SendMessage> checkDogsAdoptersForTrialPeriodHasExpired() {
+        List<SendMessage> sendMessage = new ArrayList<>();
+        String textToSend = "";
+        SendMessage sm = new SendMessage();
+        sm.setText(textToSend);
+        sendMessage.add(sm);
+        // get all users with trial period
+        List<DogUser> toTestWithTrialPeriod = dogUserService.findUsersByAdoptedIsTrue();
+        logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);
+        // Check users for the last day of trial period
 
+        for (DogUser petsMaster : toTestWithTrialPeriod) {
+            if (petsMaster.getFinishDate().isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
+                // if day > N & adopter is in status "adopted,"
+                // than we must send request to volunteer to decide about adopter:
+                // probation period passed or not
+                textToSend = "N-ый день уже прошел! Срочно примите решение " +
+                        "об успешном/неуспешном прохождении усыновителем испытательного срока" +
+                        " или продлите испытательный срок\n";
+                sendMessage.add(callToVolunteer(petsMaster.getChatId(), textToSend, "--+3DoGs?+*^"));
+            }
+            if (petsMaster.getFinishDate().equals(LocalDate.now()) && petsMaster.getAdopted()) {
+                // if day = N & adopter is in status "adopted,"
+                // than we must send request to volunteer to decide about adopter:
+                // the trial period expires today. You have to decide about adopter:
+                // probation period passed or not
+                textToSend = "Сегодня истекает N-ый день. " +
+                        "Примите решение об успешном/неуспешном прохождении " +
+                        "усыновителем испытательного срока или продлите испытательный срок\n";
+                sendMessage.add(callToVolunteer(petsMaster.getChatId(), textToSend, "--+3DoGs?+*^"));
+            }
+        }
+        return sendMessage;
+    }
+
+    /**
+     * See all reports in cats DB and check for trial period - is expired?
+     *
+     * @return SendMessage
+     */
+    public List<SendMessage> checkCatsAdoptersForTrialPeriodHasExpired() {
+        List<SendMessage> sendMessage = new ArrayList<>();
+        String textToSend = "";
+        SendMessage sm = new SendMessage();
+        sm.setText(textToSend);
+        sendMessage.add(sm);
+        // get all users with trial period
+        List<CatUser> toTestWithTrialPeriod = catUserService.findUsersByAdoptedIsTrue();
+        logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);
+        // Check users for the last day of trial period
+
+        for (CatUser petsMaster : toTestWithTrialPeriod) {
+            if (petsMaster.getFinishDate().isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
+                // if day > N & adopter is in status "adopted,"
+                // than we must send request to volunteer to decide about adopter:
+                // probation period passed or not
+                textToSend = "N-ый день уже прошел! Срочно примите решение " +
+                        "об успешном/неуспешном прохождении усыновителем испытательного срока" +
+                        " или продлите испытательный срок\n";
+                sendMessage.add(callToVolunteer(petsMaster.getChatId(), textToSend, "#caTs*+-"));
+            }
+            if (petsMaster.getFinishDate().equals(LocalDate.now()) && petsMaster.getAdopted()) {
+                // if day = N & adopter is in status "adopted,"
+                // than we must send request to volunteer to decide about adopter:
+                // the trial period expires today. You have to decide about adopter:
+                // probation period passed or not
+                textToSend = "Сегодня истекает N-ый день. " +
+                        "Примите решение об успешном/неуспешном прохождении " +
+                        "усыновителем испытательного срока или продлите испытательный срок\n";
+                sendMessage.add(callToVolunteer(petsMaster.getChatId(), textToSend, "#caTs*+-"));
+            }
+        }
+        return sendMessage;
+    }
 }

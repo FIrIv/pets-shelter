@@ -4,11 +4,14 @@ package com.telegrambot.jd501.service;
 import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.List;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -56,8 +59,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 // --- send incoming message (or pressed key) for checking -----
                 SendMessage sendMessage = botService.checkInputMessage(update);
                 sendMessageToUser(sendMessage);
-            }
-            else if (update.getMessage() != null && update.getMessage().hasContact()) {
+            } else if (update.getMessage() != null && update.getMessage().hasContact()) {
                 // --- if pressed key get contact call method getContact() -----
                 // --- (1) Reply to user that his phone is saved
                 SendMessage sendMessage = botService.replyAboutSavingContact(update);
@@ -65,8 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 // --- (2) Send user's phone number to volunteer
                 sendMessage = botService.sendUserPhoneToVolunteer(update);
                 sendMessageToUser(sendMessage);
-            }
-            else if (update.getMessage() != null && update.getMessage().hasDocument()) {
+            } else if (update.getMessage() != null && update.getMessage().hasDocument()) {
                 // --- if pressed key get contact call method getContact() -----
                 // --- (1) Reply to user that his phone is saved
                 SendMessage sendMessage = botService.getPicture(update);
@@ -108,13 +109,52 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     /**
-     * Every day test DB in 20:00 to check all yesterday reports are present in DB.
+     * Every day check DB of catReports in 20:00 to check all yesterday reports are present in DB.
      * Photo and text about pet should be there.
      */
-    //  @Scheduled(cron = "0 20 * * * *")
-    public void sendToVolunteerIfSomethingWrongWithReports() {
-        SendMessage message = botService.checkReportsOfTwoLastDays();
-        sendMessageToUser(message);
+    @Scheduled(cron = "0 20 * * * *")
+    public void sendToVolunteerIfSomethingWrongWithReportsCats() {
+        List<SendMessage> messageList = botService.checkReportsOfTwoLastDaysCats();
+        for (SendMessage message : messageList) {
+            sendMessageToUser(message);
+        }
     }
+
+    /**
+     * Every day check DB of dogReports in 20:00 to check all yesterday reports are present in DB.
+     * Photo and text about pet should be there.
+     */
+    @Scheduled(cron = "0 20 * * * *")
+    public void sendToVolunteerIfSomethingWrongWithReportsDogs() {
+        List<SendMessage> messageList = botService.checkReportsOfTwoLastDaysDogs();
+        for (SendMessage message : messageList) {
+            sendMessageToUser(message);
+        }
+    }
+
+    /**
+     * Every day check DB of dogReports in 12:00 for trial period - is expired?
+     * Photo and text about pet should be there.
+     */
+    @Scheduled(cron = "00 12 * * * *")
+    public void sendToVolunteerToDecideAboutDogsAdopter() {
+        List<SendMessage> messageList = botService.checkDogsAdoptersForTrialPeriodHasExpired();
+        for (SendMessage message : messageList) {
+            sendMessageToUser(message);
+        }
+    }
+
+    /**
+     * Every day check DB of catReports in 12:00 for trial period - is expired?
+     * Photo and text about pet should be there.
+     */
+    @Scheduled(cron = "00 12 * * * *")
+    public void sendToVolunteerToDecideAboutCatsAdopter() {
+        List<SendMessage> messageList = botService.checkCatsAdoptersForTrialPeriodHasExpired();
+        for (SendMessage message : messageList) {
+            sendMessageToUser(message);
+        }
+    }
+
 
 }
