@@ -91,7 +91,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 execute(message);
             }
         } catch (TelegramApiException e) {
-            logger.error("Error occured in method sendMessageToUser: " + e.getMessage());
+            logger.error("Error occurred in method sendMessageToUser: " + e.getMessage());
         }
     }
 
@@ -112,11 +112,13 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Every day check DB of catReports in 20:00 to check all yesterday reports are present in DB.
      * Photo and text about pet should be there.
      */
-    @Scheduled(cron = "0 20 * * * *")
+    @Scheduled(cron = "0 00 20 * * *")
     public void sendToVolunteerIfSomethingWrongWithReportsCats() {
         List<SendMessage> messageList = botService.checkReportsOfTwoLastDaysCats();
         for (SendMessage message : messageList) {
-            sendMessageToUser(message);
+            if (message.getText() != null) {
+                sendMessageToUser(message);
+            }
         }
     }
 
@@ -124,11 +126,13 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Every day check DB of dogReports in 20:00 to check all yesterday reports are present in DB.
      * Photo and text about pet should be there.
      */
-    @Scheduled(cron = "0 20 * * * *")
+    @Scheduled(cron = "0 00 20 * * *")
     public void sendToVolunteerIfSomethingWrongWithReportsDogs() {
         List<SendMessage> messageList = botService.checkReportsOfTwoLastDaysDogs();
         for (SendMessage message : messageList) {
-            sendMessageToUser(message);
+            if (message.getText() != null) {
+                sendMessageToUser(message);
+            }
         }
     }
 
@@ -136,11 +140,13 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Every day check DB of dogReports in 12:00 for trial period - is expired?
      * Photo and text about pet should be there.
      */
-    @Scheduled(cron = "00 12 * * * *")
+    @Scheduled(cron = "0 00 12 * * *")
     public void sendToVolunteerToDecideAboutDogsAdopter() {
         List<SendMessage> messageList = botService.checkDogsAdoptersForTrialPeriodHasExpired();
         for (SendMessage message : messageList) {
-            sendMessageToUser(message);
+            if (message.getText() != null) {
+                sendMessageToUser(message);
+            }
         }
     }
 
@@ -148,13 +154,13 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Every day check DB of catReports in 12:00 for trial period - is expired?
      * Photo and text about pet should be there.
      */
-    @Scheduled(cron = "00 12 * * * *")
+    @Scheduled(cron = "0 00 12 * * *")
     public void sendToVolunteerToDecideAboutCatsAdopter() {
         List<SendMessage> messageList = botService.checkCatsAdoptersForTrialPeriodHasExpired();
         for (SendMessage message : messageList) {
-            sendMessageToUser(message);
+            if (message.getText() != null) {
+                sendMessageToUser(message);
+            }
         }
     }
-
-
 }

@@ -853,7 +853,7 @@ public class BotService {
                 sm.setText(textToSend);
                 sendMessage.add(sm);
             }
-            if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
+            if (petReportYesterday != null && petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
                 // if user hasn't sent text of report yesterday, remind to him
                 textToSend = "Добрый день, мы не получили рассказ о питомце за вчерашний день, " +
                         "пожалуйста, пришлите его сегодня.";
@@ -861,7 +861,7 @@ public class BotService {
                 sm.setText(textToSend);
                 sendMessage.add(sm);
             }
-            if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
+            if (petReportYesterday != null && petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
                 //  if user hasn't sent photo yesterday, remind to him
                 textToSend = "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, " +
                         "пожалуйста, пришлите его сегодня.";
@@ -907,7 +907,7 @@ public class BotService {
                 sm.setText(textToSend);
                 sendMessage.add(sm);
             }
-            if (petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
+            if (petReportYesterday != null && petReportYesterday.getTextOfReport() == null && petReportYesterday.getPhoto() != null) {
                 // if user hasn't sent text of report yesterday, remind to him
                 textToSend = "Добрый день, мы не получили рассказ о питомце за вчерашний день, " +
                         "пожалуйста, пришлите его сегодня.";
@@ -915,7 +915,7 @@ public class BotService {
                 sm.setText(textToSend);
                 sendMessage.add(sm);
             }
-            if (petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
+            if (petReportYesterday != null && petReportYesterday.getTextOfReport() != null && petReportYesterday.getPhoto() == null) {
                 //  if user hasn't sent photo yesterday, remind to him
                 textToSend = "Добрый день, мы не получили фотоотчет о питомце за вчерашний день, " +
                         "пожалуйста, пришлите его сегодня.";
@@ -944,7 +944,8 @@ public class BotService {
         // Check users for the last day of trial period
 
         for (DogUser petsMaster : toTestWithTrialPeriod) {
-            if (petsMaster.getFinishDate().isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
+            LocalDate adopterFinishDate = petsMaster.getFinishDate();
+            if (adopterFinishDate != null && adopterFinishDate.isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
                 // if day > N & adopter is in status "adopted,"
                 // than we must send request to volunteer to decide about adopter:
                 // probation period passed or not
@@ -953,7 +954,7 @@ public class BotService {
                         " или продлите испытательный срок\n";
                 sendMessage.add(callToVolunteer(petsMaster.getChatId(), textToSend, "--+3DoGs?+*^"));
             }
-            if (petsMaster.getFinishDate().equals(LocalDate.now()) && petsMaster.getAdopted()) {
+            if (adopterFinishDate != null && adopterFinishDate.equals(LocalDate.now()) && petsMaster.getAdopted()) {
                 // if day = N & adopter is in status "adopted,"
                 // than we must send request to volunteer to decide about adopter:
                 // the trial period expires today. You have to decide about adopter:
@@ -984,7 +985,8 @@ public class BotService {
         // Check users for the last day of trial period
 
         for (CatUser petsMaster : toTestWithTrialPeriod) {
-            if (petsMaster.getFinishDate().isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
+            LocalDate adopterFinishDate = petsMaster.getFinishDate();
+            if (adopterFinishDate != null && adopterFinishDate.isBefore(LocalDate.now()) && petsMaster.getAdopted()) {
                 // if day > N & adopter is in status "adopted,"
                 // than we must send request to volunteer to decide about adopter:
                 // probation period passed or not
@@ -993,7 +995,7 @@ public class BotService {
                         " или продлите испытательный срок\n";
                 sendMessage.add(callToVolunteer(petsMaster.getChatId(), textToSend, "#caTs*+-"));
             }
-            if (petsMaster.getFinishDate().equals(LocalDate.now()) && petsMaster.getAdopted()) {
+            if (adopterFinishDate != null && adopterFinishDate.equals(LocalDate.now()) && petsMaster.getAdopted()) {
                 // if day = N & adopter is in status "adopted,"
                 // than we must send request to volunteer to decide about adopter:
                 // the trial period expires today. You have to decide about adopter:
