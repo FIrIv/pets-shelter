@@ -680,21 +680,11 @@ public class BotService {
      * @return message to send
      */
     SendMessage sendUserPhoneToVolunteer(Update update) {
-        // --- Make message for sending contact to volunteer ---
-        SendMessage message = callToVolunteer(update.getMessage().getChatId(), "", update.getMessage().getChat().getUserName());
-        String textToVolunter = message.getText();
         // --- extract from contact's data: chatId, first name and phone number
         Contact contact = getContact(update);
         long userChatId = contact.getUserId();
         String phoneNumber = contact.getPhoneNumber();
         String firstName = contact.getFirstName();
-        String addPhoneNumberToVolunteerText;
-        if (textToVolunter.contains("*** Извините, произошла ошибка!")) {
-            addPhoneNumberToVolunteerText = textToVolunter;
-        } else {
-            addPhoneNumberToVolunteerText = textToVolunter + " . Его телефон " + phoneNumber + " chatId-" + userChatId;
-        }
-        message.setText(addPhoneNumberToVolunteerText);
         // --- work with data base ---
         if (isDog) {
             // ---- check contact in base -----
@@ -721,6 +711,20 @@ public class BotService {
                 catUserService.createUser(newUser);
             }
         }
+        // --- Make message for sending contact to volunteer ---
+        String userName = update.getMessage().getChat().getUserName();
+        SendMessage message = callToVolunteer(userChatId, "", userName);
+        String textToVolunter = message.getText();
+
+
+        String addPhoneNumberToVolunteerText;
+        if (textToVolunter.contains("*** Извините, произошла ошибка!")) {
+            addPhoneNumberToVolunteerText = textToVolunter;
+        } else {
+            addPhoneNumberToVolunteerText = textToVolunter + " . Его телефон " + phoneNumber + " chatId-" + userChatId;
+        }
+        message.setText(addPhoneNumberToVolunteerText);
+
         return message;
     }
 
