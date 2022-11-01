@@ -86,4 +86,18 @@ class DogReportServiceTest {
 
         assertThrows(PetReportNotFoundException.class,() ->out.updatePetReport(DOG_REPORT_2));
     }
+
+    @Test
+    void getPhotoById() {
+        when(dogReportRepository.findById(anyLong())).thenReturn(Optional.of(DOG_REPORT_1));
+
+        assertEquals(out.getPhotoById(ID1), PHOTO_1);
+    }
+
+    @Test
+    void petReportNotFoundExceptionTest3() {
+        when(dogReportRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(PetReportNotFoundException.class,() ->out.getPhotoById(ID2));
+    }
 }
