@@ -1,14 +1,16 @@
 package com.telegrambot.jd501.controllers.dog;
 
-import com.telegrambot.jd501.controllers.Dog.DogController;
-import com.telegrambot.jd501.controllers.Dog.DogReportController;
-import com.telegrambot.jd501.controllers.Dog.DogUserController;
 import com.telegrambot.jd501.model.dog.Dog;
 import com.telegrambot.jd501.model.dog.DogReport;
 import com.telegrambot.jd501.model.dog.DogUser;
-import com.telegrambot.jd501.service.DogService.DogUserService;
+import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.dog_service.DogUserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 import static org.springframework.http.MediaType.IMAGE_JPEG;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(MockitoExtension.class)
 class DogReportControllerTest {
 
     @LocalServerPort
@@ -36,6 +39,7 @@ class DogReportControllerTest {
     DogController dogController;
 
     @Autowired
+    @InjectMocks
     DogUserService dogUserService;
 
     @Autowired
@@ -43,6 +47,10 @@ class DogReportControllerTest {
 
     @Autowired
     DogReportController dogReportController;
+
+    @Autowired
+    @Mock
+    private MailingListService mailingListService;
 
     @Test
     void contextLoads() throws Exception {

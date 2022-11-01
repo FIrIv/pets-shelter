@@ -1,4 +1,4 @@
-package com.telegrambot.jd501.repository.Dog;
+package com.telegrambot.jd501.repository.dog;
 
 import com.telegrambot.jd501.model.dog.DogInformationMessage;
 import org.springframework.data.jpa.repository.JpaRepository;

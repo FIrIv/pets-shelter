@@ -1,10 +1,9 @@
 package com.telegrambot.jd501.controllers.cat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.telegrambot.jd501.controllers.Cat.CatVolunteerController;
 import com.telegrambot.jd501.model.cat.CatVolunteer;
-import com.telegrambot.jd501.repository.Cat.CatVolunteerRepository;
-import com.telegrambot.jd501.service.CatService.CatVolunteerService;
+import com.telegrambot.jd501.repository.cat.CatVolunteerRepository;
+import com.telegrambot.jd501.service.cat_service.CatVolunteerService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;

@@ -1,8 +1,6 @@
 package com.telegrambot.jd501.controllers.cat;
 
-import com.telegrambot.jd501.controllers.Cat.CatInformationMessageController;
 import com.telegrambot.jd501.model.cat.CatInformationMessage;
-import com.telegrambot.jd501.model.cat.CatUser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +16,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CatInformationMessageControllerTest {
-
     @LocalServerPort
     private int port;
 
@@ -45,15 +40,18 @@ class CatInformationMessageControllerTest {
         CatInformationMessage infoMessage2 = new CatInformationMessage(-2L, "Тестовое info message2.");
         long id2 = catInformationMessageController.createInformationMessage(infoMessage2).getBody().getId();
 
-        ResponseEntity<List<CatInformationMessage>> response = restTemplate.exchange("http://localhost:" + port + "/cat/informationMessage", HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<CatInformationMessage>>() {});
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
-        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage1);
-        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage2);
-
-        catInformationMessageController.deleteInformationMessage(id1);
-        catInformationMessageController.deleteInformationMessage(id2);
+        try {
+            ResponseEntity<List<CatInformationMessage>> response = restTemplate.exchange("http://localhost:" + port + "/cat/informationMessage", HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<CatInformationMessage>>() {
+                    });
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
+            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage1);
+            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage2);
+        } finally {
+            catInformationMessageController.deleteInformationMessage(id1);
+            catInformationMessageController.deleteInformationMessage(id2);
+        }
     }
 
     @Test
@@ -78,14 +76,16 @@ class CatInformationMessageControllerTest {
 
         HttpEntity<CatInformationMessage> entityUp = new HttpEntity<CatInformationMessage>(infoMessageUp);
 
-        ResponseEntity<CatInformationMessage> response = restTemplate.exchange("/cat/informationMessage", HttpMethod.PUT, entityUp,
-                CatInformationMessage.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().getId()).isNotNull();
-        Assertions.assertThat(response.getBody().getText()).isEqualTo("Перезаписанное тестовое info message.");
-        Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
-
-        catInformationMessageController.deleteInformationMessage(id);
+        try {
+            ResponseEntity<CatInformationMessage> response = restTemplate.exchange("/cat/informationMessage", HttpMethod.PUT, entityUp,
+                    CatInformationMessage.class);
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody().getId()).isNotNull();
+            Assertions.assertThat(response.getBody().getText()).isEqualTo("Перезаписанное тестовое info message.");
+            Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
+        } finally {
+            catInformationMessageController.deleteInformationMessage(id);
+        }
     }
 
     @Test

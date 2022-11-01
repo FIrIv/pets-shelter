@@ -1,7 +1,5 @@
 package com.telegrambot.jd501.controllers.dog;
 
-import com.telegrambot.jd501.controllers.Dog.DogInformationMessageController;
-import com.telegrambot.jd501.model.cat.CatInformationMessage;
 import com.telegrambot.jd501.model.dog.DogInformationMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class DogInformationMessageControllerTest {
@@ -45,15 +41,18 @@ class DogInformationMessageControllerTest {
         DogInformationMessage infoMessage2 = new DogInformationMessage(-2L, "Тестовое info message2.");
         long id2 = dogInformationMessageController.createInformationMessage(infoMessage2).getBody().getId();
 
-        ResponseEntity<List<DogInformationMessage>> response = restTemplate.exchange("http://localhost:" + port + "/dog/informationMessage", HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<DogInformationMessage>>() {});
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
-        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage1);
-        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage2);
-
-        dogInformationMessageController.deleteInformationMessage(id1);
-        dogInformationMessageController.deleteInformationMessage(id2);
+        try {
+            ResponseEntity<List<DogInformationMessage>> response = restTemplate.exchange("http://localhost:" + port + "/dog/informationMessage", HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<DogInformationMessage>>() {
+                    });
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
+            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage1);
+            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage2);
+        } finally {
+            dogInformationMessageController.deleteInformationMessage(id1);
+            dogInformationMessageController.deleteInformationMessage(id2);
+        }
     }
 
     @Test
@@ -78,14 +77,16 @@ class DogInformationMessageControllerTest {
 
         HttpEntity<DogInformationMessage> entityUp = new HttpEntity<DogInformationMessage>(infoMessageUp);
 
-        ResponseEntity<DogInformationMessage> response = restTemplate.exchange("/dog/informationMessage", HttpMethod.PUT, entityUp,
-                DogInformationMessage.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().getId()).isNotNull();
-        Assertions.assertThat(response.getBody().getText()).isEqualTo("Перезаписанное тестовое info message.");
-        Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
-
-        dogInformationMessageController.deleteInformationMessage(id);
+        try {
+            ResponseEntity<DogInformationMessage> response = restTemplate.exchange("/dog/informationMessage", HttpMethod.PUT, entityUp,
+                    DogInformationMessage.class);
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody().getId()).isNotNull();
+            Assertions.assertThat(response.getBody().getText()).isEqualTo("Перезаписанное тестовое info message.");
+            Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
+        } finally {
+            dogInformationMessageController.deleteInformationMessage(id);
+        }
     }
 
     @Test

@@ -17,5 +17,4 @@ public class TelegramBotConfiguration {
     @Value("${bot.token}")
     private String token;
 
-
 }

@@ -1,19 +1,14 @@
 package com.telegrambot.jd501.controllers.dog;
 
-import com.telegrambot.jd501.controllers.Dog.DogController;
-import com.telegrambot.jd501.controllers.Dog.DogUserController;
-import com.telegrambot.jd501.model.cat.CatUser;
 import com.telegrambot.jd501.model.dog.Dog;
 import com.telegrambot.jd501.model.dog.DogUser;
-import com.telegrambot.jd501.service.CatService.CatUserService;
-import com.telegrambot.jd501.service.DogService.DogUserService;
-import com.telegrambot.jd501.service.TelegramBot;
+import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.dog_service.DogUserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,8 +23,6 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +42,7 @@ class DogUserControllerTest {
 
     @Autowired
     @Mock
-    private TelegramBot telegramBot;
+    private MailingListService mailingListService;
 
     @Autowired
     @InjectMocks
@@ -144,6 +137,7 @@ class DogUserControllerTest {
 
     @Test
     void changeStatusOfTheAdopter() {
+
         // user 1
         Long id = -1L;
         Long chatId = -1234L;
@@ -232,8 +226,6 @@ class DogUserControllerTest {
         Long idToDelete = dogUserController.createUser(expectedUser).getBody().getId();
         String message = "Отправляю сообщение";
 
-        Mockito.doNothing().when(telegramBot).sendMessageToUserByChatId(chatId, message);
-
         // test
         ResponseEntity<String> response = restTemplate.exchange("http://localhost:" + port + "/dog/user/send_message_to_dogUser/{chatId}/{message}", HttpMethod.PUT, null, String.class, chatId, message);
         Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
@@ -257,8 +249,6 @@ class DogUserControllerTest {
                 " вы успешно прошли испытательный срок" +
                 " вам больше не нужно отправлять отчеты" +
                 " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте";
-
-        Mockito.doNothing().when(telegramBot).sendMessageToUserByChatId(chatId, message);
 
         // test
         ResponseEntity<DogUser> response = restTemplate.exchange("http://localhost:" + port + "/dog/user/user_passed_probation_period/{chatId}", HttpMethod.PUT, null, DogUser.class, chatId);
@@ -285,8 +275,6 @@ class DogUserControllerTest {
         String message = "К сожалению вы не прошли испытательный срок." +
                 " Мы не сможем оставить вам питомца." +
                 " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте";
-
-        Mockito.doNothing().when(telegramBot).sendMessageToUserByChatId(chatId, message);
 
         // test
         ResponseEntity<DogUser> response = restTemplate.exchange("http://localhost:" + port + "/dog/user/user_not_passed_probation_period/{chatId}", HttpMethod.PUT, null, DogUser.class, chatId);

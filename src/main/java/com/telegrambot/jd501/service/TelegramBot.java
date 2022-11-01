@@ -15,9 +15,9 @@ import java.util.List;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
-    final TelegramBotConfiguration config;
-    private final BotService botService;
+    private final TelegramBotConfiguration config;
 
+    private final BotService botService;
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
 
@@ -34,8 +34,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @Override
     public String getBotUsername() {
-        return config.getBotName();
-    }
+        return config.getBotName();   }
 
     /**
      * Get bot's token
@@ -85,7 +84,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      *
      * @param message message to User
      */
-    void sendMessageToUser(SendMessage message) {
+    public void sendMessageToUser(SendMessage message) {
         try {
             if (!message.getText().isEmpty()) {
                 execute(message);
@@ -112,7 +111,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Every day check DB of catReports in 20:00 to check all yesterday reports are present in DB.
      * Photo and text about pet should be there.
      */
-    @Scheduled(cron = "0 00 20 * * *")
+    @Scheduled(cron = "${cron.expression.evening}")
     public void sendToVolunteerIfSomethingWrongWithReportsCats() {
         List<SendMessage> messageList = botService.checkReportsOfTwoLastDaysCats();
         for (SendMessage message : messageList) {
@@ -126,7 +125,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Every day check DB of dogReports in 20:00 to check all yesterday reports are present in DB.
      * Photo and text about pet should be there.
      */
-    @Scheduled(cron = "0 00 20 * * *")
+    @Scheduled(cron = "${cron.expression.evening}")
     public void sendToVolunteerIfSomethingWrongWithReportsDogs() {
         List<SendMessage> messageList = botService.checkReportsOfTwoLastDaysDogs();
         for (SendMessage message : messageList) {
@@ -140,7 +139,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Every day check DB of dogReports in 12:00 for trial period - is expired?
      * Photo and text about pet should be there.
      */
-    @Scheduled(cron = "0 00 12 * * *")
+    @Scheduled(cron = "${cron.expression.day}")
     public void sendToVolunteerToDecideAboutDogsAdopter() {
         List<SendMessage> messageList = botService.checkDogsAdoptersForTrialPeriodHasExpired();
         for (SendMessage message : messageList) {
@@ -154,7 +153,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      * Every day check DB of catReports in 12:00 for trial period - is expired?
      * Photo and text about pet should be there.
      */
-    @Scheduled(cron = "0 00 12 * * *")
+    @Scheduled(cron = "${cron.expression.day}")
     public void sendToVolunteerToDecideAboutCatsAdopter() {
         List<SendMessage> messageList = botService.checkCatsAdoptersForTrialPeriodHasExpired();
         for (SendMessage message : messageList) {

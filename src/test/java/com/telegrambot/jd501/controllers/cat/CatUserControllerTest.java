@@ -1,17 +1,14 @@
 package com.telegrambot.jd501.controllers.cat;
 
-import com.telegrambot.jd501.controllers.Cat.CatController;
-import com.telegrambot.jd501.controllers.Cat.CatUserController;
 import com.telegrambot.jd501.model.cat.Cat;
 import com.telegrambot.jd501.model.cat.CatUser;
-import com.telegrambot.jd501.service.CatService.CatUserService;
-import com.telegrambot.jd501.service.TelegramBot;
+import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.cat_service.CatUserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,14 +19,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +42,7 @@ class CatUserControllerTest {
 
     @Autowired
     @Mock
-    private TelegramBot telegramBot;
+    private MailingListService mailingListService;
 
     @Autowired
     @InjectMocks
@@ -81,16 +74,19 @@ class CatUserControllerTest {
         expectedUser2 = catUserController.createUser(expectedUser2).getBody();
 
         // test
-        ResponseEntity<List<CatUser>> response = restTemplate.exchange("http://localhost:" + port + "/cat/user", HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<CatUser>>() {});
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+        try {
+            ResponseEntity<List<CatUser>> response = restTemplate.exchange("http://localhost:" + port + "/cat/user", HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<CatUser>>() {
+                    });
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
 
-        Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
-        Assertions.assertThat(response.getBody()).contains(expectedUser1);
-        Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expectedUser2);
-
-        catUserController.deleteUser(expectedUser1.getId());
-        catUserController.deleteUser(expectedUser2.getId());
+            Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
+            Assertions.assertThat(response.getBody()).contains(expectedUser1);
+            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expectedUser2);
+        } finally {
+            catUserController.deleteUser(expectedUser1.getId());
+            catUserController.deleteUser(expectedUser2.getId());
+        }
     }
 
     @Test
@@ -133,13 +129,15 @@ class CatUserControllerTest {
         HttpEntity<CatUser> entityUp = new HttpEntity<CatUser>(userToChange);
 
         // test
-        ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user", HttpMethod.PUT, entityUp, CatUser.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().getId()).isNotNull();
-        Assertions.assertThat(response.getBody().getName()).isEqualTo("Новое имя");
-        Assertions.assertThat(response.getBody().getId()).isEqualTo(userToChange.getId());
-
-        catUserController.deleteUser(userToChange.getId());
+        try {
+            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user", HttpMethod.PUT, entityUp, CatUser.class);
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody().getId()).isNotNull();
+            Assertions.assertThat(response.getBody().getName()).isEqualTo("Новое имя");
+            Assertions.assertThat(response.getBody().getId()).isEqualTo(userToChange.getId());
+        } finally {
+            catUserController.deleteUser(userToChange.getId());
+        }
     }
 
     @Test
@@ -158,15 +156,17 @@ class CatUserControllerTest {
         pet = catController.createPet(pet).getBody();
 
         // test
-        ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/adoption/{userId}/{petId}", HttpMethod.PUT, null, CatUser.class, expectedUser.getId(), pet.getId());
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().getId()).isNotNull();
-        Assertions.assertThat(response.getBody().getAdopted()).isTrue();
-        Assertions.assertThat(response.getBody().getPet().getId()).isEqualTo(pet.getId());
-        Assertions.assertThat(response.getBody().getId()).isEqualTo(expectedUser.getId());
-
-        catUserController.deleteUser(expectedUser.getId());
-        catController.deletePet(pet.getId());
+        try {
+            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/adoption/{userId}/{petId}", HttpMethod.PUT, null, CatUser.class, expectedUser.getId(), pet.getId());
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody().getId()).isNotNull();
+            Assertions.assertThat(response.getBody().getAdopted()).isTrue();
+            Assertions.assertThat(response.getBody().getPet().getId()).isEqualTo(pet.getId());
+            Assertions.assertThat(response.getBody().getId()).isEqualTo(expectedUser.getId());
+        } finally {
+            catUserController.deleteUser(expectedUser.getId());
+            catController.deletePet(pet.getId());
+        }
     }
 
     @Test
@@ -192,14 +192,16 @@ class CatUserControllerTest {
 
         int daysPlus = 15;
         // test
-        ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/change_period/{id}/{days}", HttpMethod.PUT, null, CatUser.class, userToChangeId, daysPlus);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().getId()).isNotNull();
-        Assertions.assertThat(response.getBody().getId()).isEqualTo(userToChangeId);
-        Assertions.assertThat(response.getBody().getFinishDate()).isEqualTo(userToChange.getFinishDate().plusDays(15));
-
-        catUserController.deleteUser(userToChangeId);
-        catController.deletePet(pet1.getId());
+        try {
+            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/change_period/{id}/{days}", HttpMethod.PUT, null, CatUser.class, userToChangeId, daysPlus);
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody().getId()).isNotNull();
+            Assertions.assertThat(response.getBody().getId()).isEqualTo(userToChangeId);
+            Assertions.assertThat(response.getBody().getFinishDate()).isEqualTo(userToChange.getFinishDate().plusDays(15));
+        } finally {
+            catUserController.deleteUser(userToChangeId);
+            catController.deletePet(pet1.getId());
+        }
     }
 
     @Test
@@ -232,15 +234,15 @@ class CatUserControllerTest {
         Long idToDelete = catUserController.createUser(expectedUser).getBody().getId();
         String message = "Отправляю сообщение";
 
-        Mockito.doNothing().when(telegramBot).sendMessageToUserByChatId(chatId, message);
-
         // test
-        ResponseEntity<String> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/send_message_to_catUser/{chatId}/{message}", HttpMethod.PUT, null, String.class, chatId, message);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody()).isNotNull();
-        Assertions.assertThat(response.getBody()).isEqualTo("Message: "+ message + "sent to User with chat Id: " + chatId);
-
-        catUserController.deleteUser(idToDelete);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/send_message_to_catUser/{chatId}/{message}", HttpMethod.PUT, null, String.class, chatId, message);
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody()).isNotNull();
+            Assertions.assertThat(response.getBody()).isEqualTo("Message: " + message + "sent to User with chat Id: " + chatId);
+        } finally {
+            catUserController.deleteUser(idToDelete);
+        }
     }
 
     @Test
@@ -258,18 +260,18 @@ class CatUserControllerTest {
                 " вам больше не нужно отправлять отчеты" +
                 " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте";
 
-        Mockito.doNothing().when(telegramBot).sendMessageToUserByChatId(chatId, message);
-
         // test
-        ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/user_passed_probation_period/{chatId}", HttpMethod.PUT, null, CatUser.class, chatId);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody()).isNotNull();
-        Assertions.assertThat(response.getBody().getAdopted()).isEqualTo(false);
-        Assertions.assertThat(response.getBody().getFinishDate()).isNull();
-        Assertions.assertThat(response.getBody().getStartDate()).isNull();
-        Assertions.assertThat(response.getBody().getPet()).isNull();
-
-        catUserController.deleteUser(idToDelete);
+        try {
+            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/user_passed_probation_period/{chatId}", HttpMethod.PUT, null, CatUser.class, chatId);
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody()).isNotNull();
+            Assertions.assertThat(response.getBody().getAdopted()).isEqualTo(false);
+            Assertions.assertThat(response.getBody().getFinishDate()).isNull();
+            Assertions.assertThat(response.getBody().getStartDate()).isNull();
+            Assertions.assertThat(response.getBody().getPet()).isNull();
+        } finally {
+            catUserController.deleteUser(idToDelete);
+        }
     }
 
     @Test
@@ -286,17 +288,17 @@ class CatUserControllerTest {
                 " Мы не сможем оставить вам питомца." +
                 " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте";
 
-        Mockito.doNothing().when(telegramBot).sendMessageToUserByChatId(chatId, message);
-
         // test
-        ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/user_not_passed_probation_period/{chatId}", HttpMethod.PUT, null, CatUser.class, chatId);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody()).isNotNull();
-        Assertions.assertThat(response.getBody().getAdopted()).isEqualTo(false);
-        Assertions.assertThat(response.getBody().getFinishDate()).isNull();
-        Assertions.assertThat(response.getBody().getStartDate()).isNull();
-        Assertions.assertThat(response.getBody().getPet()).isNull();
-
-        catUserController.deleteUser(idToDelete);
+        try {
+            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/user_not_passed_probation_period/{chatId}", HttpMethod.PUT, null, CatUser.class, chatId);
+            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody()).isNotNull();
+            Assertions.assertThat(response.getBody().getAdopted()).isEqualTo(false);
+            Assertions.assertThat(response.getBody().getFinishDate()).isNull();
+            Assertions.assertThat(response.getBody().getStartDate()).isNull();
+            Assertions.assertThat(response.getBody().getPet()).isNull();
+        } finally {
+            catUserController.deleteUser(idToDelete);
+        }
     }
 }

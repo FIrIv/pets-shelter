@@ -1,11 +1,10 @@
 package com.telegrambot.jd501.controllers.cat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.telegrambot.jd501.controllers.Cat.CatController;
 import com.telegrambot.jd501.model.cat.Cat;
-import com.telegrambot.jd501.repository.Cat.CatRepository;
-import com.telegrambot.jd501.service.CatService.CatService;
+import com.telegrambot.jd501.repository.cat.CatRepository;
 
+import com.telegrambot.jd501.service.cat_service.CatService;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -28,18 +25,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = CatController.class)
 class CatControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private CatRepository catRepository;
 
     @SpyBean
     private CatService catService;
 
+
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private CatRepository catRepository;
 
     @Test
     void getAllCats() throws Exception {

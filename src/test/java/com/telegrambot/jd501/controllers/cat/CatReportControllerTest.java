@@ -1,20 +1,15 @@
 package com.telegrambot.jd501.controllers.cat;
 
-import com.telegrambot.jd501.controllers.Cat.CatController;
-import com.telegrambot.jd501.controllers.Cat.CatReportController;
-import com.telegrambot.jd501.controllers.Cat.CatUserController;
 import com.telegrambot.jd501.model.cat.Cat;
 import com.telegrambot.jd501.model.cat.CatReport;
 import com.telegrambot.jd501.model.cat.CatUser;
-import com.telegrambot.jd501.service.CatService.CatUserService;
-import com.telegrambot.jd501.service.TelegramBot;
+import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.cat_service.CatUserService;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,14 +17,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.IMAGE_JPEG;
@@ -45,21 +36,21 @@ class CatReportControllerTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    CatController catController;
+    private CatController catController;
 
     @Autowired
     @InjectMocks
-    CatUserService catUserService;
+    private CatUserService catUserService;
 
     @Autowired
-    CatUserController catUserController;
+    private CatUserController catUserController;
 
     @Autowired
-    CatReportController catReportController;
+    private CatReportController catReportController;
 
     @Autowired
     @Mock
-    private TelegramBot telegramBot;
+    private MailingListService mailingListService;
 
     @Test
     void contextLoads() throws Exception {
