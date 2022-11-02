@@ -9,16 +9,15 @@ import com.telegrambot.jd501.model.dog.DogUser;
 import com.telegrambot.jd501.repository.dog.DogRepository;
 import com.telegrambot.jd501.repository.dog.DogUserRepository;
 import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.MessageTextService;
 import com.telegrambot.jd501.service.TelegramBot;
 import org.springframework.stereotype.Service;
 
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
 
 @Service
 public class DogUserService {
@@ -27,18 +26,15 @@ public class DogUserService {
 
     private final MailingListService mailingListService;
 
-    private final Properties properties;
+    private final MessageTextService messageTextService;
 
 
-
-    public DogUserService(DogUserRepository dogUserRepository, DogRepository dogRepository, MailingListService mailingListService) {
+    public DogUserService(DogUserRepository dogUserRepository, DogRepository dogRepository, MailingListService mailingListService, MessageTextService messageTextService)  {
         this.dogUserRepository = dogUserRepository;
         this.dogRepository = dogRepository;
         this.mailingListService = mailingListService;
-        this.properties = new Properties();
+        this.messageTextService = messageTextService;
     }
-
-
 
 
     /**
@@ -105,9 +101,9 @@ public class DogUserService {
         DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         dogUserRepository.save(temp);
-        loadTextProperty();
+
         sendMessageToUserWithChatId(temp.getChatId(),
-                properties.getProperty("probation.period.extension.one")  + days + properties.getProperty("probation.period.extension.two"));
+                messageTextService.get("{0}") + days + messageTextService.get("{1}"));
         return temp;
     }
 
@@ -131,8 +127,7 @@ public class DogUserService {
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
-        loadTextProperty();
-        sendMessageToUserWithChatId(userTemp.getChatId(), properties.getProperty("congrat.u.are.new.adopter"));
+        sendMessageToUserWithChatId(userTemp.getChatId(), messageTextService.get("{2}"));
         return dogUserRepository.save(userTemp);
     }
 
@@ -197,16 +192,8 @@ public class DogUserService {
      * @throws UserNotFoundException when user with chatId not found
      */
     public DogUser changeStatusUserPassedProbationPeriod(Long chatId) {
-        DogUser temp = findUserByChatId(chatId);
-        if (temp == null) {
-            throw new UserNotFoundException("User with chat Id not found");
-        }
-        temp.setFinishDate(null);
-        temp.setAdopted(false);
-        temp.setPet(null);
-        temp.setStartDate(null);
-        loadTextProperty();
-        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("passed.probation.period"));
+        DogUser temp = changeStatusUserPassedProbationUtilityMethod(chatId);
+        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("{3}"));
         return dogUserRepository.save(temp);
     }
 
@@ -221,6 +208,18 @@ public class DogUserService {
      * @throws UserNotFoundException when user with chatId not found
      */
     public DogUser changeStatusUserNotPassedProbationPeriod(Long chatId) {
+        DogUser temp = changeStatusUserPassedProbationUtilityMethod(chatId);
+        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("{4}"));
+        return dogUserRepository.save(temp);
+    }
+
+    /**
+     * Utility method for changeStatusUserPassedProbationPeriod
+     *
+     * @param chatId
+     * @return DogUser
+     */
+    private DogUser changeStatusUserPassedProbationUtilityMethod(Long chatId) {
         DogUser temp = findUserByChatId(chatId);
         if (temp == null) {
             throw new UserNotFoundException("User with chat Id not found");
@@ -229,20 +228,6 @@ public class DogUserService {
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-        loadTextProperty();
-        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("not.passed.probation.period"));
-        return dogUserRepository.save(temp);
-    }
-
-    /**
-     * Service method for loud text from text.properties file
-     */
-    private void loadTextProperty() {
-        try {
-            FileInputStream fis = new FileInputStream("src/main/resources/text.properties");
-            properties.load(fis);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return temp;
     }
 }

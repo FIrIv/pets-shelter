@@ -7,15 +7,13 @@ import com.telegrambot.jd501.model.cat.CatUser;
 import com.telegrambot.jd501.repository.cat.CatRepository;
 import com.telegrambot.jd501.repository.cat.CatUserRepository;
 import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.MessageTextService;
 import com.telegrambot.jd501.service.TelegramBot;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
 
 
 @Service
@@ -25,13 +23,13 @@ public class CatUserService {
 
     private final MailingListService mailingListService;
 
-    private final Properties properties;
+    private final MessageTextService messageTextService;
 
-    public CatUserService(CatUserRepository catUserRepository, CatRepository catRepository, MailingListService mailingListService) {
+    public CatUserService(CatUserRepository catUserRepository, CatRepository catRepository, MailingListService mailingListService, MessageTextService messageTextService) {
         this.catUserRepository = catUserRepository;
         this.catRepository = catRepository;
         this.mailingListService = mailingListService;
-        this.properties = new Properties();
+        this.messageTextService = messageTextService;
     }
 
     /**
@@ -98,9 +96,8 @@ public class CatUserService {
         CatUser temp = catUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("CatUser not found"));
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         catUserRepository.save(temp);
-        loadTextProperty();
         sendMessageToUserWithChatId(temp.getChatId(),
-                properties.getProperty("probation.period.extension.one")  + days + properties.getProperty("probation.period.extension.two"));
+                messageTextService.get("{0}") + days + messageTextService.get("{1}"));
         return temp;
     }
 
@@ -123,9 +120,7 @@ public class CatUserService {
         userTemp.setAdopted(true);
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
-        userTemp.setFinishDate(LocalDate.now().plusDays(30));
-        loadTextProperty();
-        sendMessageToUserWithChatId(userTemp.getChatId(), properties.getProperty("congrat.u.are.new.adopter"));
+        sendMessageToUserWithChatId(userTemp.getChatId(), messageTextService.get("{2}"));
         return catUserRepository.save(userTemp);
     }
 
@@ -190,16 +185,8 @@ public class CatUserService {
      * @throws UserNotFoundException when user with chatId not found
      */
     public CatUser changeStatusUserPassedProbationPeriod(Long chatId) {
-        CatUser temp = findUserByChatId(chatId);
-        if (temp == null) {
-            throw new UserNotFoundException("User with chat Id not found");
-        }
-        temp.setFinishDate(null);
-        temp.setAdopted(false);
-        temp.setPet(null);
-        temp.setStartDate(null);
-        loadTextProperty();
-        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("passed.probation.period"));
+        CatUser temp = findUserUtilityMethod(chatId);
+        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("{3}"));
         return catUserRepository.save(temp);
     }
 
@@ -214,6 +201,13 @@ public class CatUserService {
      * @throws UserNotFoundException when usen with chatId not found
      */
     public CatUser changeStatusUserNotPassedProbationPeriod(Long chatId) {
+        CatUser temp = findUserUtilityMethod(chatId);
+        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("{4}"));
+        return catUserRepository.save(temp);
+    }
+
+
+    private CatUser findUserUtilityMethod(Long chatId) {
         CatUser temp = findUserByChatId(chatId);
         if (temp == null) {
             throw new UserNotFoundException("User with chat Id not found");
@@ -222,20 +216,6 @@ public class CatUserService {
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-        loadTextProperty();
-        sendMessageToUserWithChatId(temp.getChatId(),properties.getProperty("not.passed.probation.period"));
-        return catUserRepository.save(temp);
-    }
-
-    /**
-     * Service method for loud text from text.properties file
-     */
-    private void loadTextProperty() {
-        try {
-            FileInputStream fis = new FileInputStream("src/main/resources/text.properties");
-            properties.load(fis);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return temp;
     }
 }
