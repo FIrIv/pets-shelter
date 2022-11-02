@@ -77,11 +77,12 @@ class DogUserServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForProbationPeriodExtension")
     void probationPeriodExtension(Integer days) {
-        when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_3));
-        when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_3);
-        when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_3);
+        when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_31));
+        when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_31);
+        when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_31);
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
+        System.out.println(DOG_USER_3.getFinishDate());
         DOG_USER_4.setFinishDate(DOG_USER_3.getFinishDate().plusDays(days));
         assertEquals(out.probationPeriodExtension(ID1, days), DOG_USER_4);
     }
@@ -96,7 +97,7 @@ class DogUserServiceTest {
 
         assertEquals(out.changeStatusOfTheAdopter(ID1, ID1), DOG_USER_3);
     }
-    
+
     @Test
     void changeStatusOfTheAdopterException1Test() {
         when(dogUserRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -111,7 +112,7 @@ class DogUserServiceTest {
 
         assertThrows(PetNotFoundException.class, () -> out.changeStatusOfTheAdopter(ID1, ID1));
     }
-    
+
     @Test
     void findDogUsersByAdoptedIsTrue() {
         when(dogUserRepository.findDogUsersByIsAdoptedIsTrue()).thenReturn(List.of(DOG_USER_3,DOG_USER_4));

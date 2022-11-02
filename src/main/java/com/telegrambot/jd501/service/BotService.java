@@ -712,14 +712,14 @@ public class BotService {
         // --- Make message for sending contact to volunteer ---
         String userName = update.getMessage().getChat().getUserName();
         SendMessage message = callToVolunteer(userChatId, "", userName);
-        String textToVolunter = message.getText();
+        String textToVolunteer = message.getText();
 
 
         String addPhoneNumberToVolunteerText;
-        if (textToVolunter.contains("*** Извините, произошла ошибка!")) {
-            addPhoneNumberToVolunteerText = textToVolunter;
+        if (textToVolunteer.contains("*** Извините, произошла ошибка!")) {
+            addPhoneNumberToVolunteerText = textToVolunteer;
         } else {
-            addPhoneNumberToVolunteerText = textToVolunter + " . Его телефон " + phoneNumber + " chatId-" + userChatId;
+            addPhoneNumberToVolunteerText = textToVolunteer + " . Его телефон " + phoneNumber + " chatId-" + userChatId;
         }
         message.setText(addPhoneNumberToVolunteerText);
 
