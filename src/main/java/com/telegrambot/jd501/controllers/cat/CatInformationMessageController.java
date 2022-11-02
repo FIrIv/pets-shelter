@@ -47,13 +47,13 @@ public class CatInformationMessageController {
         return catInformationMessageService.getAllInformationMessages();
     }
 
-    /**
+    /*/**
      * add new CatInformationMessage in DataBase
      *
      * @param catInformationMessage Use method of CatInformationMessageService {@link CatInformationMessageService#createInformationMessage(CatInformationMessage)}
      * @return CatInformationMessage
      */
-    @ApiResponses({
+    /*@ApiResponses({
             @ApiResponse(
                     responseCode = "200",
                     description = "Create new CatInformationMessage",
@@ -66,7 +66,7 @@ public class CatInformationMessageController {
     @PostMapping
     public ResponseEntity<CatInformationMessage> createInformationMessage(@RequestBody CatInformationMessage catInformationMessage) {
         return ResponseEntity.ok(catInformationMessageService.createInformationMessage(catInformationMessage));
-    }
+    }*/
 
     /**
      * change InformationMessage in DataBase
@@ -95,7 +95,7 @@ public class CatInformationMessageController {
         return ResponseEntity.ok(catInformationMessageService.updateInformationMessage(catInformationMessage));
     }
 
-    /**
+    /*/**
      * delete CatInformationMessage from DataBase by id
      * Use method of Service {@link CatInformationMessageService#deleteInformationMessage(Long id)}
      *
@@ -103,7 +103,7 @@ public class CatInformationMessageController {
      * @return Deleted CatInformationMessage
      * @throws com.telegrambot.jd501.exceptions.InformationMessageNotFoundException if CatInformationMessage with id not found
      */
-    @ApiResponses({
+    /*@ApiResponses({
             @ApiResponse(
                     responseCode = "200",
                     description = "Delete CatInformationMessage By Id",
@@ -120,5 +120,5 @@ public class CatInformationMessageController {
     @DeleteMapping("{id}")
     public ResponseEntity<CatInformationMessage> deleteInformationMessage(@PathVariable Long id) {
         return ResponseEntity.ok(catInformationMessageService.deleteInformationMessage(id));
-    }
+    }*/
 }

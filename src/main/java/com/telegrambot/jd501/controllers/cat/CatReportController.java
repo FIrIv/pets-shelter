@@ -123,7 +123,7 @@ public class CatReportController {
         return ResponseEntity.ok(catReportService.updatePetReport(catReport));
     }
 
-    /**
+    /* /**
      * delete CatReport from DataBase by id
      * Use method of Service {@link CatReportService#deletePetReport(Long id)}}
      *
@@ -131,7 +131,7 @@ public class CatReportController {
      * @return Deleted CatReport
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if CatReport with id not found
      */
-    @ApiResponses({
+    /*@ApiResponses({
             @ApiResponse(
                     responseCode = "200",
                     description = "Delete CatReport By Id",
@@ -148,7 +148,7 @@ public class CatReportController {
     @DeleteMapping("/{id}")
     public ResponseEntity<CatReport> deleteReport(@PathVariable Long id) {
         return ResponseEntity.ok(catReportService.deletePetReport(id));
-    }
+    }*/
 
     /**
      * Find CatReport by ID and get byte[] Photo from Report

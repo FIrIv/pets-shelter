@@ -23,6 +23,7 @@ public class CatInformationMessageService {
     public List<CatInformationMessage> getAllInformationMessages() {
         return catInformationMessageRepository.findAll();
     }
+
     /**
      * add new CatInformationMessage in DataBase
      *
@@ -33,6 +34,7 @@ public class CatInformationMessageService {
     public CatInformationMessage createInformationMessage(CatInformationMessage catInformationMessage) {
         return catInformationMessageRepository.save(catInformationMessage);
     }
+
     /**
      * change CatInformationMessage in DataBase
      * Use  method CatInformationMessage repository {@link CatInformationMessageRepository#save(Object)} (CatInformationMessage)}
@@ -45,6 +47,7 @@ public class CatInformationMessageService {
         catInformationMessageRepository.findById(catinformationMessage.getId()).orElseThrow(() -> new InformationMessageNotFoundException("CatInformationMessage not found"));
         return catInformationMessageRepository.save(catinformationMessage);
     }
+
     /**
      * delete CatInformationMessage from DataBase by id
      * Use  method CatInformationMessage repository {@link CatInformationMessageRepository#deleteById(Object)} } (Long id)}
