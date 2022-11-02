@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 import static com.telegrambot.jd501.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,7 +79,7 @@ class CatUserServiceTest {
         when(catUserRepository.findById(anyLong())).thenReturn(Optional.of(CAT_USER_3));
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_3);
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
         CAT_USER_4.setFinishDate(CAT_USER_3.getFinishDate().plusDays(days));
         assertEquals(out.probationPeriodExtension(ID1, days), CAT_USER_4);
@@ -92,7 +91,7 @@ class CatUserServiceTest {
         when(catRepository.findById(anyLong())).thenReturn(Optional.of(CAT_1));
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_3);
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
         assertEquals(out.changeStatusOfTheAdopter(ID1, ID1), CAT_USER_3);
     }
@@ -171,7 +170,7 @@ class CatUserServiceTest {
     void sendMessageToUserWithChatId() {
         String message = "text";
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_1);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
         String expected = "Message: " + message + "sent to User with chat Id: " + CHAT_ID_1;
 
@@ -181,7 +180,7 @@ class CatUserServiceTest {
     @Test
     void changeStatusUserPassedProbationPeriod() {
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_1);
 
         assertEquals(out.changeStatusUserPassedProbationPeriod(CHAT_ID_1), CAT_USER_1);
@@ -190,7 +189,7 @@ class CatUserServiceTest {
     @Test
     void changeStatusUserNotPassedProbationPeriod() {
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_1);
 
         assertEquals(out.changeStatusUserNotPassedProbationPeriod(CHAT_ID_1), CAT_USER_1);

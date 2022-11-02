@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 import static com.telegrambot.jd501.Constants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,7 +80,7 @@ class DogUserServiceTest {
         when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_3));
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_3);
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_3);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
         DOG_USER_4.setFinishDate(DOG_USER_3.getFinishDate().plusDays(days));
         assertEquals(out.probationPeriodExtension(ID1, days), DOG_USER_4);
@@ -93,7 +92,7 @@ class DogUserServiceTest {
         when(dogRepository.findById(anyLong())).thenReturn(Optional.of(DOG_1));
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_3);
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_3);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
         assertEquals(out.changeStatusOfTheAdopter(ID1, ID1), DOG_USER_3);
     }
@@ -172,7 +171,7 @@ class DogUserServiceTest {
     void sendMessageToUserWithChatId() {
         String message = "text";
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_1);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
         String expected = "Message: " + message + "sent to User with chat Id: " + CHAT_ID_1;
 
@@ -182,7 +181,7 @@ class DogUserServiceTest {
     @Test
     void changeStatusUserPassedProbationPeriod() {
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_3);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_1);
 
         assertEquals(out.changeStatusUserPassedProbationPeriod(CHAT_ID_1), DOG_USER_1);
@@ -191,7 +190,7 @@ class DogUserServiceTest {
     @Test
     void changeStatusUserNotPassedProbationPeriod() {
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_3);
-        doNothing().when(mailingListService).sendMessageToUserByChatId(anyLong(), anyString());
+        when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_1);
 
         assertEquals(out.changeStatusUserNotPassedProbationPeriod(CHAT_ID_1), DOG_USER_1);

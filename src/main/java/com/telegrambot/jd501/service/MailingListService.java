@@ -29,7 +29,6 @@ public class MailingListService {
      * @param chatId
      * @param message
      * Use method MailingList repository {@link com.telegrambot.jd501.repository.MailingListRepository#save(Object)} (MailingList)}
-     * @return DogInformationMessage
      */
     public MailingList sendMessageToUserByChatId(Long chatId, String message) {
         return mailingListRepository.save(new MailingList(chatId, message));
