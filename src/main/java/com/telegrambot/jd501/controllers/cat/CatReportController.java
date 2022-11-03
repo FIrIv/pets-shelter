@@ -22,7 +22,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 /**
  * class for work with CatReports
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/cat/report")
@@ -100,7 +100,7 @@ public class CatReportController {
      * change CatReport in DataBase
      * Use method of Service {@link CatReportService#updatePetReport(CatReport)}
      *
-     * @param catReport
+     * @param catReport (object)
      * @return CatReport
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if CatReport with id not found
      */
@@ -153,7 +153,7 @@ public class CatReportController {
     /**
      * Find CatReport by ID and get byte[] Photo from Report
      * Use method of catReportService {@link CatReportService#getPhotoById(Long)}
-     * @param id
+     * @param id of CatReport
      * @return byte[]
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException when CatReport not found
      */

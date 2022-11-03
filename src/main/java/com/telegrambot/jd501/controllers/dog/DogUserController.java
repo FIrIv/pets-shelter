@@ -16,7 +16,7 @@ import java.util.Collection;
 
 /**
  * class for work with User
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/dog/user")
@@ -73,7 +73,7 @@ public class DogUserController {
      * change DogUser in DataBase
      * Use method of Service {@link DogUserService#updateUser(DogUser)}
      *
-     * @param dogUser
+     * @param dogUser (object)
      * @return DogUser
      * @throws com.telegrambot.jd501.exceptions.UserNotFoundException if DogUser with id not found
      */
@@ -147,7 +147,7 @@ public class DogUserController {
      * delete DogUser from DataBase by id
      * Use method of Service {@link }
      *
-     * @param id
+     * @param id of DogUser
      * @return Deleted DogUser
      * @throws com.telegrambot.jd501.exceptions.UserNotFoundException if DogUser with id not found
      */
@@ -172,8 +172,8 @@ public class DogUserController {
     /**
      * Use dogUserService to Sent custom message to Dog User with chat Id.
      * Use method DogUserService {@link DogUserService#sendMessageToUserWithChatId(Long, String)}
-     * @param chatId
-     * @param message
+     * @param chatId person to send
+     * @param message to send
      * @return String that a message has been sent to the user
      * @throws UserNotFoundException when user with chat id not found
      */
@@ -199,7 +199,7 @@ public class DogUserController {
      *
      * finds a user by chat id. changes him status. and sends him a message that he has passed the trial period
      * Use method DogUserService {@link DogUserService#changeStatusUserPassedProbationPeriod(Long)}
-     * @param chatId
+     * @param chatId of DogUser
      * @return DogUser
      * @throws UserNotFoundException when user with chatId not found
      */
@@ -225,7 +225,7 @@ public class DogUserController {
      *
      * finds a user by chat id. changes him status. and sends him a message that he has not passed the trial period
      * Use method DogUserService {@link DogUserService#changeStatusUserNotPassedProbationPeriod(Long)}
-     * @param chatId
+     * @param chatId of DogUser
      * @return DogUser
      * @throws UserNotFoundException when user with chatId not found
      */

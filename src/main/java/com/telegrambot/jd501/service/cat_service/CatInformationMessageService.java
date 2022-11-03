@@ -39,20 +39,20 @@ public class CatInformationMessageService {
      * change CatInformationMessage in DataBase
      * Use  method CatInformationMessage repository {@link CatInformationMessageRepository#save(Object)} (CatInformationMessage)}
      *
-     * @param catinformationMessage
+     * @param catInformationMessage (object)
      * @return CatInformationMessage
      * @throws InformationMessageNotFoundException if CatInformationMessage with id not found
      */
-    public CatInformationMessage updateInformationMessage(CatInformationMessage catinformationMessage) {
-        catInformationMessageRepository.findById(catinformationMessage.getId()).orElseThrow(() -> new InformationMessageNotFoundException("CatInformationMessage not found"));
-        return catInformationMessageRepository.save(catinformationMessage);
+    public CatInformationMessage updateInformationMessage(CatInformationMessage catInformationMessage) {
+        catInformationMessageRepository.findById(catInformationMessage.getId()).orElseThrow(() -> new InformationMessageNotFoundException("CatInformationMessage not found"));
+        return catInformationMessageRepository.save(catInformationMessage);
     }
 
     /**
      * delete CatInformationMessage from DataBase by id
      * Use  method CatInformationMessage repository {@link CatInformationMessageRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id (object)
      * @return Deleted CatInformationMessage
      * @throws InformationMessageNotFoundException if CatInformationMessage with id not found
      */

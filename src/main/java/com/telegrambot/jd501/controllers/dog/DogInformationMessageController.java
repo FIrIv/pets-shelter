@@ -14,7 +14,7 @@ import java.util.Collection;
 
 /**
  * class for work with InformationMessage
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/dog/informationMessage")
@@ -72,7 +72,7 @@ public class DogInformationMessageController {
      * change DogInformationMessage in DataBase
      * Use method of Service {@link DogInformationMessageService#updateInformationMessage(DogInformationMessage)}
      *
-     * @param dogInformationMessage
+     * @param dogInformationMessage (object)
      * @return DogInformationMessage
      * @throws com.telegrambot.jd501.exceptions.InformationMessageNotFoundException if DogInformationMessage with id not found
      */

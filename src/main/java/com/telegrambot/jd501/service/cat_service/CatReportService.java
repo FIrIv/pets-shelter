@@ -47,7 +47,7 @@ public class CatReportService {
      * change CatReport in DataBase
      * Use  method CatReport repository {@link CatReportRepository#save(Object)} (CatReport)}
      *
-     * @param catReport
+     * @param catReport (object)
      * @return CatReport
      * @throws PetReportNotFoundException if CatReport with id not found
      */
@@ -60,7 +60,7 @@ public class CatReportService {
      * delete CatReport from DataBase by id
      * Use  method CatReport repository {@link CatReportRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id of CatReport
      * @return Deleted CatReport
      * @throws PetReportNotFoundException if CatReport with id not found
      */
@@ -84,8 +84,8 @@ public class CatReportService {
      * get one CatReport from DataBase by User And DateOfReport
      * Use method of CatReport repository {@link CatReportRepository#findCatReportByCatUserAndDateOfReport(CatUser, LocalDate)} (<CatReport>)}
      *
-     * @param user
-     * @param dateOfReport
+     * @param user (object)
+     * @param dateOfReport date of report
      * @return CatReport With Cat And dateOfReport
      */
     public CatReport getPetReportByUserAndDateOfReport(CatUser user, LocalDate dateOfReport) {
@@ -95,7 +95,7 @@ public class CatReportService {
     /**
      * Find all CatReport By ChatId
      * Use method CatReport repository {@link CatReportRepository # }
-     * @param chatId
+     * @param chatId of chat history
      * @return Collection CatReport
      */
     public List<CatReport> getAllPetReportsByChatId(Long chatId){
@@ -105,9 +105,8 @@ public class CatReportService {
 
     /**
      * Find CatReport by ID and get byte[] Photo from Report
-     *
      * Use method of catReportRepository {@link CatReportRepository#findById(Object)}
-     * @param id
+     * @param id of CatReport
      * @return byte[]
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException when CatReport not found
      */

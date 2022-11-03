@@ -17,14 +17,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-
 @Service
 public class CatUserService {
     private final CatUserRepository catUserRepository;
     private final CatRepository catRepository;
-
     private final MailingListService mailingListService;
-
     private final Properties properties;
 
     public CatUserService(CatUserRepository catUserRepository, CatRepository catRepository, MailingListService mailingListService) {
@@ -62,7 +59,7 @@ public class CatUserService {
      * change CatUser in DataBase
      * Use  method User repository {@link CatUserRepository#save(Object)} (CatUser)}
      *
-     * @param catUser
+     * @param catUser (object)
      * @return CatUser
      * @throws UserNotFoundException if CatUser with id not found
      */
@@ -75,7 +72,7 @@ public class CatUserService {
      * delete CatUser from DataBase by id
      * Use  method CatUser repository {@link CatUserRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id of CatUser
      * @return Deleted CatUser
      * @throws UserNotFoundException if CatUser with id not found
      */
@@ -165,8 +162,8 @@ public class CatUserService {
      * Use method CatUserService {@link CatUserService#findUserByChatId(long)}
      * Use method TelegramBot {@link TelegramBot#sendMessageToUserByChatId(long, String)}
      *
-     * @param chatId
-     * @param message
+     * @param chatId person to send
+     * @param message to send
      * @return String that a message has been sent to the user
      * @throws UserNotFoundException when user with chat id not found
      */
@@ -185,7 +182,7 @@ public class CatUserService {
      * Use method CatUserService {@link CatUserService#findUserByChatId(long)}
      * Use method CatUserRepository {@link CatUserRepository#save(Object)}
      *
-     * @param chatId
+     * @param chatId of CatUser
      * @return CatUser
      * @throws UserNotFoundException when user with chatId not found
      */
@@ -209,9 +206,9 @@ public class CatUserService {
      * Use method CatUserService {@link CatUserService#findUserByChatId(long)}
      * Use method CatUserRepository {@link CatUserRepository#save(Object)}
      *
-     * @param chatId
+     * @param chatId of CatUser
      * @return CatUser
-     * @throws UserNotFoundException when usen with chatId not found
+     * @throws UserNotFoundException when user with chatId not found
      */
     public CatUser changeStatusUserNotPassedProbationPeriod(Long chatId) {
         CatUser temp = findUserByChatId(chatId);

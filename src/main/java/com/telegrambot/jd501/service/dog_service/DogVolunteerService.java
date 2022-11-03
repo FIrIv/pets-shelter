@@ -41,7 +41,7 @@ public class DogVolunteerService {
      * change DogVolunteer in DataBase
      * Use  method DogVolunteer repository {@link DogVolunteerRepository#save(Object)} (DogVolunteer)}
      *
-     * @param dogVolunteer
+     * @param dogVolunteer (object)
      * @return DogVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if DogVolunteer with id not found
      */
@@ -53,7 +53,7 @@ public class DogVolunteerService {
      * delete DogVolunteer from DataBase by id
      * Use  method DogVolunteer repository {@link DogVolunteerRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id of DogVolunteer
      * @return Deleted DogVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if DogVolunteer with id not found
      */
