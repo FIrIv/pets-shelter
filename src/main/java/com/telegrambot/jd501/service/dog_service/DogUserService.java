@@ -23,7 +23,6 @@ import java.util.List;
 public class DogUserService {
     private final DogUserRepository dogUserRepository;
     private final DogRepository dogRepository;
-
     private final MailingListService mailingListService;
 
     private final MessageTextService messageTextService;

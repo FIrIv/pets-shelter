@@ -14,7 +14,7 @@ import java.util.Collection;
 
 /**
  * class for work with Dog
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/dog/dog")
@@ -72,7 +72,7 @@ public class DogController {
      * change Dog in DataBase
      * Use method of Service {@link DogService#updatePet(Dog)}
      *
-     * @param dog
+     * @param dog (object)
      * @return Dog
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if Dog with id not found
      */
@@ -99,7 +99,7 @@ public class DogController {
      * delete Dog from DataBase by id
      * Use method of Service {@link DogService#deletePet(Long id)}}
      *
-     * @param id
+     * @param id of Dog
      * @return Deleted Dog
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if Dog with id not found
      */
