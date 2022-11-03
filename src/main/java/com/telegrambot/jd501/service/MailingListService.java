@@ -28,7 +28,7 @@ public class MailingListService {
      * add new MailingList in DataBase
      * @param chatId
      * @param message
-     * Use method MailingList repository {@link com.telegrambot.jd501.repository.MailingListRepository#save(Object)} (MailingList)}
+     * Use method of MailingList repository {@link com.telegrambot.jd501.repository.MailingListRepository#save(Object)} (MailingList)}
      */
     public MailingList sendMessageToUserByChatId(Long chatId, String message) {
         return mailingListRepository.save(new MailingList(chatId, message));
@@ -36,9 +36,7 @@ public class MailingListService {
 
     /**
      * remove MailingList from DataBase by Id
-     * Use method of MailingList repository {@link com.telegrambot.jd501.repository.MailingListRepository#deleteById(Long)} ()}
-     *
-     * @return collection of MailingList
+     * Use method of MailingList repository {@link com.telegrambot.jd501.repository.MailingListRepository#deleteById(Object)} ()}
      */
     public void deleteMessageFromMailingList(Long id) {
         mailingListRepository.deleteById(id);
