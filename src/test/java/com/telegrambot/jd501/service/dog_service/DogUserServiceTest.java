@@ -82,8 +82,7 @@ class DogUserServiceTest {
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_31);
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
-        System.out.println(DOG_USER_3.getFinishDate());
-        DOG_USER_4.setFinishDate(DOG_USER_3.getFinishDate().plusDays(days));
+        DOG_USER_4.setFinishDate(DOG_USER_31.getFinishDate().plusDays(days));
         assertEquals(out.probationPeriodExtension(ID1, days), DOG_USER_4);
     }
 

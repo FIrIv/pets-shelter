@@ -1,11 +1,10 @@
 package com.telegrambot.jd501.service;
 
 import com.telegrambot.jd501.model.cat.CatUser;
-import com.telegrambot.jd501.service.cat_service.CatInformationMessageService;
+import com.telegrambot.jd501.model.dog.DogUser;
 import com.telegrambot.jd501.service.cat_service.CatReportService;
 import com.telegrambot.jd501.service.cat_service.CatUserService;
 import com.telegrambot.jd501.service.cat_service.CatVolunteerService;
-import com.telegrambot.jd501.service.dog_service.DogInformationMessageService;
 import com.telegrambot.jd501.service.dog_service.DogReportService;
 import com.telegrambot.jd501.service.dog_service.DogUserService;
 import com.telegrambot.jd501.service.dog_service.DogVolunteerService;
@@ -35,10 +34,6 @@ class BotServiceTest {
     private CatVolunteerService catVolunteerService;
     @Mock
     private DogVolunteerService dogVolunteerService;
-    @Mock
-    private CatInformationMessageService catInformationMessageService;
-    @Mock
-    private DogInformationMessageService dogInformationMessageService;
     @Mock
     private CatReportService catReportService;
     @Mock
@@ -85,16 +80,20 @@ class BotServiceTest {
 
     @Test
     void checkReportsOfTwoLastDaysCats() {
-//        when(catUserService.findUsersByAdoptedIsTrue()).thenReturn(List.of(CAT_USER_3));
-//        when(catReportService.getPetReportByUserAndDateOfReport(any(CatUser.class), any(LocalDate.class))).thenReturn(null,null);
-//        when(catUserService.findUserByChatId(anyLong())).thenReturn(CAT_USER_3);
-//        when(catVolunteerService.getAllVolunteers()).thenReturn(CAT_VOLUNTEER_LIST);
-//
-//        assertEquals(out.checkReportsOfTwoLastDaysCats(), List.of(TEST_MESSAGE_2));
+        when(catUserService.findUsersByAdoptedIsTrue()).thenReturn(List.of(CAT_USER_3));
+        when(catReportService.getPetReportByUserAndDateOfReport(any(CatUser.class), any(LocalDate.class))).thenReturn(null);
+        when(catUserService.findUserByChatId(anyLong())).thenReturn(CAT_USER_3);
+        when(catVolunteerService.getAllVolunteers()).thenReturn(CAT_VOLUNTEER_LIST);
+
+        assertEquals(out.checkReportsOfTwoLastDaysCats(), List.of(TEST_MESSAGE_22,TEST_MESSAGE_2));
     }
 
     @Test
     void checkReportsOfTwoLastDaysDogs() {
+        when(dogUserService.findUsersByAdoptedIsTrue()).thenReturn(List.of(DOG_USER_3));
+        when(dogReportService.getPetReportByUserAndDateOfReport(any(DogUser.class), any(LocalDate.class))).thenReturn(DOG_REPORT_3);
+
+        assertEquals(out.checkReportsOfTwoLastDaysDogs(), List.of(TEST_MESSAGE_4));
     }
 
     @Test
@@ -103,7 +102,7 @@ class BotServiceTest {
         when(dogUserService.findUserByChatId(anyLong())).thenReturn(DOG_USER_33);
         when(dogVolunteerService.getAllVolunteers()).thenReturn(DOG_VOLUNTEER_LIST);
 
-        assertEquals(out.checkDogsAdoptersForTrialPeriodHasExpired().get(1), TEST_MESSAGE_34);
+        assertEquals(out.checkDogsAdoptersForTrialPeriodHasExpired(), List.of(TEST_MESSAGE_34));
     }
 
     @Test
@@ -112,6 +111,6 @@ class BotServiceTest {
         when(catUserService.findUserByChatId(anyLong())).thenReturn(CAT_USER_33);
         when(catVolunteerService.getAllVolunteers()).thenReturn(CAT_VOLUNTEER_LIST);
 
-        assertEquals(out.checkCatsAdoptersForTrialPeriodHasExpired().get(1), TEST_MESSAGE_33);
+        assertEquals(out.checkCatsAdoptersForTrialPeriodHasExpired(), List.of(TEST_MESSAGE_33));
     }
 }

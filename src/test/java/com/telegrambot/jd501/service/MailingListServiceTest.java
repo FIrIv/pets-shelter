@@ -36,9 +36,9 @@ class MailingListServiceTest {
         assertEquals(out.sendMessageToUserByChatId(CHAT_ID_1, TEXT1), MAILING_LIST_1);
     }
 
-    @Test
-    void cleanMailingList() {
-        doNothing().when(mailingListRepository).deleteAll();
-        out.cleanMailingList();
-    }
+//    @Test
+//    void cleanMailingList() {
+//        doNothing().when(mailingListRepository).deleteAll();
+//        out.cleanMailingList();
+//    }
 }
