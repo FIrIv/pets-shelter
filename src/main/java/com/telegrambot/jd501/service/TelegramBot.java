@@ -2,7 +2,6 @@ package com.telegrambot.jd501.service;
 
 
 import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
-import com.telegrambot.jd501.model.MailingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,15 +20,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final TelegramBotConfiguration config;
 
     private final BotService botService;
-    private final MailingListService mailingListService;
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
 
 
-    public TelegramBot(TelegramBotConfiguration config, BotService botService, MailingListService mailingListService) {
+    public TelegramBot(TelegramBotConfiguration config, BotService botService) {
         this.config = config;
         this.botService = botService;
-        this.mailingListService = mailingListService;
     }
 
     /**
