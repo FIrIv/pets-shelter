@@ -32,27 +32,27 @@ public class DogReportController {
         this.dogReportService = dogReportService;
     }
 
-    /**
-     * get All DogReport-s from DataBase
-     * Use method of service {@link DogReportService#getAllPetReports()}}
-     *
-     * @return collection of DogReport
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Show all DogReport",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Collection.class)
-                    )
-            )
-    })
-
-    @GetMapping
-    public Collection <DogReport> getAllReports() {
-  return dogReportService.getAllPetReports();
-    }
+//    /**
+//     * get All DogReport-s from DataBase
+//     * Use method of service {@link DogReportService#getAllPetReports()}}
+//     *
+//     * @return collection of DogReport
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Show all DogReport",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = Collection.class)
+//                    )
+//            )
+//    })
+//
+//    @GetMapping
+//    public Collection <DogReport> getAllReports() {
+//  return dogReportService.getAllPetReports();
+//    }
 
     /**
      * get All DogReport-s By ChatId

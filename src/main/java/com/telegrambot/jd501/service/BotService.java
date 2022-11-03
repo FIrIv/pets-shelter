@@ -9,10 +9,10 @@ import com.telegrambot.jd501.model.dog.DogVolunteer;
 import com.telegrambot.jd501.service.cat_service.CatInformationMessageService;
 import com.telegrambot.jd501.service.cat_service.CatReportService;
 import com.telegrambot.jd501.service.cat_service.CatUserService;
+import com.telegrambot.jd501.service.dog_service.DogUserService;
 import com.telegrambot.jd501.service.cat_service.CatVolunteerService;
 import com.telegrambot.jd501.service.dog_service.DogInformationMessageService;
 import com.telegrambot.jd501.service.dog_service.DogReportService;
-import com.telegrambot.jd501.service.dog_service.DogUserService;
 import com.telegrambot.jd501.service.dog_service.DogVolunteerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,22 +29,24 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class BotService {
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
 
-    private final CatUserService catUserService;
-    private final DogUserService dogUserService;
+
     private final CatVolunteerService catVolunteerService;
     private final DogVolunteerService dogVolunteerService;
     private final CatInformationMessageService catInformationMessageService;
     private final DogInformationMessageService dogInformationMessageService;
     private final CatReportService catReportService;
     private final DogReportService dogReportService;
+    private final CatUserService catUserService;
+    private final DogUserService dogUserService;
 
     public BotService(CatUserService catUserService, DogUserService dogUserService,
                       CatVolunteerService catVolunteerService, DogVolunteerService dogVolunteerService,

@@ -16,6 +16,7 @@ public class CatVolunteerService {
     public CatVolunteerService(CatVolunteerRepository catVolunteerRepository) {
         this.catVolunteerRepository = catVolunteerRepository;
     }
+
     /**
      * get All CatVolunteer from DataBase
      * Use method of CatVolunteer repository {@link CatVolunteerRepository#findAll()} ()} (Collection< CatVolunteer >)}
@@ -29,8 +30,7 @@ public class CatVolunteerService {
     /**
      * add new CatVolunteer in DataBase
      *
-     * @param catVolunteer
-     * Use  method CatVolunteer repository {@link CatVolunteerRepository#save(Object)} (CatVolunteer)}
+     * @param catVolunteer Use  method CatVolunteer repository {@link CatVolunteerRepository#save(Object)} (CatVolunteer)}
      * @return CatVolunteer
      */
     public CatVolunteer createVolunteer(CatVolunteer catVolunteer) {
@@ -49,17 +49,22 @@ public class CatVolunteerService {
         catVolunteerRepository.findById(catVolunteer.getId()).orElseThrow(() -> new VolunteerNotFoundException("CatVolunteer not found"));
         return catVolunteerRepository.save(catVolunteer);
     }
+
     /**
      * delete CatVolunteer from DataBase by id
-     * Use  method CatVolunteer repository {@link CatVolunteerRepository#deleteById(Object)} } (Long id)}
+     * Use  method CatVolunteer repository {@link CatVolunteerRepository#deleteById(Object)}
+     * Use  method CatVolunteer repository {@link CatVolunteerRepository#findCatVolunteerByChatId(long)}
      *
-     * @param id of CatVolunteer
+     * @param chatId of CatVolunteer
      * @return Deleted CatVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if CatVolunteer with id not found
      */
-    public CatVolunteer deleteVolunteer(Long id) {
-        CatVolunteer temp = catVolunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("CatVolunteer not found"));
-        catVolunteerRepository.deleteById(id);
+    public CatVolunteer deleteVolunteer(Long chatId) {
+        CatVolunteer temp = catVolunteerRepository.findCatVolunteerByChatId(chatId);
+        if (temp == null) {
+            throw new VolunteerNotFoundException("volunteer not found");
+        }
+        catVolunteerRepository.deleteById(temp.getId());
         return temp;
     }
 

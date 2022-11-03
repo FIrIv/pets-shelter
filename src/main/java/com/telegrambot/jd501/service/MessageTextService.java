@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 @Service
@@ -20,6 +21,9 @@ public class MessageTextService {
 
     public String get(String key) {
         return properties.getProperty(key);
+    }
+    public String get(String key, Object... args){
+       return MessageFormat.format(get(key), args);
     }
 
 }

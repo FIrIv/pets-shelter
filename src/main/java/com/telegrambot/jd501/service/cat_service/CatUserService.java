@@ -68,34 +68,40 @@ public class CatUserService {
     }
 
     /**
-     * delete CatUser from DataBase by id
-     * Use  method CatUser repository {@link CatUserRepository#deleteById(Object)} } (Long id)}
+     * delete CatUser from DataBase by chatId
+     * Use  method CatUser repository {@link CatUserRepository#deleteById(Object)}
      *
-     * @param id of CatUser
+     * @param chatId of CatUser
      * @return Deleted CatUser
      * @throws UserNotFoundException if CatUser with id not found
      */
-    public CatUser deleteUser(Long id) {
-        CatUser temp = catUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("CatUser not found"));
-        catUserRepository.deleteById(id);
+    public CatUser deleteUser(Long chatId) {
+        CatUser temp = catUserRepository.findCatUserByChatId(chatId);
+        if (temp == null){
+            throw new UserNotFoundException("User not found");
+        }
+        catUserRepository.deleteById(temp.getId());
         return temp;
     }
 
     /**
-     * find CatUser by id, change amount of probation period, and sent message to user about change probation period
-     * Use method CatUser repository {@link CatUserRepository#findById(Object)}
+     * find CatUser by chatId, change amount of probation period, and sent message to user about change probation period
+     * Use method CatUser repository {@link CatUserRepository#findCatUserByChatId(Long)}
      * Use  method CatUser repository {@link CatUserRepository#save(Object)}
      *
-     * @param id   - CatUser id for find CatUser in repository,
+     * @param chatId   - CatUser id for find CatUser in repository,
      * @param days - number of days to increase the term of the transfer
      * @return CatUser
      */
-    public CatUser probationPeriodExtension(Long id, Integer days) {
-        CatUser temp = catUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("CatUser not found"));
+    public CatUser probationPeriodExtension(Long chatId, Integer days) {
+        CatUser temp = catUserRepository.findCatUserByChatId(chatId);
+        if (temp == null){
+           throw new  UserNotFoundException("User not Found");
+        }
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         catUserRepository.save(temp);
         sendMessageToUserWithChatId(temp.getChatId(),
-                messageTextService.get("{0}") + days + messageTextService.get("{1}"));
+                messageTextService.get("probation.period.extension", days));
         return temp;
     }
 
@@ -103,22 +109,25 @@ public class CatUserService {
      * find user by id and change  status of The Adopter, add adopted Pet, Date of adoption, set test day by 30,
      * and sent message to user about change him status.
      * <p>
-     * Use method CatUser repository {@link CatUserRepository#findById(Object)}
+     * Use method CatUser repository {@link CatUserRepository#findCatUserByChatId(Long)}
      * Use  method CatUser repository {@link CatUserRepository#save(Object)}
      * Use  method CatUser repository {@link CatRepository#findById(Object)}
      * Use method CatUserService {@link CatUserService#sendMessageToUserWithChatId(Long, String)}
      *
-     * @param userId - user id for find user in repository,
+     * @param userChatId - user id for find user in repository,
      * @param catId  - pet id for find user in repository,
      * @return Changed User
      */
-    public CatUser changeStatusOfTheAdopter(Long userId, Long catId) {
-        CatUser userTemp = catUserRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Cat User not found"));
+    public CatUser changeStatusOfTheAdopter(Long userChatId, Long catId) {
+        CatUser userTemp = catUserRepository.findCatUserByChatId(userChatId);
+        if (userTemp == null){
+            throw new UserNotFoundException("User Not Found");
+        }
         Cat petTemp = catRepository.findById(catId).orElseThrow(() -> new PetNotFoundException("Cat not found"));
         userTemp.setAdopted(true);
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
-        sendMessageToUserWithChatId(userTemp.getChatId(), messageTextService.get("{2}"));
+        sendMessageToUserWithChatId(userTemp.getChatId(), messageTextService.get("congrat.u.are.new.adopter"));
         return catUserRepository.save(userTemp);
     }
 
@@ -184,7 +193,7 @@ public class CatUserService {
      */
     public CatUser changeStatusUserPassedProbationPeriod(Long chatId) {
         CatUser temp = findUserUtilityMethod(chatId);
-        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("{3}"));
+        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("passed.probation.period"));
         return catUserRepository.save(temp);
     }
 
@@ -200,7 +209,7 @@ public class CatUserService {
      */
     public CatUser changeStatusUserNotPassedProbationPeriod(Long chatId) {
         CatUser temp = findUserUtilityMethod(chatId);
-        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("{4}"));
+        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("not.passed.probation.period"));
         return catUserRepository.save(temp);
     }
 

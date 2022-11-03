@@ -33,27 +33,27 @@ public class CatReportController {
         this.catReportService = catReportService;
     }
 
-    /**
-     * get All CatReport-s from DataBase
-     * Use method of service {@link CatReportService#getAllPetReports()}}
-     *
-     * @return collection of CatReport
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Show all CatReport",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Collection.class)
-                    )
-            )
-    })
-
-    @GetMapping
-    public Collection<CatReport> getAllReports() {
-        return catReportService.getAllPetReports();
-    }
+//    /**
+//     * get All CatReport-s from DataBase
+//     * Use method of service {@link CatReportService#getAllPetReports()}}
+//     *
+//     * @return collection of CatReport
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Show all CatReport",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = Collection.class)
+//                    )
+//            )
+//    })
+//
+//    @GetMapping
+//    public Collection<CatReport> getAllReports() {
+//        return catReportService.getAllPetReports();
+//    }
 
     /**
      * get All CatReport-s By ChatId

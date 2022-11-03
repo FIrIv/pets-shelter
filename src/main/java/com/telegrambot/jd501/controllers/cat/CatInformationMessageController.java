@@ -26,26 +26,26 @@ public class CatInformationMessageController {
         this.catInformationMessageService = catInformationMessageService;
     }
 
-    /**
-     * get All CatInformationMessage-s from DataBase
-     * Use method of CatInformationMessage service {@link CatInformationMessageService#getAllInformationMessages()} ()} (Collection< CatInformationMessage >)}
-     *
-     * @return collection of CatInformationMessage
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Show all CatInformationMessage",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Collection.class)
-                    )
-            )
-    })
-    @GetMapping
-    public Collection <CatInformationMessage> getAllInformationMessages() {
-        return catInformationMessageService.getAllInformationMessages();
-    }
+//    /**
+//     * get All CatInformationMessage-s from DataBase
+//     * Use method of CatInformationMessage service {@link CatInformationMessageService#getAllInformationMessages()} ()} (Collection< CatInformationMessage >)}
+//     *
+//     * @return collection of CatInformationMessage
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Show all CatInformationMessage",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = Collection.class)
+//                    )
+//            )
+//    })
+//    @GetMapping
+//    public Collection <CatInformationMessage> getAllInformationMessages() {
+//        return catInformationMessageService.getAllInformationMessages();
+//    }
 
     /*/**
      * add new CatInformationMessage in DataBase

@@ -36,27 +36,27 @@ class CatInformationMessageControllerTest {
         Assertions.assertThat(catInformationMessageController).isNotNull();
     }
 
-    @Test
-    void getAllCatInformationMessage() throws Exception {
-        CatInformationMessage infoMessage1 = new CatInformationMessage(-1L, "Тестовое info message1.");
-        long id1 = catInformationMessageService.createInformationMessage(infoMessage1).getId();
-
-        CatInformationMessage infoMessage2 = new CatInformationMessage(-2L, "Тестовое info message2.");
-        long id2 = catInformationMessageService.createInformationMessage(infoMessage2).getId();
-
-        try {
-            ResponseEntity<List<CatInformationMessage>> response = restTemplate.exchange("http://localhost:" + port + "/cat/informationMessage", HttpMethod.GET, null,
-                    new ParameterizedTypeReference<List<CatInformationMessage>>() {
-                    });
-            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-            Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
-            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage1);
-            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage2);
-        } finally {
-            catInformationMessageService.deleteInformationMessage(id1);
-            catInformationMessageService.deleteInformationMessage(id2);
-        }
-    }
+//    @Test
+//    void getAllCatInformationMessage() throws Exception {
+//        CatInformationMessage infoMessage1 = new CatInformationMessage(-1L, "Тестовое info message1.");
+//        long id1 = catInformationMessageService.createInformationMessage(infoMessage1).getId();
+//
+//        CatInformationMessage infoMessage2 = new CatInformationMessage(-2L, "Тестовое info message2.");
+//        long id2 = catInformationMessageService.createInformationMessage(infoMessage2).getId();
+//
+//        try {
+//            ResponseEntity<List<CatInformationMessage>> response = restTemplate.exchange("http://localhost:" + port + "/cat/informationMessage", HttpMethod.GET, null,
+//                    new ParameterizedTypeReference<List<CatInformationMessage>>() {
+//                    });
+//            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+//            Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
+//            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage1);
+//            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage2);
+//        } finally {
+//            catInformationMessageService.deleteInformationMessage(id1);
+//            catInformationMessageService.deleteInformationMessage(id2);
+//        }
+//    }
 
     /*@Test
     void createCatInformationMessage() throws Exception {

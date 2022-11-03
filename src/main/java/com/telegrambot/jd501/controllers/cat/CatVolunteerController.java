@@ -99,14 +99,14 @@ public class CatVolunteerController {
      * delete Volunteer from DataBase by id
      * Use method of Service {@link CatVolunteerService#deleteVolunteer(Long id)}
      *
-     * @param id of CatVolunteer
+     * @param chatId of CatVolunteer
      * @return Deleted CatVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if CatVolunteer with id not found
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Delete CatVolunteer By Id",
+                    description = "Delete CatVolunteer By chatId",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CatVolunteer.class)
@@ -117,8 +117,8 @@ public class CatVolunteerController {
                     description = "CatVolunteer not found"
             )
     })
-    @DeleteMapping("{id}")
-    public ResponseEntity<CatVolunteer> deleteVolunteer(@PathVariable Long id) {
-        return ResponseEntity.ok(catVolunteerService.deleteVolunteer(id));
+    @DeleteMapping("{chatId}")
+    public ResponseEntity<CatVolunteer> deleteVolunteer(@PathVariable Long chatId) {
+        return ResponseEntity.ok(catVolunteerService.deleteVolunteer(chatId));
     }
 }
