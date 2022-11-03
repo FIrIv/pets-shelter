@@ -1,19 +1,13 @@
 package com.telegrambot.jd501.service;
 
-import com.telegrambot.jd501.model.MailingList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
 public class BotSheduleService {
-
-    private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
 
     private final MailingListService mailingListService;
 
@@ -75,24 +69,6 @@ public class BotSheduleService {
         for (SendMessage message : messageList) {
             if (message.getText() != null) {
                 mailingListService.sendMessageToUserByChatId(Long.valueOf(message.getChatId()), message.getText());
-            }
-        }
-    }
-
-    /**
-     * Every hour check mail list.
-     * Send messages to users from this list (if they are exist)
-     */
-    @Scheduled(cron = "${cron.expression.hour}")
-    public void sendToUsersReminders() {
-        logger.info("Getting mailingListCollection...");
-        Collection<MailingList> mailingListCollection = mailingListService.getAllMailingList();
-        for (MailingList mailingList : mailingListCollection) {
-            if (mailingList != null) {
-                logger.info("Send message to user (chatId): " + mailingList.getChatId());
-                mailingListService.sendMessageToUserByChatId(mailingList.getChatId(), mailingList.getMessage());
-                mailingListService.deleteMessageFromMailingList(mailingList.getId());
-                logger.info("Message was deleted from DB");
             }
         }
     }

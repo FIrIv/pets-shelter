@@ -2,13 +2,17 @@ package com.telegrambot.jd501.service;
 
 
 import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
+import com.telegrambot.jd501.model.MailingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.Collection;
 
 /**
  * class for Telegram bot.
@@ -21,12 +25,15 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final BotService botService;
 
+    private final MailingListService mailingListService;
+
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
 
 
-    public TelegramBot(TelegramBotConfiguration config, BotService botService) {
+    public TelegramBot(TelegramBotConfiguration config, BotService botService, MailingListService mailingListService) {
         this.config = config;
         this.botService = botService;
+        this.mailingListService = mailingListService;
     }
 
     /**
@@ -108,5 +115,26 @@ public class TelegramBot extends TelegramLongPollingBot {
         mes.setChatId(chatId);
         mes.setText(textMessage);
         sendMessageToUser(mes);
+    }
+
+    /**
+     * Every hour check mail list.
+     * Send messages to users from this list (if they are exist)
+     */
+    @Scheduled(cron = "${cron.expression.hour}")
+    public void sendToUsersReminders() {
+        logger.info("Getting mailingListCollection...");
+        Collection<MailingList> mailingListCollection = mailingListService.getAllMailingList();
+        for (MailingList mailingList : mailingListCollection) {
+            if (mailingList != null) {
+                SendMessage mes = new SendMessage();
+                mes.setChatId(mailingList.getChatId());
+                mes.setText(mailingList.getMessage());
+                logger.info("Send message to user (chatId): " + mes.getChatId());
+                sendMessageToUser(mes);
+                mailingListService.deleteMessageFromMailingList(mailingList.getId());
+                logger.info("Message was deleted from DB");
+            }
+        }
     }
 }

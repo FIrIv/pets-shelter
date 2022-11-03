@@ -16,6 +16,9 @@ class BotSheduleServiceTest {
     @SpyBean
     private BotSheduleService out;
 
+    @SpyBean
+    private TelegramBot out2;
+
     @Test
     void whenWaitTwoMinutesThenSendToVolunteerIfSomethingWrongWithReportsCats() {
         await()
@@ -48,6 +51,6 @@ class BotSheduleServiceTest {
     void whenWaitTwoMinutesThenSendToUsersReminders() {
         await()
                 .atMost(Duration.TWO_MINUTES)
-                .untilAsserted(() -> verify(out, atLeast(1)).sendToUsersReminders());
+                .untilAsserted(() -> verify(out2, atLeast(1)).sendToUsersReminders());
     }
 }
