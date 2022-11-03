@@ -822,10 +822,8 @@ public class BotService {
      */
     public List<SendMessage> checkReportsOfTwoLastDaysCats() {
         List<SendMessage> sendMessage = new ArrayList<>();
-        String textToSend = "";
         SendMessage sm = new SendMessage();
-        sm.setText(textToSend);
-        sendMessage.add(sm);
+        String textToSend;
         // get all users with trial period
         List<CatUser> toTestWithTrialPeriod = catUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);
@@ -876,10 +874,8 @@ public class BotService {
      */
     public List<SendMessage> checkReportsOfTwoLastDaysDogs() {
         List<SendMessage> sendMessage = new ArrayList<>();
-        String textToSend = "";
         SendMessage sm = new SendMessage();
-        sm.setText(textToSend);
-        sendMessage.add(sm);
+        String textToSend;
         // get all users with trial period
         List<DogUser> toTestWithTrialPeriod2 = dogUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod2: " + toTestWithTrialPeriod2);
@@ -928,10 +924,7 @@ public class BotService {
      */
     public List<SendMessage> checkDogsAdoptersForTrialPeriodHasExpired() {
         List<SendMessage> sendMessage = new ArrayList<>();
-        String textToSend = "";
-        SendMessage sm = new SendMessage();
-        sm.setText(textToSend);
-        sendMessage.add(sm);
+        String textToSend;
         // get all users with trial period
         List<DogUser> toTestWithTrialPeriod = dogUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);
@@ -969,10 +962,7 @@ public class BotService {
      */
     public List<SendMessage> checkCatsAdoptersForTrialPeriodHasExpired() {
         List<SendMessage> sendMessage = new ArrayList<>();
-        String textToSend = "";
-        SendMessage sm = new SendMessage();
-        sm.setText(textToSend);
-        sendMessage.add(sm);
+        String textToSend;
         // get all users with trial period
         List<CatUser> toTestWithTrialPeriod = catUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);

@@ -2,6 +2,7 @@ package com.telegrambot.jd501.service;
 
 
 import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
+import com.telegrambot.jd501.model.MailingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,18 +15,21 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * class for Telegram bot.
  * config  - see TelegramBotConfiguration
  */
+
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     private final TelegramBotConfiguration config;
 
     private final BotService botService;
+    private final MailingListService mailingListService;
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
 
 
-    public TelegramBot(TelegramBotConfiguration config, BotService botService) {
+    public TelegramBot(TelegramBotConfiguration config, BotService botService, MailingListService mailingListService) {
         this.config = config;
         this.botService = botService;
+        this.mailingListService = mailingListService;
     }
 
     /**
@@ -35,7 +39,8 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     @Override
     public String getBotUsername() {
-        return config.getBotName();   }
+        return config.getBotName();
+    }
 
     /**
      * Get bot's token
