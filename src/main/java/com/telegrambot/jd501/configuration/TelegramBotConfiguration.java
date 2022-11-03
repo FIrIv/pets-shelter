@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This class for config Telegram bot.
+ * class for config Telegram bot.
  * Bot's name and UserName - see application.properties
  */
 @Configuration

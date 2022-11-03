@@ -24,13 +24,8 @@ import java.util.Properties;
 public class DogUserService {
     private final DogUserRepository dogUserRepository;
     private final DogRepository dogRepository;
-
     private final MailingListService mailingListService;
-
     private final Properties properties;
-
-
-
     public DogUserService(DogUserRepository dogUserRepository, DogRepository dogRepository, MailingListService mailingListService) {
         this.dogUserRepository = dogUserRepository;
         this.dogRepository = dogRepository;

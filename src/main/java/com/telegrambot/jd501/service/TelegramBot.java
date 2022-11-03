@@ -5,16 +5,16 @@ import com.telegrambot.jd501.configuration.TelegramBotConfiguration;
 import com.telegrambot.jd501.model.MailingList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+/**
+ * class for Telegram bot.
+ * config  - see TelegramBotConfiguration
+ */
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -111,82 +111,5 @@ public class TelegramBot extends TelegramLongPollingBot {
         mes.setChatId(chatId);
         mes.setText(textMessage);
         sendMessageToUser(mes);
-    }
-
-    /**
-     * Every day check DB of catReports in 20:00 to check all yesterday reports are present in DB.
-     * Photo and text about pet should be there.
-     */
-    @Scheduled(cron = "${cron.expression.evening}")
-    public void sendToVolunteerIfSomethingWrongWithReportsCats() {
-        List<SendMessage> messageList = botService.checkReportsOfTwoLastDaysCats();
-        for (SendMessage message : messageList) {
-            if (message.getText() != null) {
-                sendMessageToUser(message);
-            }
-        }
-    }
-
-    /**
-     * Every day check DB of dogReports in 20:00 to check all yesterday reports are present in DB.
-     * Photo and text about pet should be there.
-     */
-    @Scheduled(cron = "${cron.expression.evening}")
-    public void sendToVolunteerIfSomethingWrongWithReportsDogs() {
-        List<SendMessage> messageList = botService.checkReportsOfTwoLastDaysDogs();
-        for (SendMessage message : messageList) {
-            if (message.getText() != null) {
-                sendMessageToUser(message);
-            }
-        }
-    }
-
-    /**
-     * Every day check DB of dogReports in 12:00 for trial period - is expired?
-     * Photo and text about pet should be there.
-     */
-    @Scheduled(cron = "${cron.expression.day}")
-    public void sendToVolunteerToDecideAboutDogsAdopter() {
-        List<SendMessage> messageList = botService.checkDogsAdoptersForTrialPeriodHasExpired();
-        for (SendMessage message : messageList) {
-            if (message.getText() != null) {
-                sendMessageToUser(message);
-            }
-        }
-    }
-
-    /**
-     * Every day check DB of catReports in 12:00 for trial period - is expired?
-     * Photo and text about pet should be there.
-     */
-    @Scheduled(cron = "${cron.expression.day}")
-    public void sendToVolunteerToDecideAboutCatsAdopter() {
-        List<SendMessage> messageList = botService.checkCatsAdoptersForTrialPeriodHasExpired();
-        for (SendMessage message : messageList) {
-            if (message.getText() != null) {
-                sendMessageToUser(message);
-            }
-        }
-    }
-
-    /**
-     * Every hour check mail list.
-     * Send messages to users from this list (if they are exist)
-     */
-    @Scheduled(cron = "${cron.expression.hour}")
-    public void sendToUsersReminders() {
-        logger.info("Getting mailingListCollection...");
-        Collection<MailingList> mailingListCollection = mailingListService.getAllMailingList();
-        for (MailingList mailingList : mailingListCollection) {
-            if (mailingList != null) {
-                SendMessage mes = new SendMessage();
-                mes.setChatId(mailingList.getChatId());
-                mes.setText(mailingList.getMessage());
-                logger.info("Send message to user (chatId): " + mes.getChatId());
-                sendMessageToUser(mes);
-                mailingListService.deleteMessageFromMailingList(mailingList.getId());
-                logger.info("Message was deleted from DB");
-            }
-        }
     }
 }

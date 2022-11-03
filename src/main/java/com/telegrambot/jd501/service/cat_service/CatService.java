@@ -40,7 +40,7 @@ public class CatService {
      * change Cat in DataBase
      * Use  method cat repository {@link CatRepository#save(Object)} (Cat)}
      *
-     * @param cat
+     * @param cat (object)
      * @return Cat
      * @throws PetNotFoundException if Cat with id not found
      */
@@ -52,7 +52,7 @@ public class CatService {
      * delete Cat from DataBase by id
      * Use  method Cat repository {@link CatRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id of Cat
      * @return Deleted cat
      * @throws PetNotFoundException if Cat with id not found
      */

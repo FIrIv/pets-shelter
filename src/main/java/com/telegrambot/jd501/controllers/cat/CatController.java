@@ -14,7 +14,7 @@ import java.util.Collection;
 
 /**
  * class for work with Cat
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/cat/cat")
@@ -72,7 +72,7 @@ public class CatController {
      * change Cat in DataBase
      * Use method of Service {@link CatService#updatePet(Cat)}
      *
-     * @param cat
+     * @param cat (object)
      * @return Cat
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if Cat with id not found
      */
@@ -99,7 +99,7 @@ public class CatController {
      * delete Cat from DataBase by id
      * Use method of Service {@link CatService#deletePet(Long id)}}
      *
-     * @param id
+     * @param id of Cat
      * @return Deleted Cat
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if Cat with id not found
      */

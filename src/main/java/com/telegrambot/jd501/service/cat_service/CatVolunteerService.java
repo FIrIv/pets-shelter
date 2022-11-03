@@ -41,7 +41,7 @@ public class CatVolunteerService {
      * change CatVolunteer in DataBase
      * Use  method CatVolunteer repository {@link CatVolunteerRepository#save(Object)} (CatVolunteer)}
      *
-     * @param catVolunteer
+     * @param catVolunteer (object)
      * @return CatVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if CatVolunteer with id not found
      */
@@ -53,7 +53,7 @@ public class CatVolunteerService {
      * delete CatVolunteer from DataBase by id
      * Use  method CatVolunteer repository {@link CatVolunteerRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id of CatVolunteer
      * @return Deleted CatVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if CatVolunteer with id not found
      */

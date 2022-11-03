@@ -4,6 +4,7 @@ import com.telegrambot.jd501.model.cat.Cat;
 import com.telegrambot.jd501.model.cat.CatReport;
 import com.telegrambot.jd501.model.cat.CatUser;
 import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.cat_service.CatReportService;
 import com.telegrambot.jd501.service.cat_service.CatUserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,9 @@ class CatReportControllerTest {
 
     @Autowired
     private CatReportController catReportController;
+
+    @Autowired
+    private CatReportService catReportService;
 
     @Autowired
     @Mock
@@ -119,8 +123,8 @@ class CatReportControllerTest {
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected1);
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected2);
         } finally {
-            catReportController.deleteReport(id1);
-            catReportController.deleteReport(id2);
+            catReportService.deletePetReport(id1);
+            catReportService.deletePetReport(id2);
 
             catUserController.deleteUser(userId1);
             catUserController.deleteUser(userId2);
@@ -202,9 +206,9 @@ class CatReportControllerTest {
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected3);
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).doesNotContain(expected2);
         } finally {
-            catReportController.deleteReport(id1);
-            catReportController.deleteReport(id2);
-            catReportController.deleteReport(id3);
+            catReportService.deletePetReport(id1);
+            catReportService.deletePetReport(id2);
+            catReportService.deletePetReport(id3);
 
             catUserController.deleteUser(userId1);
             catUserController.deleteUser(userId2);
@@ -250,7 +254,7 @@ class CatReportControllerTest {
             Assertions.assertThat(response.getBody().getDateOfReport()).isEqualTo(dateOfReport1.format(DateTimeFormatter.ISO_LOCAL_DATE));
             Assertions.assertThat(response.getBody().getPhoto()).isEqualTo(photo1);
         } finally {
-            catReportController.deleteReport(id1);
+            catReportService.deletePetReport(id1);
             catUserController.deleteUser(userId1);
             catController.deletePet(petId1);
         }
@@ -292,13 +296,13 @@ class CatReportControllerTest {
             Assertions.assertThat(response.getBody().getTextOfReport()).isEqualTo("Новое имя");
             Assertions.assertThat(response.getBody().getId()).isEqualTo(reportToChange.getId());
         } finally {
-            catReportController.deleteReport(reportToChange.getId());
+            catReportService.deletePetReport(reportToChange.getId());
             catUserController.deleteUser(userId1);
             catController.deletePet(petId1);
         }
     }
 
-    @Test
+    /*@Test
     void deleteReport() {
         // pet 1
         Cat pet1 = new Cat(-1L, "тестБакс1234567890");
@@ -332,7 +336,7 @@ class CatReportControllerTest {
             catUserController.deleteUser(userId1);
             catController.deletePet(petId1);
         }
-    }
+    }*/
 
     @Test
     void getPhotoById() {
@@ -409,8 +413,8 @@ class CatReportControllerTest {
             Assertions.assertThat(response.getHeaders().getContentType()).isEqualTo(headers.getContentType());
             Assertions.assertThat(response.getHeaders().getContentLength()).isEqualTo(headers.getContentLength());
         } finally {
-            catReportController.deleteReport(id1);
-            catReportController.deleteReport(id2);
+            catReportService.deletePetReport(id1);
+            catReportService.deletePetReport(id2);
 
             catUserController.deleteUser(userId1);
             catUserController.deleteUser(userId2);

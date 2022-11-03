@@ -4,6 +4,7 @@ import com.telegrambot.jd501.model.dog.Dog;
 import com.telegrambot.jd501.model.dog.DogReport;
 import com.telegrambot.jd501.model.dog.DogUser;
 import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.dog_service.DogReportService;
 import com.telegrambot.jd501.service.dog_service.DogUserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,17 +37,20 @@ class DogReportControllerTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    DogController dogController;
+    private DogController dogController;
 
     @Autowired
     @InjectMocks
-    DogUserService dogUserService;
+    private DogUserService dogUserService;
 
     @Autowired
-    DogUserController dogUserController;
+    private DogUserController dogUserController;
 
     @Autowired
-    DogReportController dogReportController;
+    private DogReportController dogReportController;
+
+    @Autowired
+    private DogReportService dogReportService;
 
     @Autowired
     @Mock
@@ -119,8 +123,8 @@ class DogReportControllerTest {
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected1);
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected2);
         } finally {
-            dogReportController.deleteReport(id1);
-            dogReportController.deleteReport(id2);
+            dogReportService.deletePetReport(id1);
+            dogReportService.deletePetReport(id2);
 
             dogUserController.deleteUser(userId1);
             dogUserController.deleteUser(userId2);
@@ -202,9 +206,9 @@ class DogReportControllerTest {
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expected3);
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).doesNotContain(expected2);
         } finally {
-            dogReportController.deleteReport(id1);
-            dogReportController.deleteReport(id2);
-            dogReportController.deleteReport(id3);
+            dogReportService.deletePetReport(id1);
+            dogReportService.deletePetReport(id2);
+            dogReportService.deletePetReport(id3);
 
             dogUserController.deleteUser(userId1);
             dogUserController.deleteUser(userId2);
@@ -250,7 +254,7 @@ class DogReportControllerTest {
             Assertions.assertThat(response.getBody().getDateOfReport()).isEqualTo(dateOfReport1.format(DateTimeFormatter.ISO_LOCAL_DATE));
             Assertions.assertThat(response.getBody().getPhoto()).isEqualTo(photo1);
         } finally {
-            dogReportController.deleteReport(id1);
+            dogReportService.deletePetReport(id1);
             dogUserController.deleteUser(userId1);
             dogController.deletePet(petId1);
         }
@@ -292,13 +296,13 @@ class DogReportControllerTest {
             Assertions.assertThat(response.getBody().getTextOfReport()).isEqualTo("Новое имя");
             Assertions.assertThat(response.getBody().getId()).isEqualTo(reportToChange.getId());
         } finally {
-            dogReportController.deleteReport(reportToChange.getId());
+            dogReportService.deletePetReport(reportToChange.getId());
             dogUserController.deleteUser(userId1);
             dogController.deletePet(petId1);
         }
     }
 
-    @Test
+    /*@Test
     void deleteReport() {
         // pet 1
         Dog pet1 = new Dog(-1L, "тестБакс1234567890");
@@ -332,7 +336,7 @@ class DogReportControllerTest {
             dogUserController.deleteUser(userId1);
             dogController.deletePet(petId1);
         }
-    }
+    }*/
 
     @Test
     void getPhotoById() {
@@ -409,8 +413,8 @@ class DogReportControllerTest {
             Assertions.assertThat(response.getHeaders().getContentType()).isEqualTo(headers.getContentType());
             Assertions.assertThat(response.getHeaders().getContentLength()).isEqualTo(headers.getContentLength());
         } finally {
-            dogReportController.deleteReport(id1);
-            dogReportController.deleteReport(id2);
+            dogReportService.deletePetReport(id1);
+            dogReportService.deletePetReport(id2);
 
             dogUserController.deleteUser(userId1);
             dogUserController.deleteUser(userId2);
