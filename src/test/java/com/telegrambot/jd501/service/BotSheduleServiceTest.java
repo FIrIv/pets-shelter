@@ -9,7 +9,7 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 
-// it works just with TEST cron-expressions (every minute expression)
+// it works just with TEST-profile cron-expressions (every minute expression)
 @SpringBootTest
 class BotSheduleServiceTest {
 
@@ -42,5 +42,12 @@ class BotSheduleServiceTest {
         await()
                 .atMost(Duration.TWO_MINUTES)
                 .untilAsserted(() -> verify(out, atLeast(1)).sendToVolunteerToDecideAboutCatsAdopter());
+    }
+
+    @Test
+    void sendToUsersReminders() {
+        await()
+                .atMost(Duration.TWO_MINUTES)
+                .untilAsserted(() -> verify(out, atLeast(1)).sendToUsersReminders());
     }
 }
