@@ -35,12 +35,12 @@ public class MailingListService {
     }
 
     /**
-     * remove All MailingList from DataBase
-     * Use method of MailingList repository {@link com.telegrambot.jd501.repository.MailingListRepository#deleteAll()}
+     * remove MailingList from DataBase by Id
+     * Use method of MailingList repository {@link com.telegrambot.jd501.repository.MailingListRepository#deleteById(Long)} ()}
      *
      * @return collection of MailingList
      */
-    public void cleanMailingList() {
-        mailingListRepository.deleteAll();
+    public void deleteMessageFromMailingList(Long id) {
+        mailingListRepository.deleteById(id);
     }
 }

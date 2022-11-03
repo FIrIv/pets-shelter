@@ -40,7 +40,7 @@ public class DogService {
      * change Dog in DataBase
      * Use  method Dog repository {@link DogRepository#save(Object)} (Dog)}
      *
-     * @param dog
+     * @param dog (object)
      * @return Dog
      * @throws com.telegrambot.jd501.exceptions.PetNotFoundException if Dog with id not found
      */
@@ -52,7 +52,7 @@ public class DogService {
      * delete Dog from DataBase by id
      * Use  method Dog repository {@link DogRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id of Dog
      * @return Deleted Dog
      * @throws com.telegrambot.jd501.exceptions.PetNotFoundException if Dog with id not found
      */

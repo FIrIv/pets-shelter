@@ -14,7 +14,7 @@ import java.util.Collection;
 
 /**
  * class for work with InformationMessage
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/dog/informationMessage")
@@ -47,13 +47,13 @@ public class DogInformationMessageController {
         return dogInformationMessageService.getAllInformationMessages();
     }
 
-    /**
+    /*/**
      * add new DogInformationMessage in DataBase
      *
      * @param dogInformationMessage Use method of DogInformationMessageService {@link DogInformationMessageService#createInformationMessage(DogInformationMessage)}
      * @return DogInformationMessage
      */
-    @ApiResponses({
+    /*@ApiResponses({
             @ApiResponse(
                     responseCode = "200",
                     description = "Create new DogInformationMessage",
@@ -66,13 +66,13 @@ public class DogInformationMessageController {
     @PostMapping
     public ResponseEntity<DogInformationMessage> createInformationMessage(@RequestBody DogInformationMessage dogInformationMessage) {
         return ResponseEntity.ok(dogInformationMessageService.createInformationMessage(dogInformationMessage));
-    }
+    }*/
 
     /**
      * change DogInformationMessage in DataBase
      * Use method of Service {@link DogInformationMessageService#updateInformationMessage(DogInformationMessage)}
      *
-     * @param dogInformationMessage
+     * @param dogInformationMessage (object)
      * @return DogInformationMessage
      * @throws com.telegrambot.jd501.exceptions.InformationMessageNotFoundException if DogInformationMessage with id not found
      */
@@ -95,7 +95,7 @@ public class DogInformationMessageController {
         return ResponseEntity.ok(dogInformationMessageService.updateInformationMessage(dogInformationMessage));
     }
 
-    /**
+    /*/**
      * delete DogInformationMessage from DataBase by id
      * Use method of Service {@link DogInformationMessageService#deleteInformationMessage(Long id)}
      *
@@ -103,7 +103,7 @@ public class DogInformationMessageController {
      * @return Deleted DogInformationMessage
      * @throws com.telegrambot.jd501.exceptions.InformationMessageNotFoundException if DogInformationMessage with id not found
      */
-    @ApiResponses({
+    /*@ApiResponses({
             @ApiResponse(
                     responseCode = "200",
                     description = "Delete DogInformationMessage By Id",
@@ -120,5 +120,5 @@ public class DogInformationMessageController {
     @DeleteMapping("{id}")
     public ResponseEntity<DogInformationMessage> deleteInformationMessage(@PathVariable Long id) {
         return ResponseEntity.ok(dogInformationMessageService.deleteInformationMessage(id));
-    }
+    }*/
 }

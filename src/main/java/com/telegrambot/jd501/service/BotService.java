@@ -33,7 +33,6 @@ import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.util.*;
 
-
 @Service
 public class BotService {
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
@@ -61,17 +60,7 @@ public class BotService {
         this.dogReportService = dogReportService;
     }
 
-    /**
-     * String with start command in chat
-     */
-    private final String START_FIRST_COMMAND = "/start";
-    private final String START_PHRASE_TO_VOLUNTEER = "*** Панель бота для волонтёров ***";
     private final String CHOOSE_MENU_ITEM_STRING = "*** Выберите интересующий пункт меню ***";
-
-    private final String TEXT_ABOUT_REPORT = "Расскажите, как чувствует себя питомец. Какой сегодняшний рацион, " +
-            "общее самочувствие, и как он привыкает к новому месту. " +
-            "Меняется ли поведение: отказ от старых привычек, приобретение новых и т.д.\n" +
-            "Также просим приложить фотографию (нажав на 'скрепочку').";
 
     private boolean isDog;
     private boolean isReportButtonPressed = false;
@@ -222,6 +211,7 @@ public class BotService {
             isExistsVolunteer = catVolunteerService.isExistsVolunteer(chatId);
         }
         if (isExistsVolunteer) {
+            String START_PHRASE_TO_VOLUNTEER = "*** Панель бота для волонтёров ***";
             messageToSend.setText(START_PHRASE_TO_VOLUNTEER);
             messageToSend.setChatId(chatId);
             return messageToSend;
@@ -236,6 +226,9 @@ public class BotService {
             }
         }
         // Check index and choose action
+
+        // String with start command in chat
+        String START_FIRST_COMMAND = "/start";
         switch (itemInList) {
             // --- "Приют для кошек" button is pressed  (0)---
             case 0:
@@ -452,7 +445,7 @@ public class BotService {
         message.setText(text);
         message.setChatId(userChatId);
         // --- check User:
-        boolean userIsExists = false;
+        boolean userIsExists;
         boolean userIsAdopted = false;
         if (isDog) {
             // --- 1) exists? 2) adopted? ---
@@ -460,15 +453,14 @@ public class BotService {
             if (userIsExists) {
                 userIsAdopted = dogUserService.findUserByChatId(userChatId).getAdopted();
             }
-            message = setButtonsForReport(message, userIsExists, userIsAdopted);
         } else {
             // --- 1) exists? 2) adopted? ---
             userIsExists = catUserService.isExistsUser(userChatId);
             if (userIsExists) {
                 userIsAdopted = catUserService.findUserByChatId(userChatId).getAdopted();
             }
-            message = setButtonsForReport(message, userIsExists, userIsAdopted);
         }
+        message = setButtonsForReport(message, userIsExists, userIsAdopted);
         logger.info("userIsExists-" + userIsExists + ", userIsAdopted-" + userIsAdopted);
         return message;
     }
@@ -488,6 +480,10 @@ public class BotService {
             logger.info("User is exists and adopted. Take report ");
             // --- change keyboard to sending report
             message = setButtons(chatId, BUTTONS_NAMES, 14, 1);
+            String TEXT_ABOUT_REPORT = "Расскажите, как чувствует себя питомец. Какой сегодняшний рацион, " +
+                    "общее самочувствие, и как он привыкает к новому месту. " +
+                    "Меняется ли поведение: отказ от старых привычек, приобретение новых и т.д.\n" +
+                    "Также просим приложить фотографию (нажав на 'скрепочку').";
             message.setText(TEXT_ABOUT_REPORT);
             isReportButtonPressed = true;
         }
@@ -495,7 +491,7 @@ public class BotService {
     }
 
     /**
-     * Save report to data base
+     * Save report to database
      *
      * @param chatId  identification of chat
      * @param isPhoto sign of incoming data (photo or text)
@@ -515,7 +511,7 @@ public class BotService {
                     .getPetReportByUserAndDateOfReport(dogUser, LocalDate.now());
             // ************ if report exists ******
             if (dogReport != null) {
-                logger.info("dogReport: " + dogReport.toString());
+                logger.info("dogReport: " + dogReport);
                 if (isPhoto) {
                     dogReport.setPhoto(data);
                 } else {
@@ -560,7 +556,7 @@ public class BotService {
                     .getPetReportByUserAndDateOfReport(catUser, LocalDate.now());
             // ************ if report exists ******
             if (catReport != null) {
-                logger.info("catReport: " + catReport.toString());
+                logger.info("catReport: " + catReport);
                 if (isPhoto) {
                     catReport.setPhoto(data);
                 } else {
@@ -795,7 +791,7 @@ public class BotService {
         } catch (NoSuchElementException e) {
             logger.error("Volunteer doesn't exist in DB ### " + e.getMessage());
         }
-        logger.info("Contact of volunteer is ::::::::::::::: " + message.toString());
+        logger.info("Contact of volunteer is ::::::::::::::: " + message);
         isDog = tempIsDog;
         return message;
     }
@@ -826,10 +822,8 @@ public class BotService {
      */
     public List<SendMessage> checkReportsOfTwoLastDaysCats() {
         List<SendMessage> sendMessage = new ArrayList<>();
-        String textToSend = "";
         SendMessage sm = new SendMessage();
-        sm.setText(textToSend);
-        sendMessage.add(sm);
+        String textToSend;
         // get all users with trial period
         List<CatUser> toTestWithTrialPeriod = catUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);
@@ -880,10 +874,8 @@ public class BotService {
      */
     public List<SendMessage> checkReportsOfTwoLastDaysDogs() {
         List<SendMessage> sendMessage = new ArrayList<>();
-        String textToSend = "";
         SendMessage sm = new SendMessage();
-        sm.setText(textToSend);
-        sendMessage.add(sm);
+        String textToSend;
         // get all users with trial period
         List<DogUser> toTestWithTrialPeriod2 = dogUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod2: " + toTestWithTrialPeriod2);
@@ -932,10 +924,7 @@ public class BotService {
      */
     public List<SendMessage> checkDogsAdoptersForTrialPeriodHasExpired() {
         List<SendMessage> sendMessage = new ArrayList<>();
-        String textToSend = "";
-        SendMessage sm = new SendMessage();
-        sm.setText(textToSend);
-        sendMessage.add(sm);
+        String textToSend;
         // get all users with trial period
         List<DogUser> toTestWithTrialPeriod = dogUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);
@@ -973,10 +962,7 @@ public class BotService {
      */
     public List<SendMessage> checkCatsAdoptersForTrialPeriodHasExpired() {
         List<SendMessage> sendMessage = new ArrayList<>();
-        String textToSend = "";
-        SendMessage sm = new SendMessage();
-        sm.setText(textToSend);
-        sendMessage.add(sm);
+        String textToSend;
         // get all users with trial period
         List<CatUser> toTestWithTrialPeriod = catUserService.findUsersByAdoptedIsTrue();
         logger.info("====  List toTestWithTrialPeriod: " + toTestWithTrialPeriod);

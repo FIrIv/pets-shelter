@@ -46,7 +46,7 @@ public class DogReportService {
      * change DogReport in DataBase
      * Use  method DogReport repository {@link DogReportRepository#save(Object)} (DogReport)}
      *
-     * @param dogReport
+     * @param dogReport (object)
      * @return DogReport
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if DogReport with id not found
      */
@@ -59,7 +59,7 @@ public class DogReportService {
      * delete DogReport from DataBase by id
      * Use  method DogReport repository {@link DogReportRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id of DogReport
      * @return Deleted DogReport
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if PetReport with id not found
      */
@@ -73,8 +73,8 @@ public class DogReportService {
      * get one DogReport from DataBase by User And DateOfReport
      * Use method of DogReport repository {@link DogReportRepository#findDogReportByDogUserAndDateOfReport(DogUser, LocalDate)} (Dog, LocalDate)} ()} (<DogReport>)}
      *
-     * @param user
-     * @param dateOfReport
+     * @param user (object)
+     * @param dateOfReport date of report
      * @return DogReport With chatId And dateOfReportDogUser
      */
     public DogReport getPetReportByUserAndDateOfReport(DogUser user, LocalDate dateOfReport) {
@@ -85,7 +85,7 @@ public class DogReportService {
      * Find all DogReport By Chat Id
      * Use method DogReport repository {@link DogReportRepository # findAllByDogUser}
      *
-     * @param chatId
+     * @param chatId of Dog's master
      * @return Collection <DogReport>
      */
     public List <DogReport> getAllPetReportsByChatId(Long chatId) {
@@ -95,7 +95,7 @@ public class DogReportService {
     /**
      * Find DogReport by ID and get byte[] Photo from Report
      * Use method of dogReportRepository {@link DogReportRepository#findById(Object)}
-     * @param id
+     * @param id of DogReport
      * @return byte[]
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException when DogReport not found
      */

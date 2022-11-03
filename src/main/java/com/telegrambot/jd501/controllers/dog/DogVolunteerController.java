@@ -15,7 +15,7 @@ import java.util.Collection;
 
 /**
  * class for work with Volunteer
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/dog/volunteer")
@@ -72,7 +72,7 @@ public class DogVolunteerController {
      * change DogVolunteer in DataBase
      * Use method of Service {@link DogVolunteerService#updateVolunteer(DogVolunteer)}
      *
-     * @param dogVolunteer
+     * @param dogVolunteer (object)
      * @return DogVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if DogVolunteer with id not found
      */
@@ -99,7 +99,7 @@ public class DogVolunteerController {
      * delete Volunteer from DataBase by id
      * Use method of Service {@link DogVolunteerService#deleteVolunteer(Long id)}
      *
-     * @param id
+     * @param id of DogVolunteer
      * @return Deleted DogVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if DogVolunteer with id not found
      */

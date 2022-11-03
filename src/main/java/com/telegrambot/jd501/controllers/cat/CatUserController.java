@@ -17,7 +17,7 @@ import java.util.Collection;
 
 /**
  * class for work with CatUser
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/cat/user")
@@ -52,7 +52,7 @@ public class CatUserController {
     /**
      * add new CatUser in DataBase
      *
-     * @param catUser Use method of Servise {@link CatUserService#createUser(CatUser)}
+     * @param catUser Use method of Service {@link CatUserService#createUser(CatUser)}
      * @return CatUser
      */
     @ApiResponses({
@@ -72,9 +72,9 @@ public class CatUserController {
 
     /**
      * change CatUser in DataBase
-     * Use method of Servise {@link CatUserService#updateUser(CatUser)}
+     * Use method of Service {@link CatUserService#updateUser(CatUser)}
      *
-     * @param catUser
+     * @param catUser (object)
      * @return CatUser
      * @throws com.telegrambot.jd501.exceptions.UserNotFoundException if CatUser with id not found
      */
@@ -102,8 +102,8 @@ public class CatUserController {
      * add adopted Cat, Date of adoption, and set test day at 30 days
      * Use method User repository {@link }
      *
-     * @param userId - catUser id for fing catUser in repository,
-     * @param petId  - pet id for fing user in repository,
+     * @param userId - catUser id for find catUser in repository,
+     * @param petId  - pet id for find user in repository,
      * @return Changed User
      */
     @ApiResponses({
@@ -147,9 +147,9 @@ public class CatUserController {
 
     /**
      * delete CatUser from DataBase by id
-     * Use method of Servise {@link CatUserService#deleteUser(Long)}
+     * Use method of Service {@link CatUserService#deleteUser(Long)}
      *
-     * @param id
+     * @param id of CatUser
      * @return Deleted CatUser
      * @throws com.telegrambot.jd501.exceptions.UserNotFoundException if CatUser with id not found
      */
@@ -172,11 +172,10 @@ public class CatUserController {
         return ResponseEntity.ok(catUserService.deleteUser(id));
     }
     /**
-     * Use catUserService to Sent custom message to Cat User with chat Id.
-     *
+     * Use catUserService to Sent custom message to Cat User with chatId.
      * Use method CatUserService {@link CatUserService#sendMessageToUserWithChatId(Long, String)}
-     * @param chatId
-     * @param message
+     * @param chatId person to send
+     * @param message to send
      * @return String that a message has been sent to the user
      * @throws UserNotFoundException when user with chat id not found
      */
@@ -201,9 +200,8 @@ public class CatUserController {
     /**
      *
      * finds a user by chat id. changes him status. and sends him a message that he has passed the trial period
-     *
      * Use method CatUserService {@link CatUserService#changeStatusUserPassedProbationPeriod(Long)}
-     * @param chatId
+     * @param chatId of User
      * @return CatUser
      * @throws UserNotFoundException when user with chatId not found
      */
@@ -228,9 +226,8 @@ public class CatUserController {
     /**
      *
      * finds a user by chat id. changes him status. and sends him a message that he has not passed the trial period
-     *
      * Use method CatUserService {@link CatUserService#changeStatusUserNotPassedProbationPeriod(Long)}
-     * @param chatId
+     * @param chatId of CatUser
      * @return CatUser
      * @throws UserNotFoundException when user with chatId not found
      */

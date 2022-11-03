@@ -38,7 +38,7 @@ public class DogInformationMessageService {
      * change DogInformationMessage in DataBase
      * Use  method DogInformationMessage repository {@link DogInformationMessageRepository#save(Object)} (DogInformationMessageRepository)}
      *
-     * @param dogInformationMessage
+     * @param dogInformationMessage (object)
      * @return DogInformationMessage
      * @throws com.telegrambot.jd501.exceptions.InformationMessageNotFoundException if InformationMessage with id not found
      */
@@ -50,7 +50,7 @@ public class DogInformationMessageService {
      * delete InformationMessage from DataBase by id
      * Use  method DogInformationMessage repository {@link DogInformationMessageRepository#deleteById(Object)} } (Long id)}
      *
-     * @param id
+     * @param id of InformationMessage
      * @return Deleted DogInformationMessage
      * @throws com.telegrambot.jd501.exceptions.InformationMessageNotFoundException if DogInformationMessage with id not found
      */

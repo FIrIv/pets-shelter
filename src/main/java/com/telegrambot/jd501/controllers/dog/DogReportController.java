@@ -21,7 +21,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 /**
  * class for work with DogReports
- * have CRUD operation
+ * has CRUD operation
  */
 @RestController
 @RequestMapping("/dog/report")
@@ -99,7 +99,7 @@ public class DogReportController {
      * change DogReport in DataBase
      * Use method of Service {@link DogReportService#updatePetReport(DogReport)}
      *
-     * @param dogReport
+     * @param dogReport (object)
      * @return DogReport
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if DogReport with id not found
      */
@@ -122,7 +122,7 @@ public class DogReportController {
         return ResponseEntity.ok(dogReportService.updatePetReport(dogReport));
     }
 
-    /**
+    /* /**
      * delete DogReport from DataBase by id
      * Use method of Service {@link DogReportService#deletePetReport(Long id)}}
      *
@@ -130,7 +130,7 @@ public class DogReportController {
      * @return Deleted DogReport
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if DogReport with id not found
      */
-    @ApiResponses({
+    /*@ApiResponses({
             @ApiResponse(
                     responseCode = "200",
                     description = "Delete DogReport By Id",
@@ -147,12 +147,12 @@ public class DogReportController {
     @DeleteMapping("{id}")
     public ResponseEntity<DogReport> deleteReport(@PathVariable Long id) {
         return ResponseEntity.ok(dogReportService.deletePetReport(id));
-    }
+    }*/
 
     /**
      * Find DogReport by ID and get byte[] Photo from Report
      * Use method of dogReportService {@link DogReportService#getPhotoById(Long)}
-     * @param id
+     * @param id of DogReport
      * @return byte[]
      * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException when DogReport not found
      */
