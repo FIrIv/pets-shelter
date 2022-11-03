@@ -38,14 +38,14 @@ class BotSheduleServiceTest {
     }
 
     @Test
-    void whenWaitTwoMinutesThensendToVolunteerToDecideAboutCatsAdopter() {
+    void whenWaitTwoMinutesThenSendToVolunteerToDecideAboutCatsAdopter() {
         await()
                 .atMost(Duration.TWO_MINUTES)
                 .untilAsserted(() -> verify(out, atLeast(1)).sendToVolunteerToDecideAboutCatsAdopter());
     }
 
     @Test
-    void sendToUsersReminders() {
+    void whenWaitTwoMinutesThenSendToUsersReminders() {
         await()
                 .atMost(Duration.TWO_MINUTES)
                 .untilAsserted(() -> verify(out, atLeast(1)).sendToUsersReminders());
