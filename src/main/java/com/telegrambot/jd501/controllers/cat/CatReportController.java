@@ -70,58 +70,58 @@ public class CatReportController {
                     )
             )
     })
-    @GetMapping("/pet_report/{chatId}")
+    @GetMapping("/{chatId}")
     public Collection<CatReport> getAllReportsByChatId(@PathVariable Long chatId) {
         return catReportService.getAllPetReportsByChatId(chatId);
     }
-
-    /**
-     * add new CatReport in DataBase
-     *
-     * @param catReport Use method of Service {@link CatReportService#createPetReport(CatReport)}
-     * @return CatReport
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Create new CatReport",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CatReport.class)
-                    )
-            )
-    })
-    @PostMapping
-    public ResponseEntity<CatReport> createReport(@RequestBody CatReport catReport) {
-        return ResponseEntity.ok(catReportService.createPetReport(catReport));
-    }
-
-    /**
-     * change CatReport in DataBase
-     * Use method of Service {@link CatReportService#updatePetReport(CatReport)}
-     *
-     * @param catReport (object)
-     * @return CatReport
-     * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if CatReport with id not found
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Change CatReport By Id",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CatReport.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "CatReport not found"
-            )
-    })
-    @PutMapping
-    public ResponseEntity<CatReport> updateReport(@RequestBody CatReport catReport) {
-        return ResponseEntity.ok(catReportService.updatePetReport(catReport));
-    }
+//
+//    /**
+//     * add new CatReport in DataBase
+//     *
+//     * @param catReport Use method of Service {@link CatReportService#createPetReport(CatReport)}
+//     * @return CatReport
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Create new CatReport",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = CatReport.class)
+//                    )
+//            )
+//    })
+//    @PostMapping
+//    public ResponseEntity<CatReport> createReport(@RequestBody CatReport catReport) {
+//        return ResponseEntity.ok(catReportService.createPetReport(catReport));
+//    }
+//
+//    /**
+//     * change CatReport in DataBase
+//     * Use method of Service {@link CatReportService#updatePetReport(CatReport)}
+//     *
+//     * @param catReport (object)
+//     * @return CatReport
+//     * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if CatReport with id not found
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Change CatReport By Id",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = CatReport.class)
+//                    )
+//            ),
+//            @ApiResponse(
+//                    responseCode = "404",
+//                    description = "CatReport not found"
+//            )
+//    })
+//    @PutMapping
+//    public ResponseEntity<CatReport> updateReport(@RequestBody CatReport catReport) {
+//        return ResponseEntity.ok(catReportService.updatePetReport(catReport));
+//    }
 
     /* /**
      * delete CatReport from DataBase by id
