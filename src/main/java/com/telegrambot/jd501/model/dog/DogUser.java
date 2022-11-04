@@ -1,7 +1,5 @@
 package com.telegrambot.jd501.model.dog;
 
-
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;

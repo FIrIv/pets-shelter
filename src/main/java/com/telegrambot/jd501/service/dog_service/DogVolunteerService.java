@@ -16,6 +16,7 @@ public class DogVolunteerService {
     public DogVolunteerService(DogVolunteerRepository dogVolunteerRepository) {
         this.dogVolunteerRepository = dogVolunteerRepository;
     }
+
     /**
      * get All DogVolunteer from DataBase
      * Use method of DogVolunteer repository {@link DogVolunteerRepository#findAll()} ()} (Collection< DogVolunteer >)}
@@ -29,8 +30,7 @@ public class DogVolunteerService {
     /**
      * add new DogVolunteer in DataBase
      *
-     * @param dogVolunteer
-     * Use  method DogVolunteer repository {@link DogVolunteerRepository#save(Object)} (DogVolunteer)}
+     * @param dogVolunteer Use  method DogVolunteer repository {@link DogVolunteerRepository#save(Object)} (DogVolunteer)}
      * @return DogVolunteer
      */
     public DogVolunteer createVolunteer(DogVolunteer dogVolunteer) {
@@ -49,17 +49,22 @@ public class DogVolunteerService {
         dogVolunteerRepository.findById(dogVolunteer.getId()).orElseThrow(() -> new VolunteerNotFoundException("DogVolunteer not found"));
         return dogVolunteerRepository.save(dogVolunteer);
     }
+
     /**
-     * delete DogVolunteer from DataBase by id
-     * Use  method DogVolunteer repository {@link DogVolunteerRepository#deleteById(Object)} } (Long id)}
+     * delete DogVolunteer from DataBase by chatId
+     * Use  method DogVolunteer repository {@link DogVolunteerRepository#deleteById(Object)}
+     * Use  method DogVolunteer repository {@link DogVolunteerRepository#findDogVolunteerByChatId(long)}
      *
-     * @param id of DogVolunteer
+     * @param chatId of DogVolunteer
      * @return Deleted DogVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if DogVolunteer with id not found
      */
-    public DogVolunteer deleteVolunteer(Long id) {
-        DogVolunteer temp = dogVolunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("DogVolunteer not found"));
-        dogVolunteerRepository.deleteById(id);
+    public DogVolunteer deleteVolunteer(Long chatId) {
+        DogVolunteer temp = dogVolunteerRepository.findDogVolunteerByChatId(chatId);
+        if (temp == null) {
+            throw new VolunteerNotFoundException("Volunteer not found");
+        }
+        dogVolunteerRepository.deleteById(temp.getId());
         return temp;
     }
 

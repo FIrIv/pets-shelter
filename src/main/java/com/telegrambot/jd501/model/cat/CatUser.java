@@ -1,6 +1,5 @@
 package com.telegrambot.jd501.model.cat;
 
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -17,8 +16,6 @@ public class CatUser  {
     private Boolean isAdopted;
     private LocalDate startDate;
     private LocalDate finishDate;
-
-
     @OneToOne
     @JoinColumn(name = "pet_id")
     private Cat pet;

@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface DogVolunteerRepository extends JpaRepository <DogVolunteer, Long> {
 
     boolean existsByChatId(Long chatId);
+
+    DogVolunteer findDogVolunteerByChatId(long dogVolunteerChatId);
 }

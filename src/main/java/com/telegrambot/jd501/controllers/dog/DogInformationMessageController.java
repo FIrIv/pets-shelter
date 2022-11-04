@@ -25,27 +25,27 @@ public class DogInformationMessageController {
     public DogInformationMessageController(DogInformationMessageService dogInformationMessageService) {
         this.dogInformationMessageService = dogInformationMessageService;
     }
-
-    /**
-     * get All DogInformationMessage from DataBase
-     * Use method of DogInformationMessage service {@link DogInformationMessageService#getAllInformationMessages()} ()} (Collection< DogInformationMessage >)}
-     *
-     * @return collection of DogInformationMessage
-     */
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Show all DogInformationMessage",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Collection.class)
-                    )
-            )
-    })
-    @GetMapping
-    public Collection <DogInformationMessage> getAllInformationMessage() {
-        return dogInformationMessageService.getAllInformationMessages();
-    }
+//
+//    /**
+//     * get All DogInformationMessage from DataBase
+//     * Use method of DogInformationMessage service {@link DogInformationMessageService#getAllInformationMessages()} ()} (Collection< DogInformationMessage >)}
+//     *
+//     * @return collection of DogInformationMessage
+//     */
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "Show all DogInformationMessage",
+//                    content = @Content(
+//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            schema = @Schema(implementation = Collection.class)
+//                    )
+//            )
+//    })
+//    @GetMapping
+//    public Collection <DogInformationMessage> getAllInformationMessage() {
+//        return dogInformationMessageService.getAllInformationMessages();
+//    }
 
     /*/**
      * add new DogInformationMessage in DataBase

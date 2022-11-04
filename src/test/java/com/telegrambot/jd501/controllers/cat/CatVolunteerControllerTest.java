@@ -115,16 +115,16 @@ class CatVolunteerControllerTest {
     @Test
     void deleteCatVolunteer() throws Exception {
         Long id = 1L;
-        Long chatId = null;
+        Long chatId = 123456L;
         String name = "Максим";
 
         CatVolunteer expected = new CatVolunteer(id, chatId, name);
 
-        when(catVolunteerRepository.findById(eq(id))).thenReturn(Optional.of(expected));
+        when(catVolunteerRepository.findCatVolunteerByChatId(eq(chatId))).thenReturn(expected);
         doNothing().when(catVolunteerRepository).deleteById(eq(id));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/cat/volunteer/" + id)
+                        .delete("/cat/volunteer/" + chatId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

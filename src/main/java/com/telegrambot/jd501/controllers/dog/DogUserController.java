@@ -101,60 +101,60 @@ public class DogUserController {
      * add adopted Pet, Date of adoption, and set test day at 30 days
      * Use method User repository {@link }
      *
-     * @param userId - dogUser id for find dogUser in repository,
+     * @param userChatId - dogUser ChatId for find dogUser in repository,
      * @param petId  - pet id for find user in repository,
      * @return Changed User
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "find user by id and change him adoption status, add adoption Pet, adoption Date, and set test day at 30 days"
+                    description = "find user by ChatId and change him adoption status, add adoption Pet, adoption Date, and set test day at 30 days"
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "When User or Pet not found"
             )
     })
-    @PutMapping("/adoption/{userId}/{petId}")
-    public DogUser changeStatusOfTheAdopter(@PathVariable Long userId, @PathVariable Long petId) {
-        return dogUserService.changeStatusOfTheAdopter(userId, petId);
+    @PutMapping("/adoption/{userChatId}/{petId}")
+    public DogUser changeStatusOfTheAdopter(@PathVariable Long userChatId, @PathVariable Long petId) {
+        return dogUserService.changeStatusOfTheAdopter(userChatId, petId);
     }
 
     /**
-     * find DogUser by id and change amount of probation period
+     * find DogUser by ChatId and change amount of probation period
      *
-     * @param id   - user id,
+     * @param userChatId   - user ChatId,
      * @param days - number of days to increase the term of the transfer
      * @return notification that probationary period has been extended (String)
-     * or UserNotFoundException
+     * @throws  UserNotFoundException
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "find user by id and change amount of probation period"
+                    description = "find user by ChatId and change amount of probation period"
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "When User not found"
             )
     })
-    @PutMapping("/change_period/{id}/{days}")
-    public DogUser probationPeriodExtension(@PathVariable Long id, @PathVariable Integer days) {
-        return dogUserService.probationPeriodExtension(id, days);
+    @PutMapping("/change_period/{userChatId}/{days}")
+    public DogUser probationPeriodExtension(@PathVariable Long userChatId, @PathVariable Integer days) {
+        return dogUserService.probationPeriodExtension(userChatId, days);
     }
 
     /**
-     * delete DogUser from DataBase by id
-     * Use method of Service {@link }
+     * delete DogUser from DataBase by chatId
+     * Use method of DogUserService {@link DogUserService#deleteUser(Long)}
      *
-     * @param id of DogUser
+     * @param chatId of DogUser
      * @return Deleted DogUser
      * @throws com.telegrambot.jd501.exceptions.UserNotFoundException if DogUser with id not found
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Delete User By Id",
+                    description = "Delete User By chatId",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = DogUser.class)
@@ -165,9 +165,9 @@ public class DogUserController {
                     description = "User not found"
             )
     })
-    @DeleteMapping("{id}")
-    public ResponseEntity<DogUser> deleteUser(@PathVariable Long id) {
-        return ResponseEntity.ok(dogUserService.deleteUser(id));
+    @DeleteMapping("{chatId}")
+    public ResponseEntity<DogUser> deleteUser(@PathVariable Long chatId) {
+        return ResponseEntity.ok(dogUserService.deleteUser(chatId));
     }
     /**
      * Use dogUserService to Sent custom message to Dog User with chat Id.

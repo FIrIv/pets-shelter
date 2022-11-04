@@ -27,7 +27,7 @@ class BotSheduleServiceTest {
     }
 
     @Test
-    void whenWaitTwoMinutesThensendToVolunteerIfSomethingWrongWithReportsDogs() {
+    void whenWaitTwoMinutesThenSendToVolunteerIfSomethingWrongWithReportsDogs() {
         await()
                 .atMost(Duration.TWO_MINUTES)
                 .untilAsserted(() -> verify(out, atLeast(1)).sendToVolunteerIfSomethingWrongWithReportsDogs());

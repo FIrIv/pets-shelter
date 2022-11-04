@@ -96,17 +96,17 @@ public class DogVolunteerController {
     }
 
     /**
-     * delete Volunteer from DataBase by id
-     * Use method of Service {@link DogVolunteerService#deleteVolunteer(Long id)}
+     * delete Volunteer from DataBase by chatId
+     * Use method of Service {@link DogVolunteerService#deleteVolunteer(Long chatId)}
      *
-     * @param id of DogVolunteer
+     * @param chatId of DogVolunteer
      * @return Deleted DogVolunteer
      * @throws com.telegrambot.jd501.exceptions.VolunteerNotFoundException if DogVolunteer with id not found
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Delete DogVolunteer By Id",
+                    description = "Delete DogVolunteer By chatId",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = DogVolunteer.class)
@@ -117,8 +117,8 @@ public class DogVolunteerController {
                     description = "DogVolunteer not found"
             )
     })
-    @DeleteMapping("{id}")
-    public ResponseEntity<DogVolunteer> deleteVolunteer(@PathVariable Long id) {
-        return ResponseEntity.ok(dogVolunteerService.deleteVolunteer(id));
+    @DeleteMapping("{chatId}")
+    public ResponseEntity<DogVolunteer> deleteVolunteer(@PathVariable Long chatId) {
+        return ResponseEntity.ok(dogVolunteerService.deleteVolunteer(chatId));
     }
 }

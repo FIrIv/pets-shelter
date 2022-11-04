@@ -84,8 +84,8 @@ class CatUserControllerTest {
             Assertions.assertThat(response.getBody()).contains(expectedUser1);
             Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expectedUser2);
         } finally {
-            catUserController.deleteUser(expectedUser1.getId());
-            catUserController.deleteUser(expectedUser2.getId());
+            catUserController.deleteUser(expectedUser1.getChatId());
+            catUserController.deleteUser(expectedUser2.getChatId());
         }
     }
 
@@ -110,7 +110,7 @@ class CatUserControllerTest {
         Assertions.assertThat(response.getBody().getPhone()).isEqualTo(phone);
         Assertions.assertThat(response.getBody().getAdopted()).isFalse();
 
-        catUserController.deleteUser(response.getBody().getId());
+        catUserController.deleteUser(response.getBody().getChatId());
     }
 
     @Test
@@ -136,7 +136,7 @@ class CatUserControllerTest {
             Assertions.assertThat(response.getBody().getName()).isEqualTo("Новое имя");
             Assertions.assertThat(response.getBody().getId()).isEqualTo(userToChange.getId());
         } finally {
-            catUserController.deleteUser(userToChange.getId());
+            catUserController.deleteUser(userToChange.getChatId());
         }
     }
 
@@ -157,14 +157,14 @@ class CatUserControllerTest {
 
         // test
         try {
-            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/adoption/{userId}/{petId}", HttpMethod.PUT, null, CatUser.class, expectedUser.getId(), pet.getId());
+            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/adoption/{chatId}/{petId}", HttpMethod.PUT, null, CatUser.class, expectedUser.getChatId(), pet.getId());
             Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
             Assertions.assertThat(response.getBody().getId()).isNotNull();
             Assertions.assertThat(response.getBody().getAdopted()).isTrue();
             Assertions.assertThat(response.getBody().getPet().getId()).isEqualTo(pet.getId());
             Assertions.assertThat(response.getBody().getId()).isEqualTo(expectedUser.getId());
         } finally {
-            catUserController.deleteUser(expectedUser.getId());
+            catUserController.deleteUser(expectedUser.getChatId());
             catController.deletePet(pet.getId());
         }
     }
@@ -181,7 +181,7 @@ class CatUserControllerTest {
         // create user 1 in DB
         // user to change
         CatUser userToChange = catUserController.createUser(expectedUser).getBody();
-        Long userToChangeId = userToChange.getId();
+        Long userToChangeChatId = userToChange.getChatId();
         userToChange.setStartDate(LocalDate.now());
         userToChange.setFinishDate(LocalDate.now().plusDays(30));
         catUserController.updateUser(userToChange);
@@ -193,13 +193,13 @@ class CatUserControllerTest {
         int daysPlus = 15;
         // test
         try {
-            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/change_period/{id}/{days}", HttpMethod.PUT, null, CatUser.class, userToChangeId, daysPlus);
+            ResponseEntity<CatUser> response = restTemplate.exchange("http://localhost:" + port + "/cat/user/change_period/{chatId}/{days}", HttpMethod.PUT, null, CatUser.class, userToChangeChatId, daysPlus);
             Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
             Assertions.assertThat(response.getBody().getId()).isNotNull();
-            Assertions.assertThat(response.getBody().getId()).isEqualTo(userToChangeId);
+            Assertions.assertThat(response.getBody().getChatId()).isEqualTo(userToChangeChatId);
             Assertions.assertThat(response.getBody().getFinishDate()).isEqualTo(userToChange.getFinishDate().plusDays(15));
         } finally {
-            catUserController.deleteUser(userToChangeId);
+            catUserController.deleteUser(userToChange.getChatId());
             catController.deletePet(pet1.getId());
         }
     }
@@ -214,11 +214,11 @@ class CatUserControllerTest {
         CatUser expectedUser = new CatUser(id, chatId, name, phone);
 
         // create user 1 in DB
-        Long idToDelete = catUserController.createUser(expectedUser).getBody().getId();
+        Long chatIdToDelete = catUserController.createUser(expectedUser).getBody().getChatId();
 
         // test
-        ResponseEntity<CatUser> response = restTemplate.exchange("/cat/user/{id}", HttpMethod.DELETE, null,
-                CatUser.class, idToDelete);
+        ResponseEntity<CatUser> response = restTemplate.exchange("/cat/user/{chatId}", HttpMethod.DELETE, null,
+                CatUser.class, chatIdToDelete);
         Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
     }
 
@@ -231,7 +231,7 @@ class CatUserControllerTest {
         CatUser expectedUser = new CatUser(id, chatId, name, phone);
 
         // create user 1 in DB
-        Long idToDelete = catUserController.createUser(expectedUser).getBody().getId();
+        Long chatIdToDelete = catUserController.createUser(expectedUser).getBody().getChatId();
         String message = "Отправляю сообщение";
 
         // test
@@ -241,7 +241,7 @@ class CatUserControllerTest {
             Assertions.assertThat(response.getBody()).isNotNull();
             Assertions.assertThat(response.getBody()).isEqualTo("Message: " + message + "sent to User with chat Id: " + chatId);
         } finally {
-            catUserController.deleteUser(idToDelete);
+            catUserController.deleteUser(chatIdToDelete);
         }
     }
 
@@ -254,7 +254,7 @@ class CatUserControllerTest {
         CatUser expectedUser = new CatUser(id, chatId, name, phone);
 
         // create user 1 in DB
-        Long idToDelete = catUserController.createUser(expectedUser).getBody().getId();
+        Long chatIdToDelete = catUserController.createUser(expectedUser).getBody().getChatId();
         String message = "Поздравляем!" +
                 " вы успешно прошли испытательный срок" +
                 " вам больше не нужно отправлять отчеты" +
@@ -270,7 +270,7 @@ class CatUserControllerTest {
             Assertions.assertThat(response.getBody().getStartDate()).isNull();
             Assertions.assertThat(response.getBody().getPet()).isNull();
         } finally {
-            catUserController.deleteUser(idToDelete);
+            catUserController.deleteUser(chatIdToDelete);
         }
     }
 
@@ -283,7 +283,7 @@ class CatUserControllerTest {
         CatUser expectedUser = new CatUser(id, chatId, name, phone);
 
         // create user 1 in DB
-        Long idToDelete = catUserController.createUser(expectedUser).getBody().getId();
+        Long chatIdToDelete = catUserController.createUser(expectedUser).getBody().getChatId();
         String message = "К сожалению вы не прошли испытательный срок." +
                 " Мы не сможем оставить вам питомца." +
                 " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте";
@@ -298,7 +298,7 @@ class CatUserControllerTest {
             Assertions.assertThat(response.getBody().getStartDate()).isNull();
             Assertions.assertThat(response.getBody().getPet()).isNull();
         } finally {
-            catUserController.deleteUser(idToDelete);
+            catUserController.deleteUser(chatIdToDelete);
         }
     }
 }
