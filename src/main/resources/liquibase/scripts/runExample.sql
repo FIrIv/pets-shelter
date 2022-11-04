@@ -1,0 +1,2 @@
+-- ALTER TABLE cat_pet_report
+-- ADD CONSTRAINT FK_CAT_USER_ON_USER FOREIGN KEY (user_id) REFERENCES cat_user (chat_id);
