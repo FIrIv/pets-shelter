@@ -43,4 +43,6 @@ public class MailingListService {
     public void deleteMessageFromMailingList(Long id) {
         mailingListRepository.deleteById(id);
     }
+
+
 }
