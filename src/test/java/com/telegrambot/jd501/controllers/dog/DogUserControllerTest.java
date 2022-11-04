@@ -82,8 +82,8 @@ class DogUserControllerTest {
         Assertions.assertThat(response.getBody()).contains(expectedUser1);
         Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(expectedUser2);
 
-        dogUserController.deleteUser(expectedUser1.getId());
-        dogUserController.deleteUser(expectedUser2.getId());
+        dogUserController.deleteUser(expectedUser1.getChatId());
+        dogUserController.deleteUser(expectedUser2.getChatId());
     }
 
     @Test
@@ -107,7 +107,7 @@ class DogUserControllerTest {
         Assertions.assertThat(response.getBody().getPhone()).isEqualTo(phone);
         Assertions.assertThat(response.getBody().getAdopted()).isFalse();
 
-        dogUserController.deleteUser(response.getBody().getId());
+        dogUserController.deleteUser(response.getBody().getChatId());
     }
 
     @Test
@@ -132,7 +132,7 @@ class DogUserControllerTest {
         Assertions.assertThat(response.getBody().getName()).isEqualTo("Новое имя");
         Assertions.assertThat(response.getBody().getId()).isEqualTo(userToChange.getId());
 
-        dogUserController.deleteUser(userToChange.getId());
+        dogUserController.deleteUser(userToChange.getChatId());
     }
 
     @Test
@@ -152,14 +152,14 @@ class DogUserControllerTest {
         pet = dogController.createPet(pet).getBody();
 
         // test
-        ResponseEntity<DogUser> response = restTemplate.exchange("http://localhost:" + port + "/dog/user/adoption/{userId}/{petId}", HttpMethod.PUT, null, DogUser.class, expectedUser.getId(), pet.getId());
+        ResponseEntity<DogUser> response = restTemplate.exchange("http://localhost:" + port + "/dog/user/adoption/{chatId}/{petId}", HttpMethod.PUT, null, DogUser.class, expectedUser.getChatId(), pet.getId());
         Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody().getId()).isNotNull();
         Assertions.assertThat(response.getBody().getAdopted()).isTrue();
         Assertions.assertThat(response.getBody().getPet().getId()).isEqualTo(pet.getId());
         Assertions.assertThat(response.getBody().getId()).isEqualTo(expectedUser.getId());
 
-        dogUserController.deleteUser(expectedUser.getId());
+        dogUserController.deleteUser(expectedUser.getChatId());
         dogController.deletePet(pet.getId());
     }
 
@@ -175,7 +175,7 @@ class DogUserControllerTest {
         // create user 1 in DB
         // user to change
         DogUser userToChange = dogUserController.createUser(expectedUser).getBody();
-        Long userToChangeId = userToChange.getId();
+        Long userToChangeChatId = userToChange.getChatId();
         userToChange.setStartDate(LocalDate.now());
         userToChange.setFinishDate(LocalDate.now().plusDays(30));
         dogUserController.updateUser(userToChange);
@@ -186,13 +186,13 @@ class DogUserControllerTest {
 
         int daysPlus = 15;
         // test
-        ResponseEntity<DogUser> response = restTemplate.exchange("http://localhost:" + port + "/dog/user/change_period/{id}/{days}", HttpMethod.PUT, null, DogUser.class, userToChangeId, daysPlus);
+        ResponseEntity<DogUser> response = restTemplate.exchange("http://localhost:" + port + "/dog/user/change_period/{chatId}/{days}", HttpMethod.PUT, null, DogUser.class, userToChangeChatId, daysPlus);
         Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody().getId()).isNotNull();
-        Assertions.assertThat(response.getBody().getId()).isEqualTo(userToChangeId);
+        Assertions.assertThat(response.getBody().getChatId()).isEqualTo(userToChangeChatId);
         Assertions.assertThat(response.getBody().getFinishDate()).isEqualTo(userToChange.getFinishDate().plusDays(15));
 
-        dogUserController.deleteUser(userToChangeId);
+        dogUserController.deleteUser(userToChangeChatId);
         dogController.deletePet(pet1.getId());
     }
 
@@ -206,11 +206,11 @@ class DogUserControllerTest {
         DogUser expectedUser = new DogUser(id, chatId, name, phone);
 
         // create user 1 in DB
-        Long idToDelete = dogUserController.createUser(expectedUser).getBody().getId();
+        Long chatIdToDelete = dogUserController.createUser(expectedUser).getBody().getChatId();
 
         // test
-        ResponseEntity<DogUser> response = restTemplate.exchange("/dog/user/{id}", HttpMethod.DELETE, null,
-                DogUser.class, idToDelete);
+        ResponseEntity<DogUser> response = restTemplate.exchange("/dog/user/{chatId}", HttpMethod.DELETE, null,
+                DogUser.class, chatIdToDelete);
         Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
     }
 
@@ -223,7 +223,7 @@ class DogUserControllerTest {
         DogUser expectedUser = new DogUser(id, chatId, name, phone);
 
         // create user 1 in DB
-        Long idToDelete = dogUserController.createUser(expectedUser).getBody().getId();
+        Long chatIdToDelete = dogUserController.createUser(expectedUser).getBody().getChatId();
         String message = "Отправляю сообщение";
 
         // test
@@ -232,7 +232,7 @@ class DogUserControllerTest {
         Assertions.assertThat(response.getBody()).isNotNull();
         Assertions.assertThat(response.getBody()).isEqualTo("Message: "+ message + "sent to User with chat Id: " + chatId);
 
-        dogUserController.deleteUser(idToDelete);
+        dogUserController.deleteUser(chatIdToDelete);
     }
 
     @Test
@@ -244,7 +244,7 @@ class DogUserControllerTest {
         DogUser expectedUser = new DogUser(id, chatId, name, phone);
 
         // create user 1 in DB
-        Long idToDelete = dogUserController.createUser(expectedUser).getBody().getId();
+        Long chatIdToDelete = dogUserController.createUser(expectedUser).getBody().getChatId();
         String message = "Поздравляем!" +
                 " вы успешно прошли испытательный срок" +
                 " вам больше не нужно отправлять отчеты" +
@@ -259,7 +259,7 @@ class DogUserControllerTest {
         Assertions.assertThat(response.getBody().getStartDate()).isNull();
         Assertions.assertThat(response.getBody().getPet()).isNull();
 
-        dogUserController.deleteUser(idToDelete);
+        dogUserController.deleteUser(chatIdToDelete);
     }
 
     @Test
@@ -271,7 +271,7 @@ class DogUserControllerTest {
         DogUser expectedUser = new DogUser(id, chatId, name, phone);
 
         // create user 1 in DB
-        Long idToDelete = dogUserController.createUser(expectedUser).getBody().getId();
+        Long chatIdToDelete = dogUserController.createUser(expectedUser).getBody().getChatId();
         String message = "К сожалению вы не прошли испытательный срок." +
                 " Мы не сможем оставить вам питомца." +
                 " Если у вас остались вопросы, мы с радостью ответим на них в нашем телеграмм боте";
@@ -285,6 +285,6 @@ class DogUserControllerTest {
         Assertions.assertThat(response.getBody().getStartDate()).isNull();
         Assertions.assertThat(response.getBody().getPet()).isNull();
 
-        dogUserController.deleteUser(idToDelete);
+        dogUserController.deleteUser(chatIdToDelete);
     }
 }

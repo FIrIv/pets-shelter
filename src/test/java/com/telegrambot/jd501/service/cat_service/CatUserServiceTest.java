@@ -6,6 +6,7 @@ import com.telegrambot.jd501.model.cat.CatUser;
 import com.telegrambot.jd501.repository.cat.CatRepository;
 import com.telegrambot.jd501.repository.cat.CatUserRepository;
 import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.MessageTextService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,6 +36,9 @@ class CatUserServiceTest {
     @Mock
     private MailingListService mailingListService;
 
+    @Mock
+    private MessageTextService messageTextService;
+
     @InjectMocks
     private CatUserService out;
 
@@ -62,9 +66,9 @@ class CatUserServiceTest {
 
     @Test
     void deleteCatUser() {
-        when(catUserRepository.findById(anyLong())).thenReturn(Optional.of(CAT_USER_1));
+        when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_1);
 
-        assertEquals(out.deleteUser(ID1), CAT_USER_1);
+        assertEquals(out.deleteUser(CHAT_ID_1), CAT_USER_1);
     }
     private static Stream<Arguments> parametersForProbationPeriodExtension() {
         return Stream.of(
@@ -76,39 +80,40 @@ class CatUserServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForProbationPeriodExtension")
     void probationPeriodExtensionTest(Integer days) {
-        when(catUserRepository.findById(anyLong())).thenReturn(Optional.of(CAT_USER_3));
+        when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_3);
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
+        when(messageTextService.get(anyString(), anyInt())).thenReturn("text");
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
-
         CAT_USER_4.setFinishDate(CAT_USER_3.getFinishDate().plusDays(days));
-        assertEquals(out.probationPeriodExtension(ID1, days), CAT_USER_4);
+        assertEquals(out.probationPeriodExtension(CHAT_ID_1, days), CAT_USER_4);
     }
 
     @Test
     void changeStatusOfTheAdopter() {
-        when(catUserRepository.findById(anyLong())).thenReturn(Optional.of(CAT_USER_1));
+        when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_1);
         when(catRepository.findById(anyLong())).thenReturn(Optional.of(CAT_1));
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_3);
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
+        when(messageTextService.get(anyString())).thenReturn("text");
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
-        assertEquals(out.changeStatusOfTheAdopter(ID1, ID1), CAT_USER_3);
+        assertEquals(out.changeStatusOfTheAdopter(CHAT_ID_1, ID1), CAT_USER_3);
     }
 
     @Test
     void changeStatusOfTheAdopterException1Test() {
-        when(catUserRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(null);
 
-        assertThrows(UserNotFoundException.class, () -> out.changeStatusOfTheAdopter(ID1, ID1));
+        assertThrows(UserNotFoundException.class, () -> out.changeStatusOfTheAdopter(CHAT_ID_1, ID1));
     }
 
     @Test
     void changeStatusOfTheAdopterException2Test() {
-        when(catUserRepository.findById(anyLong())).thenReturn(Optional.of(CAT_USER_1));
+        when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_1);
         when(catRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetNotFoundException.class, () -> out.changeStatusOfTheAdopter(ID1, ID1));
+        assertThrows(PetNotFoundException.class, () -> out.changeStatusOfTheAdopter(CHAT_ID_1, ID1));
     }
 
     @Test
@@ -134,9 +139,9 @@ class CatUserServiceTest {
 
     @Test
     void userNotFoundExceptionTest1() {
-        when(catUserRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(null);
 
-        assertThrows(UserNotFoundException.class,() ->out.deleteUser(ID2));
+        assertThrows(UserNotFoundException.class,() ->out.deleteUser(CHAT_ID_2));
     }
     @Test
     void userNotFoundExceptionTest2() {
@@ -180,6 +185,7 @@ class CatUserServiceTest {
     @Test
     void changeStatusUserPassedProbationPeriod() {
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
+        when(messageTextService.get(anyString())).thenReturn("text");
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_1);
 
@@ -189,6 +195,7 @@ class CatUserServiceTest {
     @Test
     void changeStatusUserNotPassedProbationPeriod() {
         when(catUserRepository.findCatUserByChatId(anyLong())).thenReturn(CAT_USER_3);
+        when(messageTextService.get(anyString())).thenReturn("text");
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
         when(catUserRepository.save(any(CatUser.class))).thenReturn(CAT_USER_1);
 

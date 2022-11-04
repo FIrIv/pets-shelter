@@ -74,6 +74,7 @@ public class CatReportController {
     public Collection<CatReport> getAllReportsByChatId(@PathVariable Long chatId) {
         return catReportService.getAllPetReportsByChatId(chatId);
     }
+
 //
 //    /**
 //     * add new CatReport in DataBase

@@ -188,11 +188,11 @@ class DogReportControllerTest {
         DogReport expected3 = new DogReport(id3, dateOfReport3, textOfReport3, photo3, expectedUser1);
 
         // create reports 1 & 2 & 3 in DB
-        expected1 = dogReportController.createReport(expected1).getBody();
+        expected1 = dogReportService.createPetReport(expected1);
         id1 = expected1.getId();
-        expected2 = dogReportController.createReport(expected2).getBody();
+        expected2 = dogReportService.createPetReport(expected2);
         id2 = expected2.getId();
-        expected3 = dogReportController.createReport(expected3).getBody();
+        expected3 = dogReportService.createPetReport(expected3);
         id3 = expected3.getId();
 
         // test
@@ -241,7 +241,7 @@ class DogReportControllerTest {
         byte[] photo1 = {1};
         DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
-        expected1 = dogReportController.createReport(expected1).getBody();
+        expected1 = dogReportService.createPetReport(expected1);
         id1 = expected1.getId();
 
         // test
@@ -284,7 +284,7 @@ class DogReportControllerTest {
         DogReport expected1 = new DogReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         // report to change
-        DogReport reportToChange  = dogReportController.createReport(expected1).getBody();
+        DogReport reportToChange  = dogReportService.createPetReport(expected1);
         reportToChange.setTextOfReport("Новое имя");
         HttpEntity<DogReport> entityUp = new HttpEntity<DogReport>(reportToChange);
 
@@ -385,9 +385,9 @@ class DogReportControllerTest {
         DogReport expected2 = new DogReport(id2, dateOfReport2, textOfReport2, photo2, expectedUser2);
 
         // create reports 1 & 2 in DB
-        expected1 = dogReportController.createReport(expected1).getBody();
+        expected1 = dogReportService.createPetReport(expected1);
         id1 = expected1.getId();
-        expected2 = dogReportController.createReport(expected2).getBody();
+        expected2 = dogReportService.createPetReport(expected2);
         id2 = expected2.getId();
 
         /*// Prepare acceptable media type

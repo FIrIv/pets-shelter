@@ -96,12 +96,12 @@ public class CatUserService {
     public CatUser probationPeriodExtension(Long chatId, Integer days) {
         CatUser temp = catUserRepository.findCatUserByChatId(chatId);
         if (temp == null){
-           throw new  UserNotFoundException("User not Found");
+           throw new UserNotFoundException("User not Found");
         }
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         catUserRepository.save(temp);
         sendMessageToUserWithChatId(temp.getChatId(),
-                messageTextService.get("probation.period.extension", days));
+        messageTextService.get("probation.period.extension", days));
         return temp;
     }
 

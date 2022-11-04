@@ -97,7 +97,7 @@ public class CatVolunteerController {
 
     /**
      * delete Volunteer from DataBase by id
-     * Use method of Service {@link CatVolunteerService#deleteVolunteer(Long id)}
+     * Use method of Service {@link CatVolunteerService#deleteVolunteer(Long chatId)}
      *
      * @param chatId of CatVolunteer
      * @return Deleted CatVolunteer

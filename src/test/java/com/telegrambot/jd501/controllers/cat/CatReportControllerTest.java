@@ -188,11 +188,11 @@ class CatReportControllerTest {
         CatReport expected3 = new CatReport(id3, dateOfReport3, textOfReport3, photo3, expectedUser1);
 
         // create reports 1 & 2 & 3 in DB
-        expected1 = catReportController.createReport(expected1).getBody();
+        expected1 = catReportService.createPetReport(expected1);
         id1 = expected1.getId();
-        expected2 = catReportController.createReport(expected2).getBody();
+        expected2 = catReportService.createPetReport(expected2);
         id2 = expected2.getId();
-        expected3 = catReportController.createReport(expected3).getBody();
+        expected3 = catReportService.createPetReport(expected3);
         id3 = expected3.getId();
 
         // test
@@ -241,7 +241,7 @@ class CatReportControllerTest {
         byte[] photo1 = {1};
         CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
-        expected1 = catReportController.createReport(expected1).getBody();
+        expected1 = catReportService.createPetReport(expected1);
         id1 = expected1.getId();
 
         // test
@@ -284,7 +284,7 @@ class CatReportControllerTest {
         CatReport expected1 = new CatReport(id1, dateOfReport1, textOfReport1, photo1, expectedUser1);
 
         // report to change
-        CatReport reportToChange  = catReportController.createReport(expected1).getBody();
+        CatReport reportToChange  = catReportService.createPetReport(expected1);
         reportToChange.setTextOfReport("Новое имя");
         HttpEntity<CatReport> entityUp = new HttpEntity<CatReport>(reportToChange);
 
@@ -385,9 +385,9 @@ class CatReportControllerTest {
         CatReport expected2 = new CatReport(id2, dateOfReport2, textOfReport2, photo2, expectedUser2);
 
         // create reports 1 & 2 in DB
-        expected1 = catReportController.createReport(expected1).getBody();
+        expected1 = catReportService.createPetReport(expected1);
         id1 = expected1.getId();
-        expected2 = catReportController.createReport(expected2).getBody();
+        expected2 = catReportService.createPetReport(expected2);
         id2 = expected2.getId();
 
         /*// Prepare acceptable media type
