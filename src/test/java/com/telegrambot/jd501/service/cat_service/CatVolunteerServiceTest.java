@@ -48,9 +48,9 @@ class CatVolunteerServiceTest {
 
     @Test
     void deleteCatVolunteer() {
-        when(catVolunteerRepository.findById(anyLong())).thenReturn(Optional.of(CAT_VOLUNTEER_1));
+        when(catVolunteerRepository.findCatVolunteerByChatId(anyLong())).thenReturn(CAT_VOLUNTEER_1);
 
-        assertEquals(out.deleteVolunteer(ID1),CAT_VOLUNTEER_1);
+        assertEquals(out.deleteVolunteer(CHAT_ID_1),CAT_VOLUNTEER_1);
     }
 
     @Test
@@ -62,9 +62,9 @@ class CatVolunteerServiceTest {
 
     @Test
     void volunteerNotFoundExceptionTest1() {
-        when(catVolunteerRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(catVolunteerRepository.findCatVolunteerByChatId(anyLong())).thenReturn(null);
 
-        assertThrows(VolunteerNotFoundException.class,() ->out.deleteVolunteer(ID2));
+        assertThrows(VolunteerNotFoundException.class,() ->out.deleteVolunteer(CHAT_ID_2));
     }
     @Test
     void volunteerNotFoundExceptionTest2() {

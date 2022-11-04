@@ -6,6 +6,7 @@ import com.telegrambot.jd501.model.dog.DogUser;
 import com.telegrambot.jd501.repository.dog.DogRepository;
 import com.telegrambot.jd501.repository.dog.DogUserRepository;
 import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.MessageTextService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +32,9 @@ class DogUserServiceTest {
 
     @Mock
     private DogRepository dogRepository;
+
+    @Mock
+    private MessageTextService messageTextService;
 
     @Mock
     private MailingListService mailingListService;
@@ -62,9 +66,9 @@ class DogUserServiceTest {
 
     @Test
     void deleteDogUser() {
-        when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_1));
+        when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_1);
 
-        assertEquals(out.deleteUser(ID1), DOG_USER_1);
+        assertEquals(out.deleteUser(CHAT_ID_1), DOG_USER_1);
     }
 
     private static Stream<Arguments> parametersForProbationPeriodExtension() {
@@ -77,9 +81,9 @@ class DogUserServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForProbationPeriodExtension")
     void probationPeriodExtension(Integer days) {
-        when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_31));
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_31);
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_31);
+        when(messageTextService.get(anyString(), anyInt())).thenReturn("text");
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
         DOG_USER_4.setFinishDate(DOG_USER_31.getFinishDate().plusDays(days));
@@ -88,10 +92,10 @@ class DogUserServiceTest {
 
     @Test
     void changeStatusOfTheAdopter() {
-        when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_1));
         when(dogRepository.findById(anyLong())).thenReturn(Optional.of(DOG_1));
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_3);
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_3);
+        when(messageTextService.get(anyString())).thenReturn("text");
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
 
         assertEquals(out.changeStatusOfTheAdopter(ID1, ID1), DOG_USER_3);
@@ -99,17 +103,17 @@ class DogUserServiceTest {
 
     @Test
     void changeStatusOfTheAdopterException1Test() {
-        when(dogUserRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(null);
 
-        assertThrows(UserNotFoundException.class, () -> out.changeStatusOfTheAdopter(ID1, ID1));
+        assertThrows(UserNotFoundException.class, () -> out.changeStatusOfTheAdopter(CHAT_ID_1, ID1));
     }
 
     @Test
     void changeStatusOfTheAdopterException2Test() {
-        when(dogUserRepository.findById(anyLong())).thenReturn(Optional.of(DOG_USER_1));
+        when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_1);
         when(dogRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(PetNotFoundException.class, () -> out.changeStatusOfTheAdopter(ID1, ID1));
+        assertThrows(PetNotFoundException.class, () -> out.changeStatusOfTheAdopter(CHAT_ID_1, ID1));
     }
 
     @Test
@@ -135,9 +139,9 @@ class DogUserServiceTest {
 
     @Test
     void userNotFoundExceptionTest1() {
-        when(dogUserRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(null);
 
-        assertThrows(UserNotFoundException.class,() ->out.deleteUser(ID2));
+        assertThrows(UserNotFoundException.class,() ->out.deleteUser(CHAT_ID_2));
     }
     @Test
     void userNotFoundExceptionTest2() {
@@ -181,6 +185,7 @@ class DogUserServiceTest {
     @Test
     void changeStatusUserPassedProbationPeriod() {
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_3);
+        when(messageTextService.get(anyString())).thenReturn("text");
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_1);
 
@@ -190,6 +195,7 @@ class DogUserServiceTest {
     @Test
     void changeStatusUserNotPassedProbationPeriod() {
         when(dogUserRepository.findDogUserByChatId(anyLong())).thenReturn(DOG_USER_3);
+        when(messageTextService.get(anyString())).thenReturn("text");
         when(mailingListService.sendMessageToUserByChatId(anyLong(), anyString())).thenReturn(null);
         when(dogUserRepository.save(any(DogUser.class))).thenReturn(DOG_USER_1);
 

@@ -114,16 +114,16 @@ class DogVolunteerControllerTest {
     @Test
     void deleteDogVolunteer() throws Exception {
         Long id = 1L;
-        Long chatId = null;
+        Long chatId = 123456L;
         String name = "Максим";
 
         DogVolunteer expected = new DogVolunteer(id, chatId, name);
 
-        when(dogVolunteerRepository.findById(eq(id))).thenReturn(Optional.of(expected));
+        when(dogVolunteerRepository.findDogVolunteerByChatId(chatId)).thenReturn(expected);
         doNothing().when(dogVolunteerRepository).deleteById(eq(id));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/dog/volunteer/" + id)
+                        .delete("/dog/volunteer/" + chatId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

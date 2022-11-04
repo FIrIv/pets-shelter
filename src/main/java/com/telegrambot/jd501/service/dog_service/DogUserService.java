@@ -9,31 +9,31 @@ import com.telegrambot.jd501.model.dog.DogUser;
 import com.telegrambot.jd501.repository.dog.DogRepository;
 import com.telegrambot.jd501.repository.dog.DogUserRepository;
 import com.telegrambot.jd501.service.MailingListService;
+import com.telegrambot.jd501.service.MessageTextService;
 import com.telegrambot.jd501.service.TelegramBot;
 import org.springframework.stereotype.Service;
 
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
 
 @Service
 public class DogUserService {
     private final DogUserRepository dogUserRepository;
     private final DogRepository dogRepository;
     private final MailingListService mailingListService;
-    private final Properties properties;
-    public DogUserService(DogUserRepository dogUserRepository, DogRepository dogRepository, MailingListService mailingListService) {
+
+    private final MessageTextService messageTextService;
+
+
+    public DogUserService(DogUserRepository dogUserRepository, DogRepository dogRepository, MailingListService mailingListService, MessageTextService messageTextService)  {
         this.dogUserRepository = dogUserRepository;
         this.dogRepository = dogRepository;
         this.mailingListService = mailingListService;
-        this.properties = new Properties();
+        this.messageTextService = messageTextService;
     }
-
-
 
 
     /**
@@ -74,60 +74,68 @@ public class DogUserService {
     }
 
     /**
-     * delete DogUser from DataBase by id
+     * delete DogUser from DataBase by chatId
      * Use  method DogUser repository {@link DogUserRepository#deleteById(Object)} } (Long id)}
+     * Use  method DogUser repository {@link DogUserRepository#findDogUserByChatId(long)}
      *
-     * @param id
+     * @param chatId
      * @return Deleted DogUser
      * @throws com.telegrambot.jd501.exceptions.UserNotFoundException if DogUser with id not found
      */
-    public DogUser deleteUser(Long id) {
-        DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
-        dogUserRepository.deleteById(id);
+    public DogUser deleteUser(Long chatId) {
+        DogUser temp = dogUserRepository.findDogUserByChatId(chatId);
+        if (temp == null ){
+            throw new UserNotFoundException("User NOt Found");
+        }
+        dogUserRepository.deleteById(temp.getId());
         return temp;
     }
 
     /**
-     * find DogUser by id and change amount of probation period, and sent message to user about change probation period
-     * Use method DogUser repository {@link DogUserRepository#findById(Object)}
+     * find DogUser by ChatId and change amount of probation period, and sent message to user about change probation period
+     * Use method DogUser repository {@link DogUserRepository#findDogUserByChatId(long)}
      * Use  method DogUser repository {@link DogUserRepository#save(Object)}
      *
-     * @param id   - DogUser id for find DogUser in repository,
+     * @param userChatId   - DogUser id for find DogUser in repository,
      * @param days - number of days to increase the term of the transfer
      * @return DogUser
      */
-    public DogUser probationPeriodExtension(Long id, Integer days) {
-        DogUser temp = dogUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
+    public DogUser probationPeriodExtension(Long userChatId, Integer days) {
+        DogUser temp = dogUserRepository.findDogUserByChatId(userChatId);
+        if(temp == null){
+            throw new UserNotFoundException("User not Found");
+        }
         temp.setFinishDate(temp.getFinishDate().plusDays(days));
         dogUserRepository.save(temp);
-        loadTextProperty();
         sendMessageToUserWithChatId(temp.getChatId(),
-                properties.getProperty("probation.period.extension.one")  + days + properties.getProperty("probation.period.extension.two"));
+                messageTextService.get("probation.period.extension", days));
         return temp;
     }
 
     /**
-     * find user by id and change  status of The Adopter, add adopted Pet, Date of adoption, and set test day by 30
+     * find user by ChatId and change  status of The Adopter, add adopted Pet, Date of adoption, and set test day by 30
      * and sent message to user about change him status.
-     * <p>
+     *
      * Use method dogRepository {@link DogRepository#findById(Object)}
-     * Use method dogUser repository {@link DogUserRepository#findById(Object)}
+     * Use method dogUser repository {@link DogUserRepository#findDogUserByChatId(long)}
      * Use  method dogUser repository {@link DogUserRepository#save(Object)}
      * Use method DogUserService {@link DogUserService#sendMessageToUserWithChatId(Long, String)}
      *
-     * @param dogUserId - user id for find user in repository,
+     * @param userChatId - user id for find user in repository,
      * @param dogId     - pet id for find user in repository,
      * @return Changed User
      */
-    public DogUser changeStatusOfTheAdopter(Long dogUserId, Long dogId) {
-        DogUser userTemp = dogUserRepository.findById(dogUserId).orElseThrow(() -> new UserNotFoundException("DogUser not found"));
+    public DogUser changeStatusOfTheAdopter(Long userChatId, Long dogId) {
+        DogUser userTemp = dogUserRepository.findDogUserByChatId(userChatId);
+        if (userTemp == null){
+            throw new UserNotFoundException("User not found");
+        }
         Dog petTemp = dogRepository.findById(dogId).orElseThrow(() -> new PetNotFoundException("Dog not found"));
         userTemp.setAdopted(true);
         userTemp.setPet(petTemp);
         userTemp.setStartDate(LocalDate.now());
         userTemp.setFinishDate(LocalDate.now().plusDays(30));
-        loadTextProperty();
-        sendMessageToUserWithChatId(userTemp.getChatId(), properties.getProperty("congrat.u.are.new.adopter"));
+        sendMessageToUserWithChatId(userTemp.getChatId(), messageTextService.get("congrat.u.are.new.adopter"));
         return dogUserRepository.save(userTemp);
     }
 
@@ -192,16 +200,8 @@ public class DogUserService {
      * @throws UserNotFoundException when user with chatId not found
      */
     public DogUser changeStatusUserPassedProbationPeriod(Long chatId) {
-        DogUser temp = findUserByChatId(chatId);
-        if (temp == null) {
-            throw new UserNotFoundException("User with chat Id not found");
-        }
-        temp.setFinishDate(null);
-        temp.setAdopted(false);
-        temp.setPet(null);
-        temp.setStartDate(null);
-        loadTextProperty();
-        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("passed.probation.period"));
+        DogUser temp = changeStatusUserPassedProbationUtilityMethod(chatId);
+        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("passed.probation.period"));
         return dogUserRepository.save(temp);
     }
 
@@ -216,6 +216,18 @@ public class DogUserService {
      * @throws UserNotFoundException when user with chatId not found
      */
     public DogUser changeStatusUserNotPassedProbationPeriod(Long chatId) {
+        DogUser temp = changeStatusUserPassedProbationUtilityMethod(chatId);
+        sendMessageToUserWithChatId(temp.getChatId(), messageTextService.get("not.passed.probation.period"));
+        return dogUserRepository.save(temp);
+    }
+
+    /**
+     * Utility method for changeStatusUserPassedProbationPeriod
+     *
+     * @param chatId
+     * @return DogUser
+     */
+    private DogUser changeStatusUserPassedProbationUtilityMethod(Long chatId) {
         DogUser temp = findUserByChatId(chatId);
         if (temp == null) {
             throw new UserNotFoundException("User with chat Id not found");
@@ -224,20 +236,6 @@ public class DogUserService {
         temp.setAdopted(false);
         temp.setPet(null);
         temp.setStartDate(null);
-        loadTextProperty();
-        sendMessageToUserWithChatId(temp.getChatId(), properties.getProperty("not.passed.probation.period"));
-        return dogUserRepository.save(temp);
-    }
-
-    /**
-     * Service method for loud text from text.properties file
-     */
-    private void loadTextProperty() {
-        try {
-            FileInputStream fis = new FileInputStream("src/main/resources/text.properties");
-            properties.load(fis);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return temp;
     }
 }

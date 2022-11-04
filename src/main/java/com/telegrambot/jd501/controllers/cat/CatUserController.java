@@ -98,33 +98,33 @@ public class CatUserController {
     }
 
     /**
-     * find CatUser by id and change  status of The Adopter,
+     * find CatUser by chatId and change  status of The Adopter,
      * add adopted Cat, Date of adoption, and set test day at 30 days
      * Use method User repository {@link }
      *
-     * @param userId - catUser id for find catUser in repository,
+     * @param userChatId - catUser chatId for find catUser in repository,
      * @param petId  - pet id for find user in repository,
      * @return Changed User
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "find cat user by id and change him adoption status, add adoption Pet, adoption Date, and set test day at 30 days"
+                    description = "find cat user by chatId and change him adoption status, add adoption Pet, adoption Date, and set test day at 30 days"
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "When User or Cat not found"
             )
     })
-    @PutMapping("/adoption/{userId}/{petId}")
-    public CatUser changeStatusOfTheAdopter(@PathVariable Long userId, @PathVariable Long petId) {
-        return catUserService.changeStatusOfTheAdopter(userId, petId);
+    @PutMapping("/adoption/{userChatId}/{petId}")
+    public CatUser changeStatusOfTheAdopter(@PathVariable Long userChatId, @PathVariable Long petId) {
+        return catUserService.changeStatusOfTheAdopter(userChatId, petId);
     }
 
     /**
      * find CatUser by id and change amount of probation period
      *
-     * @param id   - user id,
+     * @param chatId   - user chatId,
      * @param days - number of days to increase the term of the transfer
      * @return notification that probationary period has been extended (String)
      * or UserNotFoundException
@@ -132,31 +132,31 @@ public class CatUserController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "find user by id and change amount of probation period"
+                    description = "find user by chatId and change amount of probation period"
             ),
             @ApiResponse(
                     responseCode = "404",
                     description = "When User not found"
             )
     })
-    @PutMapping("/change_period/{id}/{days}")
-    public CatUser probationPeriodExtension(@PathVariable Long id, @PathVariable Integer days) {
-        return catUserService.probationPeriodExtension(id, days);
+    @PutMapping("/change_period/{chatId}/{days}")
+    public CatUser probationPeriodExtension(@PathVariable Long chatId, @PathVariable Integer days) {
+        return catUserService.probationPeriodExtension(chatId, days);
     }
 
 
     /**
-     * delete CatUser from DataBase by id
+     * delete CatUser from DataBase by chatId
      * Use method of Service {@link CatUserService#deleteUser(Long)}
      *
-     * @param id of CatUser
+     * @param chatId of CatUser
      * @return Deleted CatUser
      * @throws com.telegrambot.jd501.exceptions.UserNotFoundException if CatUser with id not found
      */
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Delete CatUser By Id",
+                    description = "Delete CatUser By chatId",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CatUser.class)
@@ -167,9 +167,9 @@ public class CatUserController {
                     description = "User not found"
             )
     })
-    @DeleteMapping("{id}")
-    public ResponseEntity<CatUser> deleteUser(@PathVariable Long id) {
-        return ResponseEntity.ok(catUserService.deleteUser(id));
+    @DeleteMapping("{chatId}")
+    public ResponseEntity<CatUser> deleteUser(@PathVariable Long chatId) {
+        return ResponseEntity.ok(catUserService.deleteUser(chatId));
     }
     /**
      * Use catUserService to Sent custom message to Cat User with chatId.

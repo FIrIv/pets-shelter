@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static com.telegrambot.jd501.Constants.*;
+import static com.telegrambot.jd501.Constants.CHAT_ID_2;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -49,9 +50,9 @@ class DogVolunteerServiceTest {
 
     @Test
     void deleteDogVolunteer() {
-        when(dogVolunteerRepository.findById(anyLong())).thenReturn(Optional.of(DOG_VOLUNTEER_1));
+        when(dogVolunteerRepository.findDogVolunteerByChatId(anyLong())).thenReturn(DOG_VOLUNTEER_1);
 
-        assertEquals(out.deleteVolunteer(ID1),DOG_VOLUNTEER_1);
+        assertEquals(out.deleteVolunteer(CHAT_ID_1),DOG_VOLUNTEER_1);
     }
 
     @Test
@@ -63,9 +64,9 @@ class DogVolunteerServiceTest {
 
     @Test
     void volunteerNotFoundExceptionTest1() {
-        when(dogVolunteerRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(dogVolunteerRepository.findDogVolunteerByChatId(anyLong())).thenReturn(null);
 
-        assertThrows(VolunteerNotFoundException.class,() ->out.deleteVolunteer(ID2));
+        assertThrows(VolunteerNotFoundException.class,() ->out.deleteVolunteer(CHAT_ID_2));
     }
     @Test
     void volunteerNotFoundExceptionTest2() {

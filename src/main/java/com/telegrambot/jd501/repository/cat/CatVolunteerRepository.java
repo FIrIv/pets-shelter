@@ -8,5 +8,8 @@ import org.springframework.stereotype.Repository;
 public interface CatVolunteerRepository extends JpaRepository <CatVolunteer, Long> {
 
     boolean existsByChatId(Long chatId);
+
+
+    CatVolunteer findCatVolunteerByChatId(long chatId);
 }
 
