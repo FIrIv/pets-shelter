@@ -79,7 +79,15 @@ public class TelegramBot extends TelegramLongPollingBot {
             } else if (update.getMessage() != null && update.getMessage().hasDocument()) {
                 // --- if pressed key get contact call method getContact() -----
                 // --- (1) Reply to user that his phone is saved
-                SendMessage sendMessage = botService.getPicture(update);
+                SendMessage sendMessage = botService.getPictureAsDocument(update);
+                sendMessageToUser(sendMessage);
+            }
+
+            //  *** new ***
+            else if (update.getMessage() != null && update.getMessage().hasPhoto()) {
+                // --- if pressed key get contact call method getContact() -----
+                // --- (1) Reply to user that his phone is saved
+                SendMessage sendMessage = botService.getPictureAsPhoto(update);
                 sendMessageToUser(sendMessage);
             }
         } catch (Exception e) {
