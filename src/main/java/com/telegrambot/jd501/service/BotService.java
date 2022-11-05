@@ -676,7 +676,7 @@ public class BotService {
      * @return message to reply (with calling method {@link #saveReportToDB(long, boolean, String)})
      * @throws IOException if document hasn't gotten
      */
-  SendMessage getPictureAsPhoto(Update update) throws IOException {
+    SendMessage getPictureAsPhoto(Update update) throws IOException {
         long chatId = update.getMessage().getChatId();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -685,9 +685,9 @@ public class BotService {
             message.setText(CHOOSE_MENU_ITEM_STRING);
             return message;
         }
-      // get the last photo - it seems to be the bigger one
-      List<PhotoSize> photos = update.getMessage().getPhoto();
-      PhotoSize photo = photos.get(photos.size() - 1);
+        // get the last photo - it seems to be the bigger one
+        List<PhotoSize> photos = update.getMessage().getPhoto();
+        PhotoSize photo = photos.get(photos.size() - 1);
 
         // ---- Converse document into byte array -----
         logger.info("The conversion of the received photo into a byte array...");
