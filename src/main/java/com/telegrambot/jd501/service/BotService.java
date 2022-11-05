@@ -21,14 +21,13 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Document;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -637,14 +636,14 @@ public class BotService {
     }
 
     /**
-     * Extract photo in report from User data as document.
-     * And then converse document into byte array
+     * Extract image in report from User as document.
+     * And then converse it into byte array
      *
      * @param update list of incoming updates, must be not Null
      * @return message to reply (with calling method {@link #saveReportToDB(long, boolean, String)})
      * @throws IOException if document hasn't gotten
      */
-    SendMessage getPicture(Update update) throws IOException {
+    SendMessage getPictureAsDocument(Update update) throws IOException {
         long chatId = update.getMessage().getChatId();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -656,7 +655,7 @@ public class BotService {
         // ---- get photo as document -------
         Document getFile = update.getMessage().getDocument();
         // ---- Converse document into byte array -----
-        logger.info("The conversion of the received image into a byte array...");
+        logger.info("The conversion of the received document (as image) into a byte array...");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
         oos.writeObject(getFile);
@@ -669,6 +668,44 @@ public class BotService {
         return saveReportToDB(chatId, isPhoto, "");
     }
 
+    /**
+     * Extract image in report from User as photo.
+     * And then converse it into byte array
+     *
+     * @param update list of incoming updates, must be not Null
+     * @return message to reply (with calling method {@link #saveReportToDB(long, boolean, String)})
+     * @throws IOException if document hasn't gotten
+     */
+    SendMessage getPictureAsPhoto(Update update) throws IOException {
+        long chatId = update.getMessage().getChatId();
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        logger.info("getting picture... in temp method");
+        if (!isReportButtonPressed) {
+            message.setText(CHOOSE_MENU_ITEM_STRING);
+            return message;
+        }
+        // get the last photo - it seems to be the bigger one
+        List<PhotoSize> photos = update.getMessage().getPhoto();
+        PhotoSize photo = photos.get(photos.size() - 1);
+
+        // ---- Converse document into byte array -----
+        logger.info("The conversion of the received photo into a byte array...");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(photo);
+        oos.flush();
+        data = bos.toByteArray();
+        logger.info("... has been performed");
+
+//        ByteArrayInputStream
+
+        // update or save photo into data base ******
+        isPhoto = true;
+        return saveReportToDB(chatId, isPhoto, "");
+    }
+
+// ************************** new picture ********************************************************888
     /**
      * Send user's phone number to volunteer and save it into DB
      *
