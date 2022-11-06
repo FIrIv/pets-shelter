@@ -1,10 +1,10 @@
-package com.example.demo;
+package com.telegrambot.jd501;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DogsAndCatsShelterApplicationTests {
+class PetShelterApplicationTests {
 
 	@Test
 	void contextLoads() {
