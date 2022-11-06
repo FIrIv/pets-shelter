@@ -14,8 +14,11 @@ import com.telegrambot.jd501.service.cat_service.CatVolunteerService;
 import com.telegrambot.jd501.service.dog_service.DogInformationMessageService;
 import com.telegrambot.jd501.service.dog_service.DogReportService;
 import com.telegrambot.jd501.service.dog_service.DogVolunteerService;
+import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -27,7 +30,14 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +47,8 @@ import java.util.NoSuchElementException;
 public class BotService {
     private final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
 
-
+    @Value("${bot.token}")
+    private String token;
     private final CatVolunteerService catVolunteerService;
     private final DogVolunteerService dogVolunteerService;
     private final CatInformationMessageService catInformationMessageService;
@@ -636,14 +647,15 @@ public class BotService {
     }
 
     /**
-     * Extract image in report from User as document.
-     * And then converse it into byte array
+     * Get image in report from User as document.
+     * And extract from document fileId and size of file
      *
      * @param update list of incoming updates, must be not Null
      * @return message to reply (with calling method {@link #saveReportToDB(long, boolean, String)})
      * @throws IOException if document hasn't gotten
      */
     SendMessage getPictureAsDocument(Update update) throws IOException {
+
         long chatId = update.getMessage().getChatId();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -654,23 +666,17 @@ public class BotService {
         }
         // ---- get photo as document -------
         Document getFile = update.getMessage().getDocument();
-        // ---- Converse document into byte array -----
-        logger.info("The conversion of the received document (as image) into a byte array...");
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(getFile);
-        oos.flush();
-        data = bos.toByteArray();
-        logger.info("... has been performed");
 
-        // update or save photo into data base ******
-        isPhoto = true;
-        return saveReportToDB(chatId, isPhoto, "");
+        // get parameters of file
+        String fileId = getFile.getFileId();
+        int fileSize = getFile.getFileSize().intValue();
+
+        return getAndSavePhoto(chatId, fileId, fileSize);
     }
 
     /**
-     * Extract image in report from User as photo.
-     * And then converse it into byte array
+     * Get image in report from User as photo.
+     * And extract from document fileId and size of file
      *
      * @param update list of incoming updates, must be not Null
      * @return message to reply (with calling method {@link #saveReportToDB(long, boolean, String)})
@@ -680,32 +686,79 @@ public class BotService {
         long chatId = update.getMessage().getChatId();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        logger.info("getting picture... in temp method");
+        logger.info("getting picture... in method getPictureAsPhoto()");
         if (!isReportButtonPressed) {
             message.setText(CHOOSE_MENU_ITEM_STRING);
             return message;
         }
-        // get the last photo - it seems to be the bigger one
+
+        // get the last photo from chat
         List<PhotoSize> photos = update.getMessage().getPhoto();
         PhotoSize photo = photos.get(photos.size() - 1);
+        int fileSize = photo.getFileSize();
+        String fileId = photo.getFileId();
 
-        // ---- Converse document into byte array -----
-        logger.info("The conversion of the received photo into a byte array...");
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(photo);
-        oos.flush();
-        data = bos.toByteArray();
-        logger.info("... has been performed");
+        return getAndSavePhoto(chatId, fileId, fileSize);
+    }
 
-//        ByteArrayInputStream
+    /**
+     * Extract image in report from User data.
+     * Save it in local directory.
+     * And then converse it into byte array and save in DB
+     *
+     * @param chatId   identification of chat
+     * @param fileId   identification of file in Telegram Cloud
+     * @param fileSize size of file
+     * @return message to reply (with calling method {@link #saveReportToDB(long, boolean, String)})
+     * @throws IOException if file hasn't gotten
+     */
+    SendMessage getAndSavePhoto(long chatId, String fileId, int fileSize) throws IOException {
+        // **** get temp path to file from photo data ***
+        URL urlTemp = new URL("https://api.telegram.org/bot" + token + "/getFile?file_id=" + fileId);
+
+        // *** read that data (in JSON)
+        BufferedReader br = new BufferedReader(new InputStreamReader(urlTemp.openStream()));
+        String getFileResponse = br.readLine();
+
+        // *** extract from taken data real path to file in Telegram Cloud. Parse it from JSON format
+        JSONObject jResult = new JSONObject(getFileResponse);
+        JSONObject pathInJson = jResult.getJSONObject("result");
+        String endOfFilePath = pathInJson.getString("file_path");
+
+        // *** make real path to download file ***
+        URL urlToDownloadFile = new URL("https://api.telegram.org/file/bot" + token + "/" + endOfFilePath);
+        logger.info(urlToDownloadFile.toString());
+
+        // *** open streams and save file from Telegram Cloud to local directory on disk ***
+        String localFilePath = "src/main/resources/uploaded_files/" + endOfFilePath;
+        File localFile = new File(localFilePath);
+        InputStream is = new URL(urlToDownloadFile.toString()).openStream();
+        FileUtils.copyInputStreamToFile(is, localFile);
+        br.close();
+        is.close();
+        logger.info("Downloading to disk is OK");
+
+        // ---- Converse downloaded file into byte array -----
+        Path filePath = Paths.get(localFilePath);
+        try (InputStream iStream = Files.newInputStream(filePath);
+             BufferedInputStream bis = new BufferedInputStream(iStream, fileSize);
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            BufferedImage image = ImageIO.read(bis);
+            int width = image.getWidth();
+            int height = image.getHeight();
+            BufferedImage preview = new BufferedImage(width, height, image.getType());
+            Graphics2D graphics = preview.createGraphics();
+            graphics.drawImage(image, 0, 0, width, height, null);
+            graphics.dispose();
+            ImageIO.write(preview, "jpg", baos);
+            data = baos.toByteArray();
+        }
 
         // update or save photo into data base ******
         isPhoto = true;
         return saveReportToDB(chatId, isPhoto, "");
     }
 
-// ************************** new picture ********************************************************888
     /**
      * Send user's phone number to volunteer and save it into DB
      *
