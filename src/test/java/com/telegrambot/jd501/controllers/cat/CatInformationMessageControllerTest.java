@@ -35,42 +35,6 @@ class CatInformationMessageControllerTest {
     void contextLoads() throws Exception {
         Assertions.assertThat(catInformationMessageController).isNotNull();
     }
-
-//    @Test
-//    void getAllCatInformationMessage() throws Exception {
-//        CatInformationMessage infoMessage1 = new CatInformationMessage(-1L, "Тестовое info message1.");
-//        long id1 = catInformationMessageService.createInformationMessage(infoMessage1).getId();
-//
-//        CatInformationMessage infoMessage2 = new CatInformationMessage(-2L, "Тестовое info message2.");
-//        long id2 = catInformationMessageService.createInformationMessage(infoMessage2).getId();
-//
-//        try {
-//            ResponseEntity<List<CatInformationMessage>> response = restTemplate.exchange("http://localhost:" + port + "/cat/informationMessage", HttpMethod.GET, null,
-//                    new ParameterizedTypeReference<List<CatInformationMessage>>() {
-//                    });
-//            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-//            Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
-//            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage1);
-//            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage2);
-//        } finally {
-//            catInformationMessageService.deleteInformationMessage(id1);
-//            catInformationMessageService.deleteInformationMessage(id2);
-//        }
-//    }
-
-    /*@Test
-    void createCatInformationMessage() throws Exception {
-        CatInformationMessage infoMessage = new CatInformationMessage(-1L, "Тестовое info message.");
-
-        ResponseEntity<CatInformationMessage> response = restTemplate.postForEntity("http://localhost:" + port + "/cat/informationMessage", infoMessage, CatInformationMessage.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().getId()).isNotNull();
-        Assertions.assertThat(response.getBody().getText()).isEqualTo("Тестовое info message.");
-        Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
-
-        catInformationMessageService.deleteInformationMessage(response.getBody().getId());
-    }*/
-
     @Test
     void updateInformationMessage() throws Exception {
         CatInformationMessage infoMessage = new CatInformationMessage(-1L, "Тестовое info message.");
@@ -91,14 +55,4 @@ class CatInformationMessageControllerTest {
             catInformationMessageService.deleteInformationMessage(id);
         }
     }
-
-    /*@Test
-    void deleteCatInformationMessage() throws Exception {
-        CatInformationMessage infoMessage = new CatInformationMessage(-1L, "Тестовое info message.");
-        long id = catInformationMessageService.createInformationMessage(infoMessage).getId();
-
-        ResponseEntity<CatInformationMessage> response = restTemplate.exchange("/cat/informationMessage/{id}", HttpMethod.DELETE, null,
-                CatInformationMessage.class, id);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-    }*/
 }

@@ -32,28 +32,6 @@ public class DogReportController {
         this.dogReportService = dogReportService;
     }
 
-//    /**
-//     * get All DogReport-s from DataBase
-//     * Use method of service {@link DogReportService#getAllPetReports()}}
-//     *
-//     * @return collection of DogReport
-//     */
-//    @ApiResponses({
-//            @ApiResponse(
-//                    responseCode = "200",
-//                    description = "Show all DogReport",
-//                    content = @Content(
-//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                            schema = @Schema(implementation = Collection.class)
-//                    )
-//            )
-//    })
-//
-//    @GetMapping
-//    public Collection <DogReport> getAllReports() {
-//  return dogReportService.getAllPetReports();
-//    }
-
     /**
      * get All DogReport-s By ChatId
      * Use method of service {@link DogReportService#getAllPetReportsByChatId(Long)}
@@ -73,81 +51,6 @@ public class DogReportController {
     public Collection<DogReport> getAllReportsByChatId(@PathVariable Long chatId) {
         return dogReportService.getAllPetReportsByChatId(chatId);
     }
-
-//    /**
-//     * add new DogReport in DataBase
-//     *
-//     * @param dogReport Use method of Service {@link DogReportService#createPetReport(DogReport)}
-//     * @return DogReport
-//     */
-//    @ApiResponses({
-//            @ApiResponse(
-//                    responseCode = "200",
-//                    description = "Create new DogReport",
-//                    content = @Content(
-//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                            schema = @Schema(implementation = DogReport.class)
-//                    )
-//            )
-//    })
-//    @PostMapping
-//    public ResponseEntity<DogReport> createReport(@RequestBody DogReport dogReport) {
-//        return ResponseEntity.ok(dogReportService.createPetReport(dogReport));
-//    }
-//
-//    /**
-//     * change DogReport in DataBase
-//     * Use method of Service {@link DogReportService#updatePetReport(DogReport)}
-//     *
-//     * @param dogReport (object)
-//     * @return DogReport
-//     * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if DogReport with id not found
-//     */
-//    @ApiResponses({
-//            @ApiResponse(
-//                    responseCode = "200",
-//                    description = "Change DogReport By Id",
-//                    content = @Content(
-//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                            schema = @Schema(implementation = DogReport.class)
-//                    )
-//            ),
-//            @ApiResponse(
-//                    responseCode = "404",
-//                    description = "DogReport not found"
-//            )
-//    })
-//    @PutMapping
-//    public ResponseEntity<DogReport> updateReport(@RequestBody DogReport dogReport) {
-//        return ResponseEntity.ok(dogReportService.updatePetReport(dogReport));
-//    }
-
-    /* /**
-     * delete DogReport from DataBase by id
-     * Use method of Service {@link DogReportService#deletePetReport(Long id)}}
-     *
-     * @param id
-     * @return Deleted DogReport
-     * @throws com.telegrambot.jd501.exceptions.PetReportNotFoundException if DogReport with id not found
-     */
-    /*@ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Delete DogReport By Id",
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = DogReport.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "DogReport not found"
-            )
-    })
-    @DeleteMapping("{id}")
-    public ResponseEntity<DogReport> deleteReport(@PathVariable Long id) {
-        return ResponseEntity.ok(dogReportService.deletePetReport(id));
-    }*/
 
     /**
      * Find DogReport by ID and get byte[] Photo from Report

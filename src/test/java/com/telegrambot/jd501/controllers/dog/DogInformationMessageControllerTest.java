@@ -34,42 +34,6 @@ class DogInformationMessageControllerTest {
     void contextLoads() throws Exception {
         Assertions.assertThat(dogInformationMessageController).isNotNull();
     }
-
-//    @Test
-//    void getAllDogInformationMessage() {
-//        DogInformationMessage infoMessage1 = new DogInformationMessage(-1L, "Тестовое info message1.");
-//        long id1 = dogInformationMessageService.createInformationMessage(infoMessage1).getId();
-//
-//        DogInformationMessage infoMessage2 = new DogInformationMessage(-2L, "Тестовое info message2.");
-//        long id2 = dogInformationMessageService.createInformationMessage(infoMessage2).getId();
-//
-//        try {
-//            ResponseEntity<List<DogInformationMessage>> response = restTemplate.exchange("http://localhost:" + port + "/dog/informationMessage", HttpMethod.GET, null,
-//                    new ParameterizedTypeReference<List<DogInformationMessage>>() {
-//                    });
-//            Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-//            Assertions.assertThat(response.getBody().size()).isGreaterThan(1);
-//            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage1);
-//            Assertions.assertThat(response.getBody().stream().collect(Collectors.toSet())).contains(infoMessage2);
-//        } finally {
-//            dogInformationMessageService.deleteInformationMessage(id1);
-//            dogInformationMessageService.deleteInformationMessage(id2);
-//        }
-//    }
-
-    /*@Test
-    void createDogInformationMessage() {
-        DogInformationMessage infoMessage = new DogInformationMessage(-1L, "Тестовое info message.");
-
-        ResponseEntity<DogInformationMessage> response = restTemplate.postForEntity("http://localhost:" + port + "/dog/informationMessage", infoMessage, DogInformationMessage.class);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        Assertions.assertThat(response.getBody().getId()).isNotNull();
-        Assertions.assertThat(response.getBody().getText()).isEqualTo("Тестовое info message.");
-        Assertions.assertThat(response.getBody().getId()).isEqualTo(-1L);
-
-        dogInformationMessageService.deleteInformationMessage(response.getBody().getId());
-    }*/
-
     @Test
     void updateInformationMessage() {
         DogInformationMessage infoMessage = new DogInformationMessage(-1L, "Тестовое info message.");
@@ -90,14 +54,4 @@ class DogInformationMessageControllerTest {
             dogInformationMessageService.deleteInformationMessage(id);
         }
     }
-
-    /*@Test
-    void deleteInformationMessage() {
-        DogInformationMessage infoMessage = new DogInformationMessage(-1L, "Тестовое info message.");
-        long id = dogInformationMessageService.createInformationMessage(infoMessage).getId();
-
-        ResponseEntity<DogInformationMessage> response = restTemplate.exchange("/dog/informationMessage/{id}", HttpMethod.DELETE, null,
-                DogInformationMessage.class, id);
-        Assertions.assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-    }*/
 }
